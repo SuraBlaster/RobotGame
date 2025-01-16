@@ -190,7 +190,7 @@ void Player::CollisionPlayerVsEnemies()
             if (normal.y > 0.8f)
             {
                 //¬ƒWƒƒƒ“ƒv
-                Jump(jumpSpeed * 0.5f);
+               // Jump(jumpSpeed * 0.5f);
             }
             else
             {

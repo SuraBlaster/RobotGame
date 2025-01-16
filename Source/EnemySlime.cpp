@@ -84,10 +84,10 @@ void EnemySlime::DrawDebugPrimitive()
     debugRenderer->DrawSphere(targetPosition, radius, DirectX::XMFLOAT4(1, 1, 0, 1));
 
     //索敵範囲をデバッグ円柱描画
-    debugRenderer->DrawCylinder(position, searchRange, 1.0f, DirectX::XMFLOAT4(0, 0, 1, 1));
+    debugRenderer->DrawSphere(position, searchRange, DirectX::XMFLOAT4(0, 0, 1, 1));
 
     //攻撃範囲をデバッグ円柱描画
-    debugRenderer->DrawCylinder(position, attackRange, 1.0f, DirectX::XMFLOAT4(1, 0, 0, 1));
+    debugRenderer->DrawSphere(position, attackRange, DirectX::XMFLOAT4(1, 0, 0, 1));
 }
 
 void EnemySlime::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
@@ -99,7 +99,7 @@ void EnemySlime::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
 void EnemySlime::SetRandomTargetPosition()
 {
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
-    targetPosition.y = 0;
+    targetPosition.y = Mathf::RandomRange(territoryOrigin.y, territoryOrigin.y + territoryRange);
     targetPosition.z = Mathf::RandomRange(territoryOrigin.z, territoryOrigin.z + territoryRange);
 
 }
@@ -108,6 +108,7 @@ void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
 {
     //ターゲット方向への進行ベクトルを算出
     float vx = targetPosition.x - position.x;
+    float vy = targetPosition.y - position.y;
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
     vx /= dist;
@@ -190,12 +191,12 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                 vec.z /= length;
 
                 //XZ平面に吹っ飛ばす力を掛ける
-                float power = 10.0f;
+                float power = 1.0f;
                 vec.x *= power;
                 vec.z *= power;
 
                 //Y方向にも力を掛ける
-                vec.y = 5.0f;
+                vec.y = 1.0f;
 
                 //吹っ飛ばす
                 player.AddImpulse(vec);
