@@ -111,11 +111,13 @@ void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
     float vy = targetPosition.y - position.y;
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
+
+    
     vx /= dist;
     vz /= dist;
 
     //ˆÚ“®ˆ—
-    Move(vx, vz, moveSpeed * speedRate);
+    Move(vx, vz,vy, moveSpeed * speedRate);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 
