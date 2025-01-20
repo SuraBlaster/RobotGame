@@ -53,6 +53,10 @@ void SceneGame::Initialize()
 	//カメラコントローラー初期化
 	cameraController = new CameraController;
 
+	Mouse& mouse = Input::Instance().GetMouse();
+	mouse.setCenter();
+	cameraController->ZeroClear();
+	
 	//ゲージスプライト
 	gauge = new Sprite();
 }
@@ -91,23 +95,44 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	//カメラコントローラー更新処理
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
+	if (!isPause)
+	{
+		//ステージ更新処理
+		StageManager::Instance().Update(elapsedTime);
+
+		//プレイヤー更新処理
+		player->Update(elapsedTime);
+
+		//エネミー更新処理
+		EnemyManager::Instance().Update(elapsedTime);
+
+		//エフェクト更新処理
+		EffectManager::Instance().Update(elapsedTime);
+
+		isCameraControll = true;
+		isOldCameraControll = true;
+	}
+	else
+	{
+		if (isOldCameraControll)
+		{
+			isCameraControll = false;
+			isOldCameraControll = false;
+		}
+	}
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	mouse.updataNormal(isCameraControll);
+
+	//カメラコントローラー更新処理
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	//ステージ更新処理
-	StageManager::Instance().Update(elapsedTime);
-
-	//プレイヤー更新処理
-	player->Update(elapsedTime);
-
-	//エネミー更新処理
-	EnemyManager::Instance().Update(elapsedTime);
-
-	//エフェクト更新処理
-	EffectManager::Instance().Update(elapsedTime);
+	if (!isCameraControll)
+		cameraController->ZeroClear();
+	pauseUpdate();
 }
 
 // 描画処理
@@ -322,4 +347,18 @@ void SceneGame::RenderEnemyGauge(
 	}
 }
 
+void SceneGame::pauseUpdate()
+{
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	if (gamePad.GetButtonDown() & GamePad::BTN_BACK)
+	{
+		isPause = !isPause;
+	}
+}
 
+void SceneGame::pauseRender(ID3D11DeviceContext* dc)
+{
+	if (isPause)
+	{
+	}
+}

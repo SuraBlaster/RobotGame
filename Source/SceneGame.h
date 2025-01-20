@@ -31,7 +31,12 @@ private:
 		const DirectX::XMFLOAT4X4& projection
 	);
 
+	void pauseUpdate();
+	void pauseRender(ID3D11DeviceContext* dc);
 private:
+	bool isCameraControll = true;
+	bool isOldCameraControll = true;
+	bool isPause = false;
 
 	Player* player = nullptr;
 
