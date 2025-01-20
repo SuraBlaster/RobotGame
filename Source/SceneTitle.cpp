@@ -23,7 +23,7 @@ void SceneTitle::Finalize()
 void SceneTitle::Update(float elapsedTime)
 {
     GamePad& gamepad = Input::Instance().GetGamePad();
-
+    Mouse& mouse = Input::Instance().GetMouse();
     //‰½‚©ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚ç‘JˆÚ
     const GamePadButton anyButton =
         GamePad::BTN_A
@@ -36,7 +36,10 @@ void SceneTitle::Update(float elapsedTime)
     {
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
-
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+    {
+        SceneManager::Instance().GameClose()
+    }
 }
 
 void SceneTitle::Render()
