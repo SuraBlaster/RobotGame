@@ -67,6 +67,8 @@ void EnemySlime::Update(float elapsedTime)
 
     //ƒ‚ƒfƒ‹s—ñ‚ðXV
     model->UpdateTransform(transform);
+
+    delay -= elapsedTime;
 }
 
 void EnemySlime::DrawDebugPrimitive()
@@ -151,6 +153,7 @@ bool EnemySlime::SearchPlayer()
 
 void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 {
+
     //ƒm[ƒh‚ÌˆÊ’u‚Æ“–‚½‚è”»’è‚ðs‚¤
     Model::Node* node = model->FindNode(nodeName);
 
@@ -170,6 +173,9 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 
         Player& player = Player::Instance();
         DirectX::XMFLOAT3 outPosition;
+
+        int playerLimit = player.GetRimit();
+
         if (Collision::IntersectSphereVsCylinder(
             nodePosition,
             nodeRadius,
@@ -178,27 +184,36 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
             player.GetHeight(),
             outPosition))
         {
-            //ƒ_ƒ[ƒW‚ð—^‚¦‚é
-            if (player.ApplyDamage(1))
+            if (playerLimit > 0 && delay <= 0.0f)
             {
-                //“G‚ð‚Á”ò‚Î‚·ƒxƒNƒgƒ‹‚ðŽZo
-                DirectX::XMFLOAT3 vec;
-                vec.x = outPosition.x - nodePosition.x;
-                vec.z = outPosition.z - nodePosition.z;
-                float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
-                vec.x /= length;
-                vec.z /= length;
+                playerLimit--;
+                delay = 0.1f;
+                player.SetRimit(playerLimit);
+            }
+            else if(delay <= 0.0f)
+            {
+                //ƒ_ƒ[ƒW‚ð—^‚¦‚é
+                if (player.ApplyDamage(1))
+                {
+                    //“G‚ð‚Á”ò‚Î‚·ƒxƒNƒgƒ‹‚ðŽZo
+                    DirectX::XMFLOAT3 vec;
+                    vec.x = outPosition.x - nodePosition.x;
+                    vec.z = outPosition.z - nodePosition.z;
+                    float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
+                    vec.x /= length;
+                    vec.z /= length;
 
-                //XZ•½–Ê‚É‚Á”ò‚Î‚·—Í‚ðŠ|‚¯‚é
-                float power = 10.0f;
-                vec.x *= power;
-                vec.z *= power;
+                    //XZ•½–Ê‚É‚Á”ò‚Î‚·—Í‚ðŠ|‚¯‚é
+                    float power = 10.0f;
+                    vec.x *= power;
+                    vec.z *= power;
 
-                //Y•ûŒü‚É‚à—Í‚ðŠ|‚¯‚é
-                vec.y = 5.0f;
+                    //Y•ûŒü‚É‚à—Í‚ðŠ|‚¯‚é
+                    vec.y = 5.0f;
 
-                //‚Á”ò‚Î‚·
-                player.AddImpulse(vec);
+                    //‚Á”ò‚Î‚·
+                    player.AddImpulse(vec);
+                }
             }
         }
     }

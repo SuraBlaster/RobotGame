@@ -127,4 +127,6 @@ private:
     float stateTimer = 0.0f;
     float searchRange = 5.0f;
     float attackRange = 1.5f;
+
+    float delay = 0.0f;
 };

@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Graphics/Graphics.h"
 #include "EnemyManager.h"
+#include "EffectManager.h"
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include <ProjectileHoming.h>
@@ -26,8 +27,9 @@ Player::Player()
     //スケーリング
     scale.x = scale.y = scale.z = 0.01f;
 
-    //ヒットエフェクト読み込み
+    //エフェクト読み込み
     hitEffect = new Effect("Data/Effect/thunder.efk");
+    barrier = new Effect("Data/Effect/Barrier.efk");
 
     //待機ステートへ遷移
     TransitionIdleState();
@@ -36,9 +38,6 @@ Player::Player()
 void Player::DrawDebugPrimitive()
 {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-
-    //判定衝突用のデバッグ球を描画
-    //debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 0, 1));
     
     //衝突判定用のデバッグ円柱を描画
     debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
@@ -64,6 +63,7 @@ void Player::DrawDebugPrimitive()
 Player::~Player()
 {
     delete hitEffect;
+    delete barrier;
 
     if (model != nullptr)
     {
@@ -101,8 +101,8 @@ void Player::Update(float elapsedTime)
     case State::Death:
         UpdateDeathState(elapsedTime);
         break;
-    case State::Revive:
-        UpdateReviveState(elapsedTime);
+    case State::Barrier:
+        UpdateBarrierState(elapsedTime);
     }
 
     UpdateTransform();
@@ -121,6 +121,10 @@ void Player::Update(float elapsedTime)
     model->UpdateAnimation(elapsedTime);
 
     model->UpdateTransform(transform);
+
+    UpdateBarrier();
+
+    barrier->UpdateEffectColor(barrierEffectHandle, elapsedTime);
 }
 
 
@@ -162,14 +166,7 @@ void Player::CollisionPlayerVsEnemies()
         Enemy* enemy = enemyManager.GetEnemy(i);
 
         DirectX::XMFLOAT3 outPosition;
-        /*if (Collision::IntersectSphereVsSphere(
-            Player::GetPosition(),
-            Player::GetRadius(),
-            enemy->GetPosition(),
-            enemy->GetRadius(), outPosition))
-        {
-            enemy->SetPosition(outPosition);
-        }*/
+        
 
         if (Collision::IntersectCylinderVsCylinder(
             Player::GetPosition(),
@@ -210,8 +207,6 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
     Model::Node* node = model->FindNode(nodeName);
 
     //ノード位置取得
-    
-    
     DirectX::XMMATRIX Nodetra = DirectX::XMLoadFloat4x4(&node->worldTransform);
     DirectX::XMVECTOR Nodepos = Nodetra.r[3];
     DirectX::XMFLOAT3 NodePosition;
@@ -286,6 +281,8 @@ void Player::TransitionIdleState()
 
 void Player::UpdateIdleState(float elapsedTime)
 {
+    GamePad& gamepad = Input::Instance().GetGamePad();
+
     if (InputMove(elapsedTime))
     {
         TransitionMoveState();
@@ -307,6 +304,11 @@ void Player::UpdateIdleState(float elapsedTime)
     if (InputAttack())
     {
         TransitionAttackState();
+    }
+
+    if (gamepad.GetButtonDown() & GamePad::BTN_1)
+    {
+        TransitionBarrierState();
     }
 }
 
@@ -444,29 +446,29 @@ void Player::UpdateDeathState(float elapsedTime)
 {
     if (!model->IsPlayAnimation())
     {
-        //ボタンを押したら復活ステートに遷移
-        GamePad& gamePad = Input::Instance().GetGamePad();
-        if (gamePad.GetButtonDown() & GamePad::BTN_A)
-        {
-            TransitionReviveState();
-        }
+        
     }
 }
 
-void Player::TransitionReviveState()
+void Player::TransitionBarrierState()
 {
-    state = State::Revive;
+    state = State::Barrier;
 
-    //体力回復
-    health = maxHealth;
-
-    //復活アニメーション再生
-    model->PlayAnimation(Anim_Revive, false);
+    //障壁展開っぽいアニメーション再生
+    model->PlayAnimation(Anim_GetHit1, false);
+    
 }
 
-void Player::UpdateReviveState(float elapsedTime)
+void Player::UpdateBarrierState(float elapsedTime)
 {
-    //復活アニメーション終了時に待機ステートに遷移
+    float animationTime = model->GetCurrentAnimationSeconds();
+
+    if (animationTime >= 0.5f)
+    {
+        firstFlag = true;
+        barrierRimit = 5;
+    }
+
     if (!model->IsPlayAnimation())
     {
         TransitionIdleState();
@@ -647,6 +649,31 @@ void Player::CollisionprojectilesVsEnemies()
            }
         }
     }
+}
+
+void Player::UpdateBarrier()
+{
+    if (barrierRimit > 0 && barrierEffectHandle < 0)
+    {
+        barrierEffectHandle = barrier->Play(position, 0.5f);
+        firstFlag = false;
+    }
+
+    if (barrierRimit <= 0)
+    {
+        barrier->Stop(barrierEffectHandle);
+        barrierEffectHandle = -1;
+    }
+
+    /*if (barrierRimit <= 4)
+    {
+        barrier->SetEffectColor(barrierEffectHandle,{255,0,0});
+    }*/
+
+    
+
+
+    barrier->SetPosition(barrierEffectHandle, position);
 }
 
 //描画処理

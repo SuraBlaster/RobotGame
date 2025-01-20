@@ -50,3 +50,27 @@ void Effect::SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale)
 
     effekseerManager->SetScale(handle, scale.x, scale.y, scale.z);
 }
+
+void Effect::SetEffectColor(Effekseer::Handle handle, const Effekseer::Color& color) 
+{
+    Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+    if (handle >= 0) 
+    {
+        effekseerManager->SetAllColor(handle, color); // エフェクト全体の色を設定
+    }
+}
+
+void Effect::UpdateEffectColor(Effekseer::Handle handle, float time) 
+{
+
+    Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+    // 時間に応じて色を変更 (虹色のループ)
+    int red = static_cast<int>((sin(time) + 1.0f) * 127.5f);
+    int green = static_cast<int>((sin(time + 2.0f) + 1.0f) * 127.5f);
+    int blue = static_cast<int>((sin(time + 4.0f) + 1.0f) * 127.5f);
+
+    Effekseer::Color dynamicColor(red, green, blue, 255); // RGB動的変化
+    Effect::SetEffectColor(handle, dynamicColor);
+}
