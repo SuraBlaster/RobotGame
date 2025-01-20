@@ -42,5 +42,16 @@ private:
 
 	CameraController* cameraController = nullptr;
 
+	float screenWidth, screenHeight,
+		  textureWidth, textureHeight;
+
 	Sprite* gauge = nullptr;
+
+	std::unique_ptr<Sprite> toTitleSpr = nullptr;
+	std::unique_ptr<Sprite> backSpr = nullptr;
+	std::unique_ptr<Sprite> sprite = nullptr;
+
+	SpriteData spriteSD;
+	SpriteData toTitleSD;
+	SpriteData backSD;
 };

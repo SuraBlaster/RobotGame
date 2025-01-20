@@ -9,8 +9,23 @@ void SceneTitle::Initialize()
 {
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
-}
+    startSpr = std::make_unique<Sprite>("Data/Sprite/UI0.png");
+    gameCloseSpr = std::make_unique<Sprite>("Data/Sprite/UI4.png");
 
+    startSD = {
+        800,500, 250, 50,
+        0, 0,
+        static_cast<float>(startSpr->GetTextureWidth()),
+        static_cast<float>(startSpr->GetTextureHeight())
+    };
+
+    gameCloseSD = {
+    300, 500, 250, 50,
+    0, 0,
+    static_cast<float>(gameCloseSpr->GetTextureWidth()),
+    static_cast<float>(gameCloseSpr->GetTextureHeight())
+    };
+}
 void SceneTitle::Finalize()
 {
     if (sprite != nullptr)
@@ -22,23 +37,47 @@ void SceneTitle::Finalize()
 
 void SceneTitle::Update(float elapsedTime)
 {
-    GamePad& gamepad = Input::Instance().GetGamePad();
-    Mouse& mouse = Input::Instance().GetMouse();
-    //何かボタンを押したら遷移
-    const GamePadButton anyButton =
-        GamePad::BTN_A
-        | GamePad::BTN_B
-        | GamePad::BTN_X
-        | GamePad::BTN_Y
-        ;
-
-    if (gamepad.GetButtonDown() & anyButton)
+    //GamePad& gamepad = Input::Instance().GetGamePad();
+    ////何かボタンを押したら遷移
+    //const GamePadButton anyButton =
+    //    GamePad::BTN_A
+    //    | GamePad::BTN_B
+    //    | GamePad::BTN_X
+    //    | GamePad::BTN_Y
+    //    ;
+   /* if (gamepad.GetButtonDown() & anyButton)
     {
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-    }
-    if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+    }*/
+
+    Mouse& mouse = Input::Instance().GetMouse();
+
+    if (mouse.mouseVsRect(startSD.dx, startSD.dy,
+        startSD.dw, startSD.dh))
     {
-        SceneManager::Instance().GameClose()
+        startSD.r = startSD.g = startSD.b = 0.7f;
+        if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+        {
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
+    }
+    else
+    {
+        startSD.r = startSD.g = startSD.b = 1.0f;
+    }
+
+    if (mouse.mouseVsRect(gameCloseSD.dx, gameCloseSD.dy,
+        gameCloseSD.dw, gameCloseSD.dh))
+    {
+        gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 0.7f;
+        if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+        {
+            SceneManager::Instance().GameClose();
+        }
+    }
+    else
+    {
+        gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 1.0f;
     }
 }
 
@@ -67,6 +106,9 @@ void SceneTitle::Render()
             0, 0, textureWidth, textureHeight,
             0,
             1, 1, 1, 1);
+
+        startSpr->Render(dc, startSD);
+        gameCloseSpr->Render(dc, gameCloseSD);
     }
 
 }
