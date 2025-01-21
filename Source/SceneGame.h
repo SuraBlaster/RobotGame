@@ -33,10 +33,14 @@ private:
 
 	void pauseUpdate();
 	void pauseRender(ID3D11DeviceContext* dc);
+
+	void UIRender(ID3D11DeviceContext* dc);
+	void UIUpdate();
 private:
 	bool isCameraControll = true;
 	bool isOldCameraControll = true;
 	bool isPause = false;
+	bool isUIAnimation = false;
 
 	Player* player = nullptr;
 
@@ -49,9 +53,13 @@ private:
 
 	std::unique_ptr<Sprite> toTitleSpr = nullptr;
 	std::unique_ptr<Sprite> backSpr = nullptr;
+	std::unique_ptr<Sprite> playerHealthUISpr = nullptr;
+	std::unique_ptr<Sprite> playerHealthUIBackSpr = nullptr;
 	std::unique_ptr<Sprite> sprite = nullptr;
 
 	SpriteData spriteSD;
+	SpriteData playerHealthUISD;
+	SpriteData playerHealthUIBackSD;
 	SpriteData toTitleSD;
 	SpriteData backSD;
 };

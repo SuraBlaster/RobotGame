@@ -64,35 +64,55 @@ void SceneGame::Initialize()
 	gauge = new Sprite();
 
 	//2Dスプライト
-	screenWidth   = static_cast<float>(graphics.GetScreenWidth());
-	screenHeight  = static_cast<float>(graphics.GetScreenHeight());
+	{
+		screenWidth = static_cast<float>(graphics.GetScreenWidth());
+		screenHeight = static_cast<float>(graphics.GetScreenHeight());
 
-	sprite = std::make_unique<Sprite>();
-	toTitleSpr = std::make_unique<Sprite>("Data/Sprite/GoTitle.png");
-	backSpr = std::make_unique<Sprite>("Data/Sprite/Close.png");
-	spriteSD = {
-			0, 0, screenWidth, screenHeight,
-			0, 0, 1, 1,
+		sprite = std::make_unique<Sprite>();
+		spriteSD = {
+				0, 0, screenWidth, screenHeight,
+				0, 0, 1, 1,
+				0,
+				0, 0, 0, 0.6f
+		};
+
+		toTitleSpr = std::make_unique<Sprite>("Data/Sprite/GoTitle.png");
+		toTitleSD = {
+			800,500, 250, 50,
+			0, 0,
+			static_cast<float>(toTitleSpr->GetTextureWidth()),
+			static_cast<float>(toTitleSpr->GetTextureHeight()),
 			0,
-			0, 0, 0, 0.6f
-	};
-	toTitleSD = {
-		800,500, 250, 50,
-		0, 0,
-		static_cast<float>(toTitleSpr->GetTextureWidth()),
-		static_cast<float>(toTitleSpr->GetTextureHeight()),
-		0,
-		1, 1, 1, 1.0f
-	};
+			1, 1, 1, 1.0f
+		};
 
-	backSD = {
-		300, 500, 150, 50,
-		0, 0,
-		static_cast<float>(backSpr->GetTextureWidth()),
-		static_cast<float>(backSpr->GetTextureHeight()),
-		0,
-		1, 1, 1, 1.0f
-	};
+		backSpr = std::make_unique<Sprite>("Data/Sprite/Close.png");
+		backSD = {
+			300, 500, 150, 50,
+			0, 0,
+			static_cast<float>(backSpr->GetTextureWidth()),
+			static_cast<float>(backSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		playerHealthUISpr = std::make_unique<Sprite>();
+		playerHealthUISD = {
+			20, 20, player->GetHealth() * 100.0f, 30,
+			0, 0, 0, 0,
+			0,
+			1, 0, 0, 1.0f
+		};
+
+
+		playerHealthUIBackSpr = std::make_unique<Sprite>();
+		playerHealthUIBackSD = {
+			0, 20, 100.0f, 30,
+			0, 0, 0, 0,
+			0,
+			0.5f, 0.5f, 0.5f, 1.0f
+		};
+	}
 }
 
 // 終了化
@@ -146,6 +166,7 @@ void SceneGame::Update(float elapsedTime)
 
 		isCameraControll = true;
 		isOldCameraControll = true;
+		UIUpdate();
 	}
 	else
 	{
@@ -250,6 +271,7 @@ void SceneGame::Render()
 	{
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
+		UIRender(dc);
 	}
 
 	// 2DデバッグGUI描画
@@ -426,5 +448,55 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 
 		toTitleSpr->Render(dc, toTitleSD);
 		backSpr->Render(dc, backSD);
+	}
+}
+
+void SceneGame::UIUpdate()
+{
+
+}
+
+void SceneGame::UIRender(ID3D11DeviceContext* dc)
+{
+	if (!isPause && player->GetHealth() >= 0)
+	{
+		if (player->GetOnDamage())
+		{
+			playerHealthUISD.dw = player->GetHealth() * 100;
+			playerHealthUISD.dw = 100.0f;
+			isUIAnimation = true;
+		}
+
+		auto getRand = []()->float
+		{
+			const int max = RAND_MAX / 2;
+			return static_cast<float>(rand() - max) / max;
+		};
+
+		float UIShakeRange = 5.0f;
+
+		if (isUIAnimation)
+		{
+			float shakeX = getRand() * UIShakeRange;
+			float shakeY = getRand() * UIShakeRange;
+			playerHealthUISD.dx += shakeX;
+			playerHealthUISD.dy += shakeY;
+
+			playerHealthUIBackSD.dx = playerHealthUISD.dw;
+			playerHealthUIBackSD.dy = playerHealthUISD.dy;
+			
+			playerHealthUIBackSpr->Render(dc, playerHealthUIBackSD);
+			playerHealthUIBackSD.dw -= 2;
+		}
+
+		if (playerHealthUIBackSD.dw < playerHealthUIBackSD.dx)
+		{
+			isUIAnimation = false;
+			playerHealthUISD.dx = 20;
+			playerHealthUISD.dy = 20;
+			//playerHealthUISD.dw = player->GetHealth() * 100;
+		}
+
+		playerHealthUISpr->Render(dc, playerHealthUISD);
 	}
 }
