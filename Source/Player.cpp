@@ -204,10 +204,7 @@ void Player::CollisionPlayerVsEnemies()
         {
             enemy->SetPosition(outPosition);
         }
-
-
     }
-
 }
 
 void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
@@ -233,48 +230,48 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
         // 敵の位置取得
         Enemy* enemy = enemyManager.GetEnemy(i);
 
-            DirectX::XMFLOAT3 outPosition;
+        DirectX::XMFLOAT3 outPosition;
 
-            if (Collision::IntersectSphereVsCylinder(
-                NodePosition,
-                nodeRadius,
-                enemy->GetPosition(),
-                enemy->GetRadius(),
-                enemy->GetHeight(),
-                outPosition))
+        if (Collision::IntersectSphereVsCylinder(
+            NodePosition,
+            nodeRadius,
+            enemy->GetPosition(),
+            enemy->GetRadius(),
+            enemy->GetHeight(),
+            outPosition))
+        {
+            enemy->SetPosition(outPosition);
+
+            if (enemy->ApplyDamage(1))
             {
-                enemy->SetPosition(outPosition);
-
-                if (enemy->ApplyDamage(1))
                 {
-                    {
-                        DirectX::XMFLOAT3 impulse{};
+                    DirectX::XMFLOAT3 impulse{};
 
-                        const float power = 10.0f;
-                        const DirectX::XMFLOAT3& e = enemy->GetPosition();
-                        const DirectX::XMFLOAT3& p = NodePosition;
-                        float vx = e.x - p.x;
-                        float vz = e.z - p.z;
-                        float lengthXZ = sqrtf(vx * vx + vz * vz);
-                        vx /= lengthXZ;
-                        vz /= lengthXZ;
+                    const float power = 10.0f;
+                    const DirectX::XMFLOAT3& e = enemy->GetPosition();
+                    const DirectX::XMFLOAT3& p = NodePosition;
+                    float vx = e.x - p.x;
+                    float vz = e.z - p.z;
+                    float lengthXZ = sqrtf(vx * vx + vz * vz);
+                    vx /= lengthXZ;
+                    vz /= lengthXZ;
 
-                        impulse.x = vx * power;
-                        impulse.y = power * 0.5f;
-                        impulse.z = vz * power;
+                    impulse.x = vx * power;
+                    impulse.y = power * 0.5f;
+                    impulse.z = vz * power;
 
 
-                        enemy->AddImpulse(impulse);
-                    }
+                    enemy->AddImpulse(impulse);
                 }
-
-                {
-                    DirectX::XMFLOAT3 e = enemy->GetPosition();
-                    e.y += enemy->GetHeight() * 0.5f;
-                    hitEffect->Play(e);
-                }
-
             }
+
+            {
+                DirectX::XMFLOAT3 e = enemy->GetPosition();
+                e.y += enemy->GetHeight() * 0.5f;
+                hitEffect->Play(e);
+            }
+
+        }
     }
 }
 

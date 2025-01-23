@@ -342,7 +342,6 @@ void EnemySlime::UpdatePursuitState(float elapsedTime)
     
     if (dist <= attackRange)
     {
-      
         atknow = true;
         //攻撃ステートに遷移
         TransitionAttackState();
@@ -353,9 +352,6 @@ void EnemySlime::UpdatePursuitState(float elapsedTime)
 void EnemySlime::TransitionAttackState()
 {
     state = State::Attack;
-
-    
-
    
     //攻撃アニメーション再生
     model->PlayAnimation(Anim_Attack1, false);
