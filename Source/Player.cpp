@@ -259,15 +259,15 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
                         impulse.z = vz * power;
 
 
-                        enemy->AddImpulse(impulse);
+                       // enemy->AddImpulse(impulse);
                     }
                 }
 
-                {
+               /* {
                     DirectX::XMFLOAT3 e = enemy->GetPosition();
                     e.y += enemy->GetHeight() * 0.5f;
                     hitEffect->Play(e);
-                }
+                }*/
 
             }
     }
