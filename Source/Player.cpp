@@ -724,8 +724,6 @@ void Player::DrawDebugGUI()
             ImGui::InputFloat("invincible", &invincibleTimer);
         }
     }
-
-
     ImGui::End();
 }
 
