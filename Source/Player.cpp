@@ -196,8 +196,6 @@ void Player::CollisionPlayerVsEnemies()
             {
                 enemy->SetPosition(outPosition);
             }
-
-            
         }
 
     }
