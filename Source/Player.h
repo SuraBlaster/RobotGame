@@ -113,6 +113,7 @@ public:
 
     const int& GetRimit() const { return barrierRimit; }
     
+    bool GetOnDamage() { return onDamage; }
 private:
     //アニメーション
     enum Animation
@@ -168,6 +169,8 @@ private:
     int   jumpLimit = 2;
 
     float leftHandRadius = 0.4f;
+
+    bool onDamage = false;
 
     State state = State::Idle;
 

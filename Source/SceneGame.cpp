@@ -1,5 +1,7 @@
 #include "Graphics/Graphics.h"
 #include "SceneGame.h"
+#include "SceneTitle.h"
+#include "SceneLoading.h"
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
@@ -7,6 +9,7 @@
 #include "StageManager.h"
 #include "StageMain.h"
 #include "StageMoveFloor.h"
+#include "SceneManager.h"
 #include <Input/Input.h>
 // 初期化
 void SceneGame::Initialize()
@@ -27,14 +30,14 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i) 
+	for (int i = 0; i < 1; ++i)
 	{
 		EnemySlime* slime = new EnemySlime;
 		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
 	}
-	
+
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -53,8 +56,48 @@ void SceneGame::Initialize()
 	//カメラコントローラー初期化
 	cameraController = new CameraController;
 
+	Mouse& mouse = Input::Instance().GetMouse();
+	mouse.setCenter();
+	cameraController->ZeroClear();
+
 	//ゲージスプライト
 	gauge = new Sprite();
+
+	UI = std::make_unique<UserInterface>();
+	UI->Initialize();
+	//2Dスプライト
+	{
+		screenWidth = static_cast<float>(graphics.GetScreenWidth());
+		screenHeight = static_cast<float>(graphics.GetScreenHeight());
+
+		sprite = std::make_unique<Sprite>();
+		spriteSD = {
+				0, 0, screenWidth, screenHeight,
+				0, 0, 1, 1,
+				0,
+				0, 0, 0, 0.6f
+		};
+
+		toTitleSpr = std::make_unique<Sprite>("Data/Sprite/GoTitle.png");
+		toTitleSD = {
+			800,500, 250, 50,
+			0, 0,
+			static_cast<float>(toTitleSpr->GetTextureWidth()),
+			static_cast<float>(toTitleSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		backSpr = std::make_unique<Sprite>("Data/Sprite/Close.png");
+		backSD = {
+			300, 500, 150, 50,
+			0, 0,
+			static_cast<float>(backSpr->GetTextureWidth()),
+			static_cast<float>(backSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+	}
 }
 
 // 終了化
@@ -85,29 +128,50 @@ void SceneGame::Finalize()
 
 	//ステージ終了処理
 	StageManager::Instance().Clear();
-
 }
 
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-	//カメラコントローラー更新処理
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
+	if (!isPause)
+	{
+		//ステージ更新処理
+		StageManager::Instance().Update(elapsedTime);
+
+		//プレイヤー更新処理
+		player->Update(elapsedTime);
+
+		//エネミー更新処理
+		EnemyManager::Instance().Update(elapsedTime);
+
+		//エフェクト更新処理
+		EffectManager::Instance().Update(elapsedTime);
+
+		isCameraControll = true;
+		isOldCameraControll = true;
+		UI->Update(elapsedTime);
+	}
+	else
+	{
+		if (isOldCameraControll)
+		{
+			isCameraControll = false;
+			isOldCameraControll = false;
+		}
+	}
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	mouse.updataNormal(isCameraControll);
+
+	//カメラコントローラー更新処理
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	//ステージ更新処理
-	StageManager::Instance().Update(elapsedTime);
-
-	//プレイヤー更新処理
-	player->Update(elapsedTime);
-
-	//エネミー更新処理
-	EnemyManager::Instance().Update(elapsedTime);
-
-	//エフェクト更新処理
-	EffectManager::Instance().Update(elapsedTime);
+	if (!isCameraControll)
+		cameraController->ZeroClear();
+	pauseUpdate();
 }
 
 // 描画処理
@@ -167,6 +231,8 @@ void SceneGame::Render()
 
 		EnemyManager::Instance().Render(dc, shader);
 
+		UI->Render(dc, shader);
+
 		shader->End(dc);
 	}
 
@@ -191,6 +257,7 @@ void SceneGame::Render()
 	// 2Dスプライト描画
 	{
 		RenderEnemyGauge(dc, rc.view, rc.projection);
+		pauseRender(dc);
 	}
 
 	// 2DデバッグGUI描画
@@ -322,4 +389,51 @@ void SceneGame::RenderEnemyGauge(
 	}
 }
 
+void SceneGame::pauseUpdate()
+{
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	Mouse mouse = Input::Instance().GetMouse();
+	if (gamePad.GetButtonDown() & GamePad::BTN_BACK)
+	{
+		isPause = !isPause;
+	}
+	//タイトルに戻る
+	if (mouse.mouseVsRect(toTitleSD.dx, toTitleSD.dy, toTitleSD.dw, toTitleSD.dh))
+	{
+		toTitleSD.r = toTitleSD.g = toTitleSD.b = 0.7f;
+		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+		{
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+		}
+	}
+	else
+	{
+		toTitleSD.r = toTitleSD.g = toTitleSD.b = 1.0f;
+	}
+	//ゲームに戻る
+	if (mouse.mouseVsRect(backSD.dx, backSD.dy, backSD.dw, backSD.dh))
+	{
+		backSD.r = backSD.g = backSD.b = 0.7f;
+		if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+		{
+			isPause = !isPause;
+		}
+	}
+	else
+	{
+		backSD.r = backSD.g = backSD.b = 1.0f;
+	}
+}
+
+void SceneGame::pauseRender(ID3D11DeviceContext* dc)
+{
+	if (isPause)
+	{
+		//タイトルスプライト描画
+		sprite->Render(dc, spriteSD);
+
+		toTitleSpr->Render(dc, toTitleSD);
+		backSpr->Render(dc, backSD);
+	}
+}
 
