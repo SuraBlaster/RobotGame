@@ -62,5 +62,5 @@ private:
 	SpriteData playerHealthUIBackSD;
 	SpriteData HealthUIBackSD;
 
-	std::unique_ptr<Compass> compass;
+	//std::unique_ptr<Compass> compass;
 };

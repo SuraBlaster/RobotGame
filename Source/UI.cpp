@@ -65,8 +65,8 @@ void UserInterface::Initialize()
 		0.5f, 0.5f, 0.5f, 1.0f
 	};
 
-	compass = std::make_unique<Compass>();
-	compass->Initialize();
+	//compass = std::make_unique<Compass>();
+	//compass->Initialize();
 }
 
 void UserInterface::Finalize()
@@ -75,12 +75,12 @@ void UserInterface::Finalize()
 
 void UserInterface::Update(float elapsedTime)
 {
-	compass->Update();
+	//compass->Update();
 }
 
 void UserInterface::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-	shader->Draw(dc, compass.get()->GetModel());
+	//shader->Draw(dc, compass.get()->GetModel());
 	if (Player::Instance().GetHealth() >= 0)
 	{
 		if (Player::Instance().GetOnDamage())
