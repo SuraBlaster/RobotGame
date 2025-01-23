@@ -141,8 +141,8 @@ bool Player::InputMove(float elapsedTime)
 bool Player::InputAttack()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_B)
+    Mouse& mouse = Input::Instance().GetMouse();
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
     {
         return true;
     }
