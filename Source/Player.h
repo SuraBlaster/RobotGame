@@ -63,11 +63,11 @@ private:
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
 
-    //復活ステートに遷移
-    void TransitionReviveState();
+    //バリア展開ステートに遷移
+    void TransitionBarrierState();
 
-    //復活ステート更新処理
-    void UpdateReviveState(float elapsedTime);
+    //バリア展開ステート更新処理
+    void UpdateBarrierState(float elapsedTime);
 
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
@@ -106,7 +106,14 @@ public:
 
     void CollisionprojectilesVsEnemies();
 
+    //バリア更新処理
+    void UpdateBarrier();
+
+    void SetRimit(const int& rimit) { barrierRimit = rimit; }
+
+    const int& GetRimit() const { return barrierRimit; }
     
+    bool GetOnDamage() { return onDamage; }
 private:
     //アニメーション
     enum Animation
@@ -134,7 +141,7 @@ private:
         Attack,
         Damage,
         Death,
-        Revive,
+        Barrier,
     };
 private:
     ProjectileManager projectileManager;
@@ -142,6 +149,12 @@ private:
     Model* model = nullptr;
 
     Effect* hitEffect = nullptr;
+
+    Effect* barrierFirst = nullptr;
+
+    Effect* barrier = nullptr;
+
+    Effekseer::Handle barrierEffectHandle = -1;
 
     bool attackCollisionFlag = false;
 
@@ -157,5 +170,13 @@ private:
 
     float leftHandRadius = 0.4f;
 
+    bool onDamage = false;
+
     State state = State::Idle;
+
+    //バリアで防げる残り回数
+    int barrierRimit = 0;
+
+    //今バリアが展開されているかどうか
+    bool firstFlag = false;
 };
