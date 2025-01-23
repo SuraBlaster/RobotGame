@@ -266,9 +266,9 @@ void SceneGame::RenderEnemyGauge(
 			1, 0, 0, 1);
 	}
 
-	Mouse& mouse = Input::Instance().GetMouse();
+	/*Mouse& mouse = Input::Instance().GetMouse();
 
-	/*if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
 	{
 		DirectX::XMFLOAT3 screenPosition;
 		screenPosition.x = static_cast<float>(mouse.GetPositionX());
