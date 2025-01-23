@@ -25,7 +25,11 @@ public:
 
     void ChangeScene(Scene* scene);
 
+    bool GetIsGameEnd() { return isGameEnd; }
+    void GameClose() { isGameEnd = true; }
+    
 private:
     Scene* currentScene = nullptr;
     Scene* nextScene = nullptr;
+    bool isGameEnd = false;
 };

@@ -418,13 +418,18 @@ void Player::UpdateAttackState(float elapsedTime)
 void Player::TransitionDamageState()
 {
     state = State::Damage;
-
+    onDamage = true;
     //ダメージアニメーション再生
     model->PlayAnimation(Anim_GetHit1, false);
 }
 
 void Player::UpdateDamageState(float elapsedTime)
 {
+    onDamage = false;
+    if (health <= 0)
+    {
+        TransitionDamageState();
+    }
     //ダメージアニメーションが終わったら待機ステートに遷移
     if (!model->IsPlayAnimation())
     {
@@ -648,6 +653,7 @@ void Player::CollisionprojectilesVsEnemies()
         }
     }
 }
+
 
 //描画処理
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
