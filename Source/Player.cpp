@@ -19,13 +19,15 @@ Player& Player::Instance()
 //コンストラクタ
 Player::Player()
 {
-    model = new Model("Data/Model/Jammo/Jammo.mdl");
+    model = new Model("Data/Model/Player/Player2.mdl");
+
+    //スケーリング
+    scale.x = scale.y = scale.z = 0.01f;
 
     //インスタンスポインタ取得
     instance = this;
 
-    //スケーリング
-    scale.x = scale.y = scale.z = 0.01f;
+    
 
     //エフェクト読み込み
     hitEffect = new Effect("Data/Effect/thunder.efk");
@@ -40,7 +42,7 @@ void Player::DrawDebugPrimitive()
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
     
     //衝突判定用のデバッグ円柱を描画
-    debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+    //debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 
     //projectileManager.DrawDebugPrimitive();
 
@@ -88,9 +90,6 @@ void Player::Update(float elapsedTime)
         break;
     case State::Jump:
         UpdateJumpState(elapsedTime);
-        break;
-    case State::Land:
-        UpdateLandState(elapsedTime);
         break;
     case State::Attack:
         UpdateAttackState(elapsedTime);
@@ -269,6 +268,11 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
     }
 }
 
+void Player::AttachWeapon()
+{
+
+}
+
 
 
 void Player::TransitionIdleState()
@@ -276,7 +280,9 @@ void Player::TransitionIdleState()
     state = State::Idle;
 
     //待機アニメーション再生
-    model->PlayAnimation(Anim_Idle, true);
+    model->PlayAnimation(GreatSword_Idle, true);
+
+
 }
 
 void Player::UpdateIdleState(float elapsedTime)
@@ -317,7 +323,7 @@ void Player::TransitionMoveState()
     state = State::Move;
 
     //走りアニメーション再生
-    model->PlayAnimation(Anim_Running, true);
+    model->PlayAnimation(GreatSword_Run, true);
 }
 
 void Player::UpdateMoveState(float elapsedTime)
@@ -352,7 +358,7 @@ void Player::TransitionJumpState()
 
 
     //ジャンプアニメーション再生
-    model->PlayAnimation(Anim_Jump, false);
+    model->PlayAnimation(GreatSword_Jump, false);
 }
 
 void Player::UpdateJumpState(float elapsedTime)
@@ -361,41 +367,20 @@ void Player::UpdateJumpState(float elapsedTime)
     
     if (IsGround())
     {
-        TransitionLandState();
-    }
-
-    if (InputJump())
-    {
-        //ジャンプアニメーション再生
-        model->PlayAnimation(Anim_Jump_Flip, false);
+        TransitionIdleState();
     }
 
     //弾丸入力処理
     InputProjectile();
 }
 
-void Player::TransitionLandState()
-{
-    state = State::Land;
-
-    //着地アニメーション再生
-    model->PlayAnimation(Anim_Landing, false);
-}
-
-void Player::UpdateLandState(float elapsedTime)
-{
-    if (!model->IsPlayAnimation())
-    {
-        TransitionIdleState();
-    }
-}
 
 void Player::TransitionAttackState()
 {
     state = State::Attack;
 
     //攻撃アニメーション再生
-    model->PlayAnimation(Anim_Attack, false);
+    model->PlayAnimation(GreatSword_Attack, false);
 }
 
 void Player::UpdateAttackState(float elapsedTime)
@@ -422,7 +407,7 @@ void Player::TransitionDamageState()
     state = State::Damage;
 
     //ダメージアニメーション再生
-    model->PlayAnimation(Anim_GetHit1, false);
+    model->PlayAnimation(GreatSword_Damage, false);
 }
 
 void Player::UpdateDamageState(float elapsedTime)
@@ -439,7 +424,7 @@ void Player::TransitionDeathState()
     state = State::Death;
 
     //死亡アニメーション再生
-    model->PlayAnimation(Anim_Death, false);
+    model->PlayAnimation(GreatSword_Death, false);
 }
 
 void Player::UpdateDeathState(float elapsedTime)
@@ -455,7 +440,7 @@ void Player::TransitionBarrierState()
     state = State::Barrier;
 
     //障壁展開っぽいアニメーション再生
-    model->PlayAnimation(Anim_GetHit1, false);
+    model->PlayAnimation(GreatSword_Shield, false);
     
 }
 
@@ -566,17 +551,6 @@ bool Player::InputJump()
     return false;
 }
 
-//着地したときに呼ばれる
-void Player::OnLanding()
-{
-    jumpCount = 0;
-
-    if (state != State::Damage && state != State::Death)
-    {
-        TransitionLandState();
-    }
-}
-
 void Player::OnDamaged()
 {
     //ダメージステートに遷移
@@ -680,6 +654,7 @@ void Player::UpdateBarrier()
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
+
 
     projectileManager.Render(dc, shader);
 }

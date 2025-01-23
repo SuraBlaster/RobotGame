@@ -186,6 +186,15 @@
     <ClInclude Include="Source\ResourceManager.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Weapon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponGreatSword.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -321,6 +330,15 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Weapon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponGreatSword.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

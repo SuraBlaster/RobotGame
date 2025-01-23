@@ -39,12 +39,6 @@ private:
     //ジャンプステート更新処理
     void UpdateJumpState(float elapsedTime);
 
-    //着地ステートへ遷移
-    void TransitionLandState();
-
-    //着地ステート更新処理
-    void UpdateLandState(float elapsedTime);
-
     //攻撃ステートに遷移
     void TransitionAttackState();
 
@@ -71,6 +65,9 @@ private:
 
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
+
+    //武器のアタッチ処理
+    void AttachWeapon();
 
 protected:
     //ダメージを受けた時に呼ばれる
@@ -101,9 +98,6 @@ public:
     //ジャンプ入力処理
     bool InputJump();
 
-    //着地したときに呼ばれる
-    void OnLanding() override;
-
     void CollisionprojectilesVsEnemies();
 
     //バリア更新処理
@@ -112,23 +106,27 @@ public:
     void SetRimit(const int& rimit) { barrierRimit = rimit; }
 
     const int& GetRimit() const { return barrierRimit; }
-    
+
+    Model* GetModel() const { return model; }
 private:
     //アニメーション
     enum Animation
     {
-        Anim_Attack,
-        Anim_Death,
-        Anim_Falling,
-        Anim_GetHit1,
-        Anim_GetHit2,
-        Anim_Idle,
-        Anim_Jump,
-        Anim_Jump_Flip,
-        Anim_Landing,
-        Anim_Revive,
-        Anim_Running,
-        Anim_Walking,
+        Dagger_Idle,
+        Dagger_Run,
+        Dagger_Shield,
+        Dagger_Jump,
+        Dagger_Attack,
+        Dagger_Damage,
+        Dagger_Death,
+        GreatSword_Idle,
+        GreatSword_Run,
+        GreatSword_Shield,
+        GreatSword_Jump,
+        GreatSword_Attack,
+        GreatSword_Damage,
+        GreatSword_Death,
+        
     };
 
     enum class State
@@ -136,12 +134,12 @@ private:
         Idle,
         Move,
         Jump,
-        Land,
         Attack,
         Damage,
         Death,
         Barrier,
     };
+
 private:
     ProjectileManager projectileManager;
 

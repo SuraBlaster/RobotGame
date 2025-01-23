@@ -8,6 +8,8 @@
 #include "StageMain.h"
 #include "StageMoveFloor.h"
 #include <Input/Input.h>
+#include <WeaponManager.h>
+#include <WeaponGreatSword.h>
 // 初期化
 void SceneGame::Initialize()
 {
@@ -25,15 +27,10 @@ void SceneGame::Initialize()
 	//プレイヤー初期化
 	player = new Player;
 
-	//エネミー初期化
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i) 
-	{
-		EnemySlime* slime = new EnemySlime;
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
+	WeaponManager& weaponManager = WeaponManager::Instance();
+
+	WeaponGreatSword* greatsword = new WeaponGreatSword;
+	weaponManager.Register(greatsword);
 	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -69,6 +66,8 @@ void SceneGame::Finalize()
 
 	EnemyManager::Instance().Clear();
 
+	WeaponManager::Instance().Clear();
+
 	//カメラコントローラー終了処理
 	if (cameraController != nullptr)
 	{
@@ -103,6 +102,9 @@ void SceneGame::Update(float elapsedTime)
 	//プレイヤー更新処理
 	player->Update(elapsedTime);
 
+	//武器更新処理
+	WeaponManager::Instance().Update(elapsedTime);
+
 	//エネミー更新処理
 	EnemyManager::Instance().Update(elapsedTime);
 
@@ -132,27 +134,7 @@ void SceneGame::Render()
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
-	//// ビュー行列
-	//{
-	//	DirectX::XMFLOAT3 eye = { 0, 10, -10 };	// カメラの視点（位置）
-	//	DirectX::XMFLOAT3 focus = { 0, 0, 0 };	// カメラの注視点（ターゲット）
-	//	DirectX::XMFLOAT3 up = { 0, 1, 0 };		// カメラの上方向
-
-	//	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&eye);
-	//	DirectX::XMVECTOR Focus = DirectX::XMLoadFloat3(&focus);
-	//	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);
-	//	DirectX::XMMATRIX View = DirectX::XMMatrixLookAtLH(Eye, Focus, Up);
-	//	DirectX::XMStoreFloat4x4(&rc.view, View);
-	//}
-	//// プロジェクション行列
-	//{
-	//	float fovY = DirectX::XMConvertToRadians(45);	// 視野角
-	//	float aspectRatio = graphics.GetScreenWidth() / graphics.GetScreenHeight();	// 画面縦横比率
-	//	float nearZ = 0.1f;	// カメラが映し出すの最近距離
-	//	float farZ = 1000.0f;	// カメラが映し出すの最遠距離
-	//	DirectX::XMMATRIX Projection = DirectX::XMMatrixPerspectiveFovLH(fovY, aspectRatio, nearZ, farZ);
-	//	DirectX::XMStoreFloat4x4(&rc.projection, Projection);
-	//}
+	
 
 	// 3Dモデル描画
 	{
@@ -164,6 +146,8 @@ void SceneGame::Render()
 
 		//プレイヤー描画
 		player->Render(dc, shader);
+
+		WeaponManager::Instance().Render(dc, shader);
 
 		EnemyManager::Instance().Render(dc, shader);
 
