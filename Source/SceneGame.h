@@ -4,6 +4,7 @@
 #include "CameraController.h"
 #include "Scene.h"
 #include "Graphics/Sprite.h"
+#include "UI.h"
 
 // ÉQÅ[ÉÄÉVÅ[Éì
 class SceneGame : public Scene
@@ -34,13 +35,12 @@ private:
 	void pauseUpdate();
 	void pauseRender(ID3D11DeviceContext* dc);
 
-	void UIRender(ID3D11DeviceContext* dc);
-	void UIUpdate();
 private:
 	bool isCameraControll = true;
 	bool isOldCameraControll = true;
 	bool isPause = false;
 	bool isUIAnimation = false;
+	int UITimer = 20;
 
 	Player* player = nullptr;
 
@@ -53,13 +53,11 @@ private:
 
 	std::unique_ptr<Sprite> toTitleSpr = nullptr;
 	std::unique_ptr<Sprite> backSpr = nullptr;
-	std::unique_ptr<Sprite> playerHealthUISpr = nullptr;
-	std::unique_ptr<Sprite> playerHealthUIBackSpr = nullptr;
 	std::unique_ptr<Sprite> sprite = nullptr;
 
 	SpriteData spriteSD;
-	SpriteData playerHealthUISD;
-	SpriteData playerHealthUIBackSD;
 	SpriteData toTitleSD;
 	SpriteData backSD;
+
+	std::unique_ptr<UserInterface> UI = nullptr;
 };

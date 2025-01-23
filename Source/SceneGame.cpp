@@ -30,14 +30,14 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i) 
+	for (int i = 0; i < 1; ++i)
 	{
 		EnemySlime* slime = new EnemySlime;
 		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
 	}
-	
+
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -59,10 +59,12 @@ void SceneGame::Initialize()
 	Mouse& mouse = Input::Instance().GetMouse();
 	mouse.setCenter();
 	cameraController->ZeroClear();
-	
+
 	//ゲージスプライト
 	gauge = new Sprite();
 
+	UI = std::make_unique<UserInterface>();
+	UI->Initialize();
 	//2Dスプライト
 	{
 		screenWidth = static_cast<float>(graphics.GetScreenWidth());
@@ -94,23 +96,6 @@ void SceneGame::Initialize()
 			static_cast<float>(backSpr->GetTextureHeight()),
 			0,
 			1, 1, 1, 1.0f
-		};
-
-		playerHealthUISpr = std::make_unique<Sprite>();
-		playerHealthUISD = {
-			20, 20, player->GetHealth() * 100.0f, 30,
-			0, 0, 0, 0,
-			0,
-			1, 0, 0, 1.0f
-		};
-
-
-		playerHealthUIBackSpr = std::make_unique<Sprite>();
-		playerHealthUIBackSD = {
-			0, 20, 100.0f, 30,
-			0, 0, 0, 0,
-			0,
-			0.5f, 0.5f, 0.5f, 1.0f
 		};
 	}
 }
@@ -166,7 +151,7 @@ void SceneGame::Update(float elapsedTime)
 
 		isCameraControll = true;
 		isOldCameraControll = true;
-		UIUpdate();
+		UI->Update(elapsedTime);
 	}
 	else
 	{
@@ -246,6 +231,8 @@ void SceneGame::Render()
 
 		EnemyManager::Instance().Render(dc, shader);
 
+		UI->Render(dc, shader);
+
 		shader->End(dc);
 	}
 
@@ -271,7 +258,6 @@ void SceneGame::Render()
 	{
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
-		UIRender(dc);
 	}
 
 	// 2DデバッグGUI描画
@@ -451,52 +437,3 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 	}
 }
 
-void SceneGame::UIUpdate()
-{
-
-}
-
-void SceneGame::UIRender(ID3D11DeviceContext* dc)
-{
-	if (!isPause && player->GetHealth() >= 0)
-	{
-		if (player->GetOnDamage())
-		{
-			playerHealthUISD.dw = player->GetHealth() * 100;
-			playerHealthUISD.dw = 100.0f;
-			isUIAnimation = true;
-		}
-
-		auto getRand = []()->float
-		{
-			const int max = RAND_MAX / 2;
-			return static_cast<float>(rand() - max) / max;
-		};
-
-		float UIShakeRange = 5.0f;
-
-		if (isUIAnimation)
-		{
-			float shakeX = getRand() * UIShakeRange;
-			float shakeY = getRand() * UIShakeRange;
-			playerHealthUISD.dx += shakeX;
-			playerHealthUISD.dy += shakeY;
-
-			playerHealthUIBackSD.dx = playerHealthUISD.dw;
-			playerHealthUIBackSD.dy = playerHealthUISD.dy;
-			
-			playerHealthUIBackSpr->Render(dc, playerHealthUIBackSD);
-			playerHealthUIBackSD.dw -= 2;
-		}
-
-		if (playerHealthUIBackSD.dw < playerHealthUIBackSD.dx)
-		{
-			isUIAnimation = false;
-			playerHealthUISD.dx = 20;
-			playerHealthUISD.dy = 20;
-			//playerHealthUISD.dw = player->GetHealth() * 100;
-		}
-
-		playerHealthUISpr->Render(dc, playerHealthUISD);
-	}
-}
