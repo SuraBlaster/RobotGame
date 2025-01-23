@@ -3,15 +3,15 @@
 #include "Graphics/Model.h"
 #include "Enemy.h"
 
-
+#include"ProjectileManager.h"
 
 
 //スライム
-class EnemySlime : public Enemy
+class EnemySpider : public Enemy
 {
 public:
-    EnemySlime();
-    ~EnemySlime() override;
+    EnemySpider();
+    ~EnemySpider() override;
 
     //更新処理
     void Update(float elapsedTime)override;
@@ -80,6 +80,8 @@ private:
 
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
+    //弾丸発射
+    void InputProjectile();
 
 private:
     //ステート
@@ -133,4 +135,5 @@ private:
     float syuziRange = 1.5f;
     bool atknow;
 
+    ProjectileManager projectileManager;
 };

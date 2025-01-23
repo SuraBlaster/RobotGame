@@ -112,7 +112,7 @@ void Player::Update(float elapsedTime)
 
     UpdateInvincibleTimer(elapsedTime);
 
-    projectileManager.Update(elapsedTime);
+   // projectileManager.Update(elapsedTime);
 
     CollisionPlayerVsEnemies();
 
@@ -314,7 +314,7 @@ void Player::UpdateIdleState(float elapsedTime)
     }
 
     //’eŠÛ“ü—Íˆ—
-    InputProjectile();
+    //InputProjectile();
 
     //UŒ‚“ü—Íˆ—
     if (InputAttack())
@@ -348,7 +348,7 @@ void Player::UpdateMoveState(float elapsedTime)
     }
 
     //’eŠÛ“ü—Íˆ—
-    InputProjectile();
+    //InputProjectile();
 
     //UŒ‚“ü—Íˆ—
     if (InputAttack())
@@ -382,7 +382,7 @@ void Player::UpdateJumpState(float elapsedTime)
     }
 
     //’eŠÛ“ü—Íˆ—
-    InputProjectile();
+    //InputProjectile();
 }
 
 void Player::TransitionLandState()

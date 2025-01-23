@@ -1,14 +1,14 @@
-#include "EnemySlime.h"
+#include "EnemySpider.h"
 #include "Graphics/Graphics.h"
 #include "Mathf.h"
 #include "Player.h"
 #include "Collision.h"
+#include <ProjectileHoming.h>
+#include "ProjectileStraight.h"
+#include "Input/Input.h"
+#include "Input/GamePad.h"
 
-
-
-
-
-EnemySlime::EnemySlime()
+EnemySpider::EnemySpider()
 {
     model = new Model("Data/Model/Slime/Slime.mdl");
 
@@ -23,7 +23,7 @@ EnemySlime::EnemySlime()
     TransitionWanderState();
 }
 
-EnemySlime::~EnemySlime()
+EnemySpider::~EnemySpider()
 {
     delete model;
 }
@@ -36,7 +36,7 @@ EnemySlime::~EnemySlime()
 
 
 //更新処理
-void EnemySlime::Update(float elapsedTime)
+void EnemySpider::Update(float elapsedTime)
 {
     //ステートごとの更新処理
     switch (state)
@@ -83,14 +83,13 @@ void EnemySlime::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
-
-
+    projectileManager.Update(elapsedTime);
 }
-    
 
 
 
-void EnemySlime::DrawDebugPrimitive()
+
+void EnemySpider::DrawDebugPrimitive()
 {
     //基底クラスのデバッグプリミティブ関数
     Enemy::DrawDebugPrimitive();
@@ -111,13 +110,13 @@ void EnemySlime::DrawDebugPrimitive()
     debugRenderer->DrawSphere(position, attackRange, DirectX::XMFLOAT4(1, 0, 0, 1));
 }
 
-void EnemySlime::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
+void EnemySpider::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
 {
     territoryOrigin = origin;
     territoryRange = range;
 }
 
-void EnemySlime::SetRandomTargetPosition()
+void EnemySpider::SetRandomTargetPosition()
 {
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
     targetPosition.y = Mathf::RandomRange(territoryOrigin.y, territoryOrigin.y + territoryRange);
@@ -125,7 +124,7 @@ void EnemySlime::SetRandomTargetPosition()
 
 }
 
-void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
+void EnemySpider::MoveToTarget(float elapsedTime, float speedRate)
 {
     //ターゲット方向への進行ベクトルを算出
     float vx = targetPosition.x - position.x;
@@ -133,16 +132,16 @@ void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
 
-    
+
     vx /= dist;
     vz /= dist;
 
     //移動処理
-    Move(vx, vz,vy, moveSpeed * speedRate);
+    Move(vx, vz, vy, moveSpeed * speedRate);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 
-bool EnemySlime::SearchPlayer()
+bool EnemySpider::SearchPlayer()
 {
     //プレイヤーとの高低差を考慮して3Dでの距離判定をする
     const DirectX::XMFLOAT3& playerPosition = Player::Instance().GetPosition();
@@ -173,7 +172,7 @@ bool EnemySlime::SearchPlayer()
     return false;
 }
 
-void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
+void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 {
     //ノードの位置と当たり判定を行う
     Model::Node* node = model->FindNode(nodeName);
@@ -228,18 +227,18 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
     }
 }
 
-void EnemySlime::TransitionWanderState()
+void EnemySpider::TransitionWanderState()
 {
-    state = State::Wander;
+    //state = State::Wander;
 
     //目標地点設定
-    SetRandomTargetPosition();
+    //SetRandomTargetPosition();
 
     //歩きアニメーション再生
-    model->PlayAnimation(Anim_WalkFWD, true);
+   // model->PlayAnimation(Anim_WalkFWD, true);
 }
 
-void EnemySlime::UpdateWanderState(float elapsedTime)
+void EnemySpider::UpdateWanderState(float elapsedTime)
 {
     //目標地点までXZ平面での距離判定
     float vx = targetPosition.x - position.x;
@@ -262,9 +261,12 @@ void EnemySlime::UpdateWanderState(float elapsedTime)
         //見つかったら追跡ステートに遷移
         TransitionPursuitState();
     }
+
+    //弾丸発射
+    InputProjectile();
 }
 
-void EnemySlime::TransitionIdleState()
+void EnemySpider::TransitionIdleState()
 {
     state = State::Idle;
 
@@ -273,9 +275,12 @@ void EnemySlime::TransitionIdleState()
 
     //待機アニメーション再生
     model->PlayAnimation(Anim_IdleNormal, true);
+
+    //弾丸発射
+    InputProjectile();
 }
 
-void EnemySlime::UpdateIdleState(float elapsedTime)
+void EnemySpider::UpdateIdleState(float elapsedTime)
 {
     //タイマー処理
     stateTimer -= elapsedTime;
@@ -291,9 +296,11 @@ void EnemySlime::UpdateIdleState(float elapsedTime)
         //見つかったら追跡ステートに遷移
         TransitionPursuitState();
     }
+    //弾丸発射
+    InputProjectile();
 }
 
-void EnemySlime::TransitionPursuitState()
+void EnemySpider::TransitionPursuitState()
 {
     state = State::Pursuit;
 
@@ -302,9 +309,11 @@ void EnemySlime::TransitionPursuitState()
 
     //歩きアニメーション再生
     model->PlayAnimation(Anim_RunFWD, true);
+    //弾丸発射
+    InputProjectile();
 }
 
-void EnemySlime::UpdatePursuitState(float elapsedTime)
+void EnemySpider::UpdatePursuitState(float elapsedTime)
 {
     //目標位置をプレイヤー位置に設定
     targetPosition = Player::Instance().GetPosition();
@@ -327,29 +336,31 @@ void EnemySlime::UpdatePursuitState(float elapsedTime)
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vy * vy + vz * vz);
 
-    
+
     if (dist <= attackRange)
     {
-      
+
         atknow = true;
         //攻撃ステートに遷移
         TransitionAttackState();
     }
     else { atknow = false; }
+    //弾丸発射
+    InputProjectile();
 }
 
-void EnemySlime::TransitionAttackState()
+void EnemySpider::TransitionAttackState()
 {
     state = State::Attack;
 
-    
 
-   
+
+
     //攻撃アニメーション再生
     model->PlayAnimation(Anim_Attack1, false);
 }
 
-void EnemySlime::UpdateAttackState(float elapsedTime)
+void EnemySpider::UpdateAttackState(float elapsedTime)
 {
     float animationTime = model->GetCurrentAnimationSeconds();
     if (animationTime >= 0.1f && animationTime < 0.35f)
@@ -365,7 +376,7 @@ void EnemySlime::UpdateAttackState(float elapsedTime)
     }
 }
 
-void EnemySlime::TransitionIdleBattleState()
+void EnemySpider::TransitionIdleBattleState()
 {
     state = State::IdleBattle;
 
@@ -376,7 +387,7 @@ void EnemySlime::TransitionIdleBattleState()
     model->PlayAnimation(Anim_IdleBattle, true);
 }
 
-void EnemySlime::UpdateIdleBattleState(float elapsedTime)
+void EnemySpider::UpdateIdleBattleState(float elapsedTime)
 {
     //目標地点をプレイヤー位置に設定
     targetPosition = Player::Instance().GetPosition();
@@ -392,13 +403,13 @@ void EnemySlime::UpdateIdleBattleState(float elapsedTime)
         float dist = sqrtf(vx * vx + vy * vy + vz * vz);
         if (dist < attackRange)
         {
-           
+
             //攻撃ステートに遷移
             TransitionAttackState();
         }
         else
         {
-            
+
             //徘徊ステートに遷移
             TransitionIdleState();
         }
@@ -407,7 +418,7 @@ void EnemySlime::UpdateIdleBattleState(float elapsedTime)
     MoveToTarget(elapsedTime, 0.0f);
 }
 
-void EnemySlime::TransitionDamageState()
+void EnemySpider::TransitionDamageState()
 {
     state = State::Damage;
 
@@ -415,7 +426,7 @@ void EnemySlime::TransitionDamageState()
     model->PlayAnimation(Anim_GetHit, false);
 }
 
-void EnemySlime::UpdateDamageState(float elapsedTime)
+void EnemySpider::UpdateDamageState(float elapsedTime)
 {
     //ダメージアニメーションが終わったら戦闘待機ステートに遷移
     if (!model->IsPlayAnimation())
@@ -424,7 +435,7 @@ void EnemySlime::UpdateDamageState(float elapsedTime)
     }
 }
 
-void EnemySlime::TransitionDeathState()
+void EnemySpider::TransitionDeathState()
 {
     state = State::Death;
 
@@ -432,7 +443,7 @@ void EnemySlime::TransitionDeathState()
     model->PlayAnimation(Anim_Die, false);
 }
 
-void EnemySlime::UpdateDeathState(float elapsedTime)
+void EnemySpider::UpdateDeathState(float elapsedTime)
 {
     //死亡アニメーションが終わったら自分を破棄
     if (!model->IsPlayAnimation())
@@ -441,20 +452,89 @@ void EnemySlime::UpdateDeathState(float elapsedTime)
     }
 }
 
-void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemySpider::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
 }
 
-void EnemySlime::OnDead()
+void EnemySpider::OnDead()
 {
     TransitionDeathState();
 }
 
-void EnemySlime::OnDamaged()
+void EnemySpider::OnDamaged()
 {
     TransitionDamageState();
 }
 
 
+//弾丸発射
+void EnemySpider::InputProjectile()
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
 
+    //向いてる方向に発射
+    if (gamePad.GetButtonDown() & GamePad::BTN_X)
+    {
+        DirectX::XMFLOAT3 dir;
+        dir.x = sinf(angle.y);
+        dir.y = 0.0f;
+        dir.z = cosf(angle.y);
+
+        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
+
+        DirectX::XMFLOAT3 pos;
+        pos.x = position.x;
+        pos.y = position.y + scale.y / 2;
+        pos.z = position.z;
+
+        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
+        projectile->Launch(dir, pos);
+        projectileManager.Register(projectile);
+
+    }
+    //ホーミング
+   // if (gamePad.GetButtonDown() & GamePad::BTN_Y)
+    {
+        DirectX::XMFLOAT3 dir;
+        dir.x = sinf(angle.y);
+        dir.y = 0.0f;
+        dir.z = cosf(angle.y);
+
+        DirectX::XMFLOAT3 pos;
+        pos.x = position.x;
+        pos.y = position.y + height / 2;
+        pos.z = position.z;
+
+        DirectX::XMFLOAT3 target;
+        target.x = pos.x + dir.x * 1000.0f;
+        target.y = pos.y + dir.y * 1000.0f;
+        target.z = pos.z + dir.z * 1000.0f;
+
+        float dist = FLT_MAX;
+       // EnemyManager& enemyManager = EnemyManager::Instance();
+       // int enemyCount = enemyManager.GetEnemyCount();
+
+       // for (int i = 0; i < enemyCount; ++i)
+       // {
+       //     Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
+       //     DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
+       //     DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
+       //     DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
+       //     DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
+
+       //     float d;
+       //     DirectX::XMStoreFloat(&d, D);
+       //     if (d < dist)
+       //     {
+       //         dist = d;
+       //         target = enemy->GetPosition();
+       //         target.y += enemy->GetHeight() * 0.5f;
+       //     }
+       // }
+
+        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
+        projectile->Launch(dir, pos, target);
+    }
+
+}

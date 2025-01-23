@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include"EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
 #include "StageMain.h"
@@ -33,6 +34,14 @@ void SceneGame::Initialize()
 		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
+	}
+	EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i) 
+	{
+		EnemySpider* spider = new EnemySpider;
+		spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+		spider->SetTerritory(spider->GetPosition(), 10.0f);
+		enemyspiderManager.Register(spider);
 	}
 	
 	//ƒJƒƒ‰‰Šúİ’è
@@ -218,18 +227,24 @@ void SceneGame::RenderEnemyGauge(
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	int enemyCount = enemyManager.GetEnemyCount();
 
+	EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	int enemySCount = enemyspiderManager.GetEnemyCount();
+
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		Enemy* enemy = enemyManager.GetEnemy(i);
+		
 
 		DirectX::XMVECTOR ScreenPosition{};
 
 		DirectX::XMFLOAT3 enemyPosition{};
+		
 
 		enemyPosition = enemy->GetPosition();
-
+		
 		
 		enemyPosition.y += enemy->GetHeight();
+		
 		
 
 		ScreenPosition = DirectX::XMVector3Project(
@@ -252,11 +267,63 @@ void SceneGame::RenderEnemyGauge(
 		float gaugeY = 5.0f;
 
 		float health = enemy->GetHealth() / static_cast<float>(enemy->GetMaxHealth());
-
+		
 		gauge->Render(dc,
 			screenPosition.x - gaugeX * 0.5f,
 			screenPosition.y - gaugeY,
 			gaugeX * health,
+			gaugeY,
+			screenPosition.x,
+			screenPosition.y,
+			gauge->GetTextureWidth(),
+			gauge->GetTextureHeight(),
+			0,
+			1, 0, 0, 1);
+	}
+	for (int i = 0; i < enemySCount; ++i)
+	{
+		
+		Enemy* enemyS = enemyspiderManager.GetEnemy(i);
+
+		DirectX::XMVECTOR ScreenPosition{};
+
+		DirectX::XMFLOAT3 enemyPosition{};
+		DirectX::XMFLOAT3 enemySPosition{};
+
+		
+		enemySPosition = enemyS->GetPosition();
+
+		
+		
+		enemySPosition.y += enemyS->GetHeight();
+		
+
+		ScreenPosition = DirectX::XMVector3Project(
+			DirectX::XMLoadFloat3(&enemyPosition),
+			viewport.TopLeftX,
+			viewport.TopLeftY,
+			viewport.Width,
+			viewport.Height,
+			0.0f,
+			1.0f,
+			Projection,
+			View,
+			World
+		);
+
+		DirectX::XMFLOAT3 screenPosition{};
+		DirectX::XMStoreFloat3(&screenPosition, ScreenPosition);
+
+		float gaugeX = 30.0f;
+		float gaugeY = 5.0f;
+
+		
+		float healthS = enemyS->GetHealth() / static_cast<float>(enemyS->GetMaxHealth());
+
+		gauge->Render(dc,
+			screenPosition.x - gaugeX * 0.5f,
+			screenPosition.y - gaugeY,
+			gaugeX * healthS,
 			gaugeY,
 			screenPosition.x,
 			screenPosition.y,
@@ -318,6 +385,12 @@ void SceneGame::RenderEnemyGauge(
 			EnemySlime* enemy = new EnemySlime;
 			enemy->SetPosition(hit.position);
 			EnemyManager::Instance().Register(enemy);
+		}
+		if (StageManager::Instance().RayCast(start, end, hit))
+		{
+			EnemySpider* enemyS = new EnemySpider;
+			enemyS->SetPosition(hit.position);
+			EnemyManager::Instance().Register(enemyS);
 		}
 	}
 }
