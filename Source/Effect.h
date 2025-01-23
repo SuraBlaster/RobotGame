@@ -21,6 +21,11 @@ public:
     //スケール指定
     void SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale);
 
+    //色指定
+    void Effect::SetEffectColor(Effekseer::Handle handle, const Effekseer::Color& color);
+
+    void Effect::UpdateEffectColor(Effekseer::Handle handle, float time);
+
 private:
     Effekseer::EffectRef effekseerEffect;
 };

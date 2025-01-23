@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Graphics/Graphics.h"
 #include "EnemyManager.h"
+#include "EffectManager.h"
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include <ProjectileHoming.h>
@@ -15,37 +16,35 @@ Player& Player::Instance()
     return *instance;
 }
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Player::Player()
 {
     model = new Model("Data/Model/Jammo/Jammo.mdl");
 
-    //ƒCƒ“ƒXƒ^ƒ“ƒXƒ|ƒCƒ“ƒ^æ“¾
+    //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒã‚¤ãƒ³ã‚¿å–å¾—
     instance = this;
 
-    //ƒXƒP[ƒŠƒ“ƒO
+    //ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
     scale.x = scale.y = scale.z = 0.01f;
 
-    //ƒqƒbƒgƒGƒtƒFƒNƒg“Ç‚İ‚İ
+    //ã‚¨ãƒ•ã‚§ã‚¯ãƒˆèª­ã¿è¾¼ã¿
     hitEffect = new Effect("Data/Effect/thunder.efk");
+    barrier = new Effect("Data/Effect/Barrier.efk");
 
-    //‘Ò‹@ƒXƒe[ƒg‚Ö‘JˆÚ
+    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     TransitionIdleState();
 }
 
 void Player::DrawDebugPrimitive()
 {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-
-    //”»’èÕ“Ë—p‚ÌƒfƒoƒbƒO‹…‚ğ•`‰æ
-    //debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 0, 1));
     
-    //Õ“Ë”»’è—p‚ÌƒfƒoƒbƒO‰~’Œ‚ğ•`‰æ
+    //è¡çªåˆ¤å®šç”¨ã®ãƒ‡ãƒãƒƒã‚°å††æŸ±ã‚’æç”»
     debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 
     //projectileManager.DrawDebugPrimitive();
 
-    //UŒ‚Õ“Ë—p‚Ì¶èƒm[ƒh‚ÌƒfƒoƒbƒO‹…‚ğ•`‰æ
+    //æ”»æ’ƒè¡çªç”¨ã®å·¦æ‰‹ãƒãƒ¼ãƒ‰ã®ãƒ‡ãƒãƒƒã‚°çƒã‚’æç”»
     if (attackCollisionFlag)
     {
         Model::Node* leftHandBone = model->FindNode("mixamorig:LeftHand");
@@ -64,6 +63,7 @@ void Player::DrawDebugPrimitive()
 Player::~Player()
 {
     delete hitEffect;
+    delete barrier;
 
     if (model != nullptr)
     {
@@ -75,7 +75,7 @@ Player::~Player()
 
 
 
-//XVˆ—
+//æ›´æ–°å‡¦ç†
 void Player::Update(float elapsedTime)
 {
     switch (state)
@@ -101,13 +101,13 @@ void Player::Update(float elapsedTime)
     case State::Death:
         UpdateDeathState(elapsedTime);
         break;
-    case State::Revive:
-        UpdateReviveState(elapsedTime);
+    case State::Barrier:
+        UpdateBarrierState(elapsedTime);
     }
 
     UpdateTransform();
     
-    //‘–—Í‘¬“xXV
+    //èµ°åŠ›é€Ÿåº¦æ›´æ–°
     UpdateVelocity(elapsedTime);
 
     UpdateInvincibleTimer(elapsedTime);
@@ -121,6 +121,10 @@ void Player::Update(float elapsedTime)
     model->UpdateAnimation(elapsedTime);
 
     model->UpdateTransform(transform);
+
+    UpdateBarrier();
+
+    barrier->UpdateEffectColor(barrierEffectHandle, elapsedTime);
 }
 
 
@@ -128,7 +132,7 @@ void Player::Update(float elapsedTime)
 
 bool Player::InputMove(float elapsedTime)
 {
-    //isƒxƒNƒgƒ‹æ“¾
+    //é€²è¡Œãƒ™ã‚¯ãƒˆãƒ«å–å¾—
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
     Move(moveVec.x, moveVec.z, moveSpeed);
@@ -149,12 +153,12 @@ bool Player::InputAttack()
     return false;
 }
 
-//ƒvƒŒƒCƒ„[‚ÆƒGƒlƒ~[‚Æ‚ÌÕ“Ë”»’è
+//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã‚¨ãƒãƒŸãƒ¼ã¨ã®è¡çªåˆ¤å®š
 void Player::CollisionPlayerVsEnemies()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    //‚·‚×‚Ä‚Ì“G‚Æ‘“–‚½‚è‚ÅÕ“Ë”»’è
+    //ã™ã¹ã¦ã®æ•µã¨ç·å½“ãŸã‚Šã§è¡çªåˆ¤å®š
     int enemyCount = enemyManager.GetEnemyCount();
 
     for (int i = 0; i < enemyCount; ++i)
@@ -162,14 +166,7 @@ void Player::CollisionPlayerVsEnemies()
         Enemy* enemy = enemyManager.GetEnemy(i);
 
         DirectX::XMFLOAT3 outPosition;
-        /*if (Collision::IntersectSphereVsSphere(
-            Player::GetPosition(),
-            Player::GetRadius(),
-            enemy->GetPosition(),
-            enemy->GetRadius(), outPosition))
-        {
-            enemy->SetPosition(outPosition);
-        }*/
+        
 
         if (Collision::IntersectCylinderVsCylinder(
             Player::GetPosition(),
@@ -189,7 +186,7 @@ void Player::CollisionPlayerVsEnemies()
 
             if (normal.y > 0.8f)
             {
-                //¬ƒWƒƒƒ“ƒv
+                //å°ã‚¸ãƒ£ãƒ³ãƒ—
                 Jump(jumpSpeed * 0.5f);
             }
             else
@@ -206,19 +203,17 @@ void Player::CollisionPlayerVsEnemies()
 
 void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
 {
-    //ƒm[ƒhæ“¾
+    //ãƒãƒ¼ãƒ‰å–å¾—
     Model::Node* node = model->FindNode(nodeName);
 
-    //ƒm[ƒhˆÊ’uæ“¾
-    
-    
+    //ãƒãƒ¼ãƒ‰ä½ç½®å–å¾—
     DirectX::XMMATRIX Nodetra = DirectX::XMLoadFloat4x4(&node->worldTransform);
     DirectX::XMVECTOR Nodepos = Nodetra.r[3];
     DirectX::XMFLOAT3 NodePosition;
 
     DirectX::XMStoreFloat3(&NodePosition, Nodepos);
 
-    //w’è‚Ìƒm[ƒh‚Æ‚·‚×‚Ä‚Ì“G‚ğ“–‚½‚è”»’è‚ÅÕ“Ëˆ—
+    //æŒ‡å®šã®ãƒãƒ¼ãƒ‰ã¨ã™ã¹ã¦ã®æ•µã‚’å½“ãŸã‚Šåˆ¤å®šã§è¡çªå‡¦ç†
     EnemyManager& enemyManager = EnemyManager::Instance();
 
     int enemyCount = enemyManager.GetEnemyCount();
@@ -226,7 +221,7 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
 
     for (int i = 0; i < enemyCount; ++i)
     {
-        // “G‚ÌˆÊ’uæ“¾
+        // æ•µã®ä½ç½®å–å¾—
         Enemy* enemy = enemyManager.GetEnemy(i);
 
             DirectX::XMFLOAT3 outPosition;
@@ -280,33 +275,40 @@ void Player::TransitionIdleState()
 {
     state = State::Idle;
 
-    //‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //å¾…æ©Ÿã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Idle, true);
 }
 
 void Player::UpdateIdleState(float elapsedTime)
 {
+    GamePad& gamepad = Input::Instance().GetGamePad();
+
     if (InputMove(elapsedTime))
     {
         TransitionMoveState();
     }
 
-    //ˆÚ“®“ü—Íˆ—
+    //ç§»å‹•å…¥åŠ›å‡¦ç†
     InputMove(elapsedTime);
 
-    //ƒWƒƒƒ“ƒv“ü—Íˆ—
+    //ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›å‡¦ç†
     if (InputJump())
     {
         TransitionJumpState();
     }
 
-    //’eŠÛ“ü—Íˆ—
+    //å¼¾ä¸¸å…¥åŠ›å‡¦ç†
     InputProjectile();
 
-    //UŒ‚“ü—Íˆ—
+    //æ”»æ’ƒå…¥åŠ›å‡¦ç†
     if (InputAttack())
     {
         TransitionAttackState();
+    }
+
+    if (gamepad.GetButtonDown() & GamePad::BTN_1)
+    {
+        TransitionBarrierState();
     }
 }
 
@@ -314,7 +316,7 @@ void Player::TransitionMoveState()
 {
     state = State::Move;
 
-    //‘–‚èƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //èµ°ã‚Šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Running, true);
 }
 
@@ -325,19 +327,19 @@ void Player::UpdateMoveState(float elapsedTime)
         TransitionIdleState();
     }
 
-    //ˆÚ“®“ü—Íˆ—
+    //ç§»å‹•å…¥åŠ›å‡¦ç†
     InputMove(elapsedTime);
 
-    //ƒWƒƒƒ“ƒv“ü—Íˆ—
+    //ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›å‡¦ç†
     if (InputJump())
     {
         TransitionJumpState();
     }
 
-    //’eŠÛ“ü—Íˆ—
+    //å¼¾ä¸¸å…¥åŠ›å‡¦ç†
     InputProjectile();
 
-    //UŒ‚“ü—Íˆ—
+    //æ”»æ’ƒå…¥åŠ›å‡¦ç†
     if (InputAttack())
     {
         TransitionAttackState();
@@ -349,7 +351,7 @@ void Player::TransitionJumpState()
     state = State::Jump;
 
 
-    //ƒWƒƒƒ“ƒvƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //ã‚¸ãƒ£ãƒ³ãƒ—ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Jump, false);
 }
 
@@ -364,11 +366,11 @@ void Player::UpdateJumpState(float elapsedTime)
 
     if (InputJump())
     {
-        //ƒWƒƒƒ“ƒvƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+        //ã‚¸ãƒ£ãƒ³ãƒ—ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
         model->PlayAnimation(Anim_Jump_Flip, false);
     }
 
-    //’eŠÛ“ü—Íˆ—
+    //å¼¾ä¸¸å…¥åŠ›å‡¦ç†
     InputProjectile();
 }
 
@@ -376,7 +378,7 @@ void Player::TransitionLandState()
 {
     state = State::Land;
 
-    //’…’nƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //ç€åœ°ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Landing, false);
 }
 
@@ -392,7 +394,7 @@ void Player::TransitionAttackState()
 {
     state = State::Attack;
 
-    //UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Attack, false);
 }
 
@@ -403,13 +405,13 @@ void Player::UpdateAttackState(float elapsedTime)
         TransitionIdleState();
     }
 
-    //”CˆÓ‚ÌƒAƒjƒ[ƒVƒ‡ƒ“Ä¶‹æŠÔ‚Å‚Ì‚İÕ“Ë”»’èˆ—‚ğ‚·‚é
+    //ä»»æ„ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”ŸåŒºé–“ã§ã®ã¿è¡çªåˆ¤å®šå‡¦ç†ã‚’ã™ã‚‹
     float animationTime = model->GetCurrentAnimationSeconds();
     attackCollisionFlag = animationTime >= 0.3f && animationTime < 0.4f ? true : false;
 
     if (attackCollisionFlag)
     {
-        //¶èƒm[ƒh‚ÆƒGƒlƒ~[‚ÌÕ“Ëˆ—
+        //å·¦æ‰‹ãƒãƒ¼ãƒ‰ã¨ã‚¨ãƒãƒŸãƒ¼ã®è¡çªå‡¦ç†
         CollisionNodeVsEnemies("mixamorig:LeftHand", leftHandRadius);
     }
     
@@ -419,7 +421,7 @@ void Player::TransitionDamageState()
 {
     state = State::Damage;
     onDamage = true;
-    //ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_GetHit1, false);
 }
 
@@ -430,7 +432,7 @@ void Player::UpdateDamageState(float elapsedTime)
     {
         TransitionDamageState();
     }
-    //ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚ç‘Ò‹@ƒXƒe[ƒg‚É‘JˆÚ
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ãŸã‚‰å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     if (!model->IsPlayAnimation())
     {
         TransitionIdleState();
@@ -441,7 +443,7 @@ void Player::TransitionDeathState()
 {
     state = State::Death;
 
-    //€–SƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //æ­»äº¡ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Death, false);
 }
 
@@ -449,29 +451,29 @@ void Player::UpdateDeathState(float elapsedTime)
 {
     if (!model->IsPlayAnimation())
     {
-        //ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç•œŠˆƒXƒe[ƒg‚É‘JˆÚ
-        GamePad& gamePad = Input::Instance().GetGamePad();
-        if (gamePad.GetButtonDown() & GamePad::BTN_A)
-        {
-            TransitionReviveState();
-        }
+        
     }
 }
 
-void Player::TransitionReviveState()
+void Player::TransitionBarrierState()
 {
-    state = State::Revive;
+    state = State::Barrier;
 
-    //‘Ì—Í‰ñ•œ
-    health = maxHealth;
-
-    //•œŠˆƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
-    model->PlayAnimation(Anim_Revive, false);
+    //éšœå£å±•é–‹ã£ã½ã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
+    model->PlayAnimation(Anim_GetHit1, false);
+    
 }
 
-void Player::UpdateReviveState(float elapsedTime)
+void Player::UpdateBarrierState(float elapsedTime)
 {
-    //•œŠˆƒAƒjƒ[ƒVƒ‡ƒ“I—¹‚É‘Ò‹@ƒXƒe[ƒg‚É‘JˆÚ
+    float animationTime = model->GetCurrentAnimationSeconds();
+
+    if (animationTime >= 0.5f)
+    {
+        firstFlag = true;
+        barrierRimit = 5;
+    }
+
     if (!model->IsPlayAnimation())
     {
         TransitionIdleState();
@@ -550,7 +552,7 @@ void Player::InputProjectile()
 }
 
 
-//ƒWƒƒƒ“ƒv“ü—Í
+//ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›
 bool Player::InputJump()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
@@ -569,7 +571,7 @@ bool Player::InputJump()
     return false;
 }
 
-//’…’n‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+//ç€åœ°ã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
 void Player::OnLanding()
 {
     jumpCount = 0;
@@ -582,13 +584,13 @@ void Player::OnLanding()
 
 void Player::OnDamaged()
 {
-    //ƒ_ƒ[ƒWƒXƒe[ƒg‚É‘JˆÚ
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     TransitionDamageState();
 }
 
 void Player::OnDead()
 {
-    //€–SƒXƒe[ƒg‚É‘JˆÚ
+    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     TransitionDeathState();
 }
 
@@ -596,7 +598,7 @@ void Player::CollisionprojectilesVsEnemies()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    //‘“–‚½‚èˆ—
+    //ç·å½“ãŸã‚Šå‡¦ç†
     int projectileCount = projectileManager.GetProjectileCount();
     int enemyCount = enemyManager.GetEnemyCount();
     for (int i = 0; i < projectileCount; ++i)
@@ -607,7 +609,7 @@ void Player::CollisionprojectilesVsEnemies()
         {
             Enemy* enemy = enemyManager.GetEnemy(j);
 
-            //Õ“Ëˆ—
+            //è¡çªå‡¦ç†
             DirectX::XMFLOAT3 outPosition;
             if (Collision::IntersectSphereVsCylinder(
                 projectile->GetPosition(),
@@ -655,7 +657,32 @@ void Player::CollisionprojectilesVsEnemies()
 }
 
 
-//•`‰æˆ—
+void Player::UpdateBarrier()
+{
+    if (barrierRimit > 0 && barrierEffectHandle < 0)
+    {
+        barrierEffectHandle = barrier->Play(position, 0.5f);
+        firstFlag = false;
+    }
+
+    if (barrierRimit <= 0)
+    {
+        barrier->Stop(barrierEffectHandle);
+        barrierEffectHandle = -1;
+    }
+
+    /*if (barrierRimit <= 4)
+    {
+        barrier->SetEffectColor(barrierEffectHandle,{255,0,0});
+    }*/
+
+    
+
+
+    barrier->SetPosition(barrierEffectHandle, position);
+}
+
+//æç”»å‡¦ç†
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
