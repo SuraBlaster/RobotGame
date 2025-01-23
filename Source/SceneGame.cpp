@@ -5,16 +5,17 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include"EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
 #include "StageMain.h"
 #include "StageMoveFloor.h"
 #include "SceneManager.h"
 #include <Input/Input.h>
-// ‰Šú‰»
+// åˆæœŸåŒ–
 void SceneGame::Initialize()
 {
-	//ƒXƒe[ƒW‰Šú‰»
+	//ã‚¹ãƒ†ãƒ¼ã‚¸åˆæœŸåŒ–
 	StageManager& stageManager = StageManager::Instance();
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
@@ -25,10 +26,10 @@ void SceneGame::Initialize()
 	stageMoveFloor->SetTorque(DirectX::XMFLOAT3(0, 1.0f, 0));
 	stageManager.Register(stageMoveFloor);
 
-	//ƒvƒŒƒCƒ„[‰Šú‰»
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–
 	player = new Player;
 
-	//ƒGƒlƒ~[‰Šú‰»
+	//ã‚¨ãƒãƒŸãƒ¼åˆæœŸåŒ–
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < 1; ++i)
 	{
@@ -37,8 +38,16 @@ void SceneGame::Initialize()
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
 	}
-
-	//ƒJƒƒ‰‰Šúİ’è
+	EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i) 
+	{
+		EnemySpider* spider = new EnemySpider;
+		spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+		spider->SetTerritory(spider->GetPosition(), 10.0f);
+		enemyspiderManager.Register(spider);
+	}
+	
+	//ã‚«ãƒ¡ãƒ©åˆæœŸè¨­å®š
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
@@ -53,19 +62,19 @@ void SceneGame::Initialize()
 		1000.0f
 	);
 
-	//ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[‰Šú‰»
+	//ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼åˆæœŸåŒ–
 	cameraController = new CameraController;
 
 	Mouse& mouse = Input::Instance().GetMouse();
 	mouse.setCenter();
 	cameraController->ZeroClear();
 
-	//ƒQ[ƒWƒXƒvƒ‰ƒCƒg
+	//ã‚²ãƒ¼ã‚¸ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	gauge = new Sprite();
 
 	UI = std::make_unique<UserInterface>();
 	UI->Initialize();
-	//2DƒXƒvƒ‰ƒCƒg
+	//2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	{
 		screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		screenHeight = static_cast<float>(graphics.GetScreenHeight());
@@ -100,10 +109,10 @@ void SceneGame::Initialize()
 	}
 }
 
-// I—¹‰»
+// çµ‚äº†åŒ–
 void SceneGame::Finalize()
 {
-	//ƒQ[ƒWƒXƒvƒ‰ƒCƒgI—¹‰»
+	//ã‚²ãƒ¼ã‚¸ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆçµ‚äº†åŒ–
 	if (gauge != nullptr)
 	{
 		delete gauge;
@@ -112,41 +121,41 @@ void SceneGame::Finalize()
 
 	EnemyManager::Instance().Clear();
 
-	//ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[I—¹ˆ—
+	//ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼çµ‚äº†å‡¦ç†
 	if (cameraController != nullptr)
 	{
 		delete cameraController;
 		cameraController = nullptr;
 	}
 
-	//ƒvƒŒƒCƒ„[I—¹ˆ—
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼çµ‚äº†å‡¦ç†
 	if (player != nullptr)
 	{
 		delete player;
 		player = nullptr;
 	}
 
-	//ƒXƒe[ƒWI—¹ˆ—
+	//ã‚¹ãƒ†ãƒ¼ã‚¸çµ‚äº†å‡¦ç†
 	StageManager::Instance().Clear();
 }
 
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 void SceneGame::Update(float elapsedTime)
 {
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
 	if (!isPause)
 	{
-		//ƒXƒe[ƒWXVˆ—
+		//ã‚¹ãƒ†ãƒ¼ã‚¸æ›´æ–°å‡¦ç†
 		StageManager::Instance().Update(elapsedTime);
 
-		//ƒvƒŒƒCƒ„[XVˆ—
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ›´æ–°å‡¦ç†
 		player->Update(elapsedTime);
 
-		//ƒGƒlƒ~[XVˆ—
+		//ã‚¨ãƒãƒŸãƒ¼æ›´æ–°å‡¦ç†
 		EnemyManager::Instance().Update(elapsedTime);
 
-		//ƒGƒtƒFƒNƒgXVˆ—
+		//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæ›´æ–°å‡¦ç†
 		EffectManager::Instance().Update(elapsedTime);
 
 		isCameraControll = true;
@@ -165,7 +174,7 @@ void SceneGame::Update(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	mouse.updataNormal(isCameraControll);
 
-	//ƒJƒƒ‰ƒRƒ“ƒgƒ[ƒ‰[XVˆ—
+	//ã‚«ãƒ¡ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼æ›´æ–°å‡¦ç†
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
@@ -174,7 +183,7 @@ void SceneGame::Update(float elapsedTime)
 	pauseUpdate();
 }
 
-// •`‰æˆ—
+// æç”»å‡¦ç†
 void SceneGame::Render()
 {
 	Graphics& graphics = Graphics::Instance();
@@ -182,25 +191,25 @@ void SceneGame::Render()
 	ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
-	// ‰æ–ÊƒNƒŠƒA•ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgİ’è
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0`1.0)
+	// ç”»é¢ã‚¯ãƒªã‚¢ï¼†ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆè¨­å®š
+	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0ï½1.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	RenderContext rc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ƒ‰ƒCƒg•ûŒüi‰º•ûŒüj
+	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ãƒ©ã‚¤ãƒˆæ–¹å‘ï¼ˆä¸‹æ–¹å‘ï¼‰
 
-	//ƒJƒƒ‰‰Šúİ’è
+	//ã‚«ãƒ¡ãƒ©åˆæœŸè¨­å®š
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
-	//// ƒrƒ…[s—ñ
+	//// ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—
 	//{
-	//	DirectX::XMFLOAT3 eye = { 0, 10, -10 };	// ƒJƒƒ‰‚Ì‹“_iˆÊ’uj
-	//	DirectX::XMFLOAT3 focus = { 0, 0, 0 };	// ƒJƒƒ‰‚Ì’‹“_iƒ^[ƒQƒbƒgj
-	//	DirectX::XMFLOAT3 up = { 0, 1, 0 };		// ƒJƒƒ‰‚Ìã•ûŒü
+	//	DirectX::XMFLOAT3 eye = { 0, 10, -10 };	// ã‚«ãƒ¡ãƒ©ã®è¦–ç‚¹ï¼ˆä½ç½®ï¼‰
+	//	DirectX::XMFLOAT3 focus = { 0, 0, 0 };	// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ï¼ˆã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼‰
+	//	DirectX::XMFLOAT3 up = { 0, 1, 0 };		// ã‚«ãƒ¡ãƒ©ã®ä¸Šæ–¹å‘
 
 	//	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&eye);
 	//	DirectX::XMVECTOR Focus = DirectX::XMLoadFloat3(&focus);
@@ -208,25 +217,25 @@ void SceneGame::Render()
 	//	DirectX::XMMATRIX View = DirectX::XMMatrixLookAtLH(Eye, Focus, Up);
 	//	DirectX::XMStoreFloat4x4(&rc.view, View);
 	//}
-	//// ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ
+	//// ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³è¡Œåˆ—
 	//{
-	//	float fovY = DirectX::XMConvertToRadians(45);	// ‹–ìŠp
-	//	float aspectRatio = graphics.GetScreenWidth() / graphics.GetScreenHeight();	// ‰æ–Êc‰¡”ä—¦
-	//	float nearZ = 0.1f;	// ƒJƒƒ‰‚ª‰f‚µo‚·‚ÌÅ‹ß‹——£
-	//	float farZ = 1000.0f;	// ƒJƒƒ‰‚ª‰f‚µo‚·‚ÌÅ‰“‹——£
+	//	float fovY = DirectX::XMConvertToRadians(45);	// è¦–é‡è§’
+	//	float aspectRatio = graphics.GetScreenWidth() / graphics.GetScreenHeight();	// ç”»é¢ç¸¦æ¨ªæ¯”ç‡
+	//	float nearZ = 0.1f;	// ã‚«ãƒ¡ãƒ©ãŒæ˜ ã—å‡ºã™ã®æœ€è¿‘è·é›¢
+	//	float farZ = 1000.0f;	// ã‚«ãƒ¡ãƒ©ãŒæ˜ ã—å‡ºã™ã®æœ€é è·é›¢
 	//	DirectX::XMMATRIX Projection = DirectX::XMMatrixPerspectiveFovLH(fovY, aspectRatio, nearZ, farZ);
 	//	DirectX::XMStoreFloat4x4(&rc.projection, Projection);
 	//}
 
-	// 3Dƒ‚ƒfƒ‹•`‰æ
+	// 3Dãƒ¢ãƒ‡ãƒ«æç”»
 	{
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 
-		//ƒXƒe[ƒW•`‰æ
+		//ã‚¹ãƒ†ãƒ¼ã‚¸æç”»
 		StageManager::Instance().Render(dc, shader);
 
-		//ƒvƒŒƒCƒ„[•`‰æ
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æç”»
 		player->Render(dc, shader);
 
 		EnemyManager::Instance().Render(dc, shader);
@@ -236,31 +245,31 @@ void SceneGame::Render()
 		shader->End(dc);
 	}
 
-	//3DƒGƒtƒFƒNƒg•`‰æ
+	//3Dã‚¨ãƒ•ã‚§ã‚¯ãƒˆæç”»
 	{
 		EffectManager::Instance().Render(rc.view, rc.projection);
 	}
 	
 
-	// 3DƒfƒoƒbƒO•`‰æ
+	// 3Dãƒ‡ãƒãƒƒã‚°æç”»
 	{
 		EnemyManager::Instance().DrawDebugPrimitive();
 
 		player->DrawDebugPrimitive();
-		// ƒ‰ƒCƒ“ƒŒƒ“ƒ_ƒ‰•`‰æÀs
+		// ãƒ©ã‚¤ãƒ³ãƒ¬ãƒ³ãƒ€ãƒ©æç”»å®Ÿè¡Œ
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
 
-		// ƒfƒoƒbƒOƒŒƒ“ƒ_ƒ‰•`‰æÀs
+		// ãƒ‡ãƒãƒƒã‚°ãƒ¬ãƒ³ãƒ€ãƒ©æç”»å®Ÿè¡Œ
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 
-	// 2DƒXƒvƒ‰ƒCƒg•`‰æ
+	// 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 	{
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
 	}
 
-	// 2DƒfƒoƒbƒOGUI•`‰æ
+	// 2Dãƒ‡ãƒãƒƒã‚°GUIæç”»
 	{
 		player->DrawDebugGUI();
 	}
@@ -271,32 +280,38 @@ void SceneGame::RenderEnemyGauge(
 	const DirectX::XMFLOAT4X4& view,
 	const DirectX::XMFLOAT4X4& projection)
 {
-	//ƒrƒ…[ƒ|[ƒg
+	//ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆ
 	D3D11_VIEWPORT viewport;
 	UINT numViewports = 1;
 	dc->RSGetViewports(&numViewports, &viewport);
 
-	//•ÏŠ·s—ñ
+	//å¤‰æ›è¡Œåˆ—
 	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&view);
 	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&projection);
 	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
 
-	//‚·‚×‚Ä‚Ì“G‚Ì“ªã‚ÉHPƒQ[ƒW‚ğ•\¦
+	//ã™ã¹ã¦ã®æ•µã®é ­ä¸Šã«HPã‚²ãƒ¼ã‚¸ã‚’è¡¨ç¤º
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	int enemyCount = enemyManager.GetEnemyCount();
+
+	EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	int enemySCount = enemyspiderManager.GetEnemyCount();
 
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		Enemy* enemy = enemyManager.GetEnemy(i);
+		
 
 		DirectX::XMVECTOR ScreenPosition{};
 
 		DirectX::XMFLOAT3 enemyPosition{};
+		
 
 		enemyPosition = enemy->GetPosition();
-
+		
 		
 		enemyPosition.y += enemy->GetHeight();
+		
 		
 
 		ScreenPosition = DirectX::XMVector3Project(
@@ -319,11 +334,63 @@ void SceneGame::RenderEnemyGauge(
 		float gaugeY = 5.0f;
 
 		float health = enemy->GetHealth() / static_cast<float>(enemy->GetMaxHealth());
-
+		
 		gauge->Render(dc,
 			screenPosition.x - gaugeX * 0.5f,
 			screenPosition.y - gaugeY,
 			gaugeX * health,
+			gaugeY,
+			screenPosition.x,
+			screenPosition.y,
+			gauge->GetTextureWidth(),
+			gauge->GetTextureHeight(),
+			0,
+			1, 0, 0, 1);
+	}
+	for (int i = 0; i < enemySCount; ++i)
+	{
+		
+		Enemy* enemyS = enemyspiderManager.GetEnemy(i);
+
+		DirectX::XMVECTOR ScreenPosition{};
+
+		DirectX::XMFLOAT3 enemyPosition{};
+		DirectX::XMFLOAT3 enemySPosition{};
+
+		
+		enemySPosition = enemyS->GetPosition();
+
+		
+		
+		enemySPosition.y += enemyS->GetHeight();
+		
+
+		ScreenPosition = DirectX::XMVector3Project(
+			DirectX::XMLoadFloat3(&enemyPosition),
+			viewport.TopLeftX,
+			viewport.TopLeftY,
+			viewport.Width,
+			viewport.Height,
+			0.0f,
+			1.0f,
+			Projection,
+			View,
+			World
+		);
+
+		DirectX::XMFLOAT3 screenPosition{};
+		DirectX::XMStoreFloat3(&screenPosition, ScreenPosition);
+
+		float gaugeX = 30.0f;
+		float gaugeY = 5.0f;
+
+		
+		float healthS = enemyS->GetHealth() / static_cast<float>(enemyS->GetMaxHealth());
+
+		gauge->Render(dc,
+			screenPosition.x - gaugeX * 0.5f,
+			screenPosition.y - gaugeY,
+			gaugeX * healthS,
 			gaugeY,
 			screenPosition.x,
 			screenPosition.y,
@@ -386,6 +453,12 @@ void SceneGame::RenderEnemyGauge(
 			enemy->SetPosition(hit.position);
 			EnemyManager::Instance().Register(enemy);
 		}
+		if (StageManager::Instance().RayCast(start, end, hit))
+		{
+			EnemySpider* enemyS = new EnemySpider;
+			enemyS->SetPosition(hit.position);
+			EnemyManager::Instance().Register(enemyS);
+		}
 	}
 }
 
@@ -397,7 +470,7 @@ void SceneGame::pauseUpdate()
 	{
 		isPause = !isPause;
 	}
-	//ƒ^ƒCƒgƒ‹‚É–ß‚é
+	//ã‚¿ã‚¤ãƒˆãƒ«ã«æˆ»ã‚‹
 	if (mouse.mouseVsRect(toTitleSD.dx, toTitleSD.dy, toTitleSD.dw, toTitleSD.dh))
 	{
 		toTitleSD.r = toTitleSD.g = toTitleSD.b = 0.7f;
@@ -410,7 +483,7 @@ void SceneGame::pauseUpdate()
 	{
 		toTitleSD.r = toTitleSD.g = toTitleSD.b = 1.0f;
 	}
-	//ƒQ[ƒ€‚É–ß‚é
+	//ã‚²ãƒ¼ãƒ ã«æˆ»ã‚‹
 	if (mouse.mouseVsRect(backSD.dx, backSD.dy, backSD.dw, backSD.dh))
 	{
 		backSD.r = backSD.g = backSD.b = 0.7f;
@@ -429,7 +502,7 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 {
 	if (isPause)
 	{
-		//ƒ^ƒCƒgƒ‹ƒXƒvƒ‰ƒCƒg•`‰æ
+		//ã‚¿ã‚¤ãƒˆãƒ«ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 		sprite->Render(dc, spriteSD);
 
 		toTitleSpr->Render(dc, toTitleSD);

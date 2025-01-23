@@ -112,7 +112,7 @@ void Player::Update(float elapsedTime)
 
     UpdateInvincibleTimer(elapsedTime);
 
-    projectileManager.Update(elapsedTime);
+   // projectileManager.Update(elapsedTime);
 
     CollisionPlayerVsEnemies();
 
@@ -122,6 +122,17 @@ void Player::Update(float elapsedTime)
 
     model->UpdateTransform(transform);
 
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    if (gamePad.GetButtonDown() & GamePad::BTN_SPACE)
+    {
+        velocity.y+=1;
+    } 
+     if (gamePad.GetButtonDown() & GamePad::BTN_CONTROL)
+    {
+        velocity.y-=1;
+    } 
+    
     UpdateBarrier();
 
     //barrier->UpdateEffectColor(barrierEffectHandle, elapsedTime);
@@ -135,7 +146,7 @@ bool Player::InputMove(float elapsedTime)
     //進行ベクトル取得
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(moveVec.x, moveVec.z, moveSpeed);
+    Move(moveVec.x, moveVec.z,moveVec.y, moveSpeed);
 
     Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed);
 
@@ -185,7 +196,7 @@ void Player::CollisionPlayerVsEnemies()
             DirectX::XMStoreFloat3(&normal, N);
 
             if (normal.y > 0.8f)
-            {
+            
                 //小ジャンプ
                 Jump(jumpSpeed * 0.5f);
             }
@@ -297,8 +308,9 @@ void Player::UpdateIdleState(float elapsedTime)
         TransitionJumpState();
     }
 
-    //弾丸入力処理
-    InputProjectile();
+    //�e�ۓ��͏���
+    //InputProjectile();
+
 
     //攻撃入力処理
     if (InputAttack())
@@ -336,8 +348,9 @@ void Player::UpdateMoveState(float elapsedTime)
         TransitionJumpState();
     }
 
-    //弾丸入力処理
-    InputProjectile();
+    //�e�ۓ��͏���
+    //InputProjectile();
+
 
     //攻撃入力処理
     if (InputAttack())
@@ -370,8 +383,8 @@ void Player::UpdateJumpState(float elapsedTime)
         model->PlayAnimation(Anim_Jump_Flip, false);
     }
 
-    //弾丸入力処理
-    InputProjectile();
+    //�e�ۓ��͏���
+    //InputProjectile();
 }
 
 void Player::TransitionLandState()
@@ -556,7 +569,7 @@ void Player::InputProjectile()
 bool Player::InputJump()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)
+   /* if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
         if (jumpCount < jumpLimit)
         {
@@ -567,7 +580,7 @@ bool Player::InputJump()
             
         }
         
-    }
+    }*/
     return false;
 }
 

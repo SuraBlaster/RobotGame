@@ -50,7 +50,7 @@ public:
 
 protected:
     //ˆÚ“®ˆ—
-    void Move(float vx, float vz, float speed);
+    void Move(float vx, float vz,float vy, float speed);
 
     //‰ñ“]ˆ—
     void Turn(float elapsedTime, float vx, float vz, float speed);
@@ -95,7 +95,7 @@ protected:
     };
     float radius = 0.5f;
     
-    float gravity = -1.0f;
+    float gravity = 0.0f;
 
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
 
@@ -120,6 +120,8 @@ protected:
     float moveVecX = 0.0f;
 
     float moveVecZ = 0.0f;
+
+    float moveVecY = 0.0f;
 
     float airControl = 0.3f;
 

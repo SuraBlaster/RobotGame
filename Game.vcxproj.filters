@@ -186,7 +186,11 @@
     <ClInclude Include="Source\ResourceManager.h">
       <Filter>Source</Filter>
     </ClInclude>
+
+    <ClInclude Include="Source\EnemySpider.h">
+
     <ClInclude Include="Source\UI.h">
+
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -326,6 +330,7 @@
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EnemySpider.cpp">
     <ClCompile Include="Source\UI.cpp">
       <Filter>Source</Filter>
     </ClCompile>
