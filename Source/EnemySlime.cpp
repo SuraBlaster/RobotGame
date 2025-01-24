@@ -67,7 +67,7 @@ void EnemySlime::Update(float elapsedTime)
 
     // 敵の位置を更新
     //update_enemy_position();
-    position = {};
+
     //速力処理更新
     UpdateVelocity(elapsedTime);
 
@@ -85,7 +85,7 @@ void EnemySlime::Update(float elapsedTime)
 
     delay -= elapsedTime;
 }
-    
+
 
 
 
@@ -108,19 +108,7 @@ void EnemySlime::DrawDebugPrimitive()
 
     //攻撃範囲をデバッグ円柱描画
     debugRenderer->DrawSphere(position, attackRange, DirectX::XMFLOAT4(1, 0, 0, 1));
-
-    ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Enemy", nullptr, ImGuiWindowFlags_None))
-    {
-        if (ImGui::CollapsingHeader("Transform1", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            ImGui::InputFloat3("Position1", &position.x);
-        }
-    }
-    ImGui::End();
 }
-
 
 void EnemySlime::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
 {
@@ -133,6 +121,7 @@ void EnemySlime::SetRandomTargetPosition()
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
     targetPosition.y = Mathf::RandomRange(territoryOrigin.y, territoryOrigin.y + territoryRange);
     targetPosition.z = Mathf::RandomRange(territoryOrigin.z, territoryOrigin.z + territoryRange);
+
 }
 
 void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
@@ -143,12 +132,12 @@ void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
 
-    
+
     vx /= dist;
     vz /= dist;
 
     //移動処理
-    Move(vx, vz,vy, moveSpeed * speedRate);
+    Move(vx, vz, vy, moveSpeed * speedRate);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 
@@ -222,7 +211,7 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                 delay = 0.1f;
                 player.SetRimit(playerLimit);
             }
-            else if(delay <= 0.0f)
+            else if (delay <= 0.0f)
             {
                 //ダメージを与える
                 if (player.ApplyDamage(1))
@@ -350,9 +339,10 @@ void EnemySlime::UpdatePursuitState(float elapsedTime)
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vy * vy + vz * vz);
 
-    
+
     if (dist <= attackRange)
     {
+
         atknow = true;
         //攻撃ステートに遷移
         TransitionAttackState();
@@ -363,7 +353,10 @@ void EnemySlime::UpdatePursuitState(float elapsedTime)
 void EnemySlime::TransitionAttackState()
 {
     state = State::Attack;
-   
+
+
+
+
     //攻撃アニメーション再生
     model->PlayAnimation(Anim_Attack1, false);
 }
@@ -411,13 +404,13 @@ void EnemySlime::UpdateIdleBattleState(float elapsedTime)
         float dist = sqrtf(vx * vx + vy * vy + vz * vz);
         if (dist < attackRange)
         {
-           
+
             //攻撃ステートに遷移
             TransitionAttackState();
         }
         else
         {
-            
+
             //徘徊ステートに遷移
             TransitionIdleState();
         }
