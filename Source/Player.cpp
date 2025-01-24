@@ -29,7 +29,7 @@ Player::Player()
 
     //エフェクト読み込み
     hitEffect = new Effect("Data/Effect/thunder.efk");
-    barrier = new Effect("Data/Effect/Barrier.efk");
+    barrier = new Effect("Data/Effect/Barrer.efk");
 
     //待機ステートへ遷移
     TransitionIdleState();
@@ -143,7 +143,7 @@ bool Player::InputMoveSword(float elapsedTime)
     //�i�s�x�N�g���擾
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(moveVec.x, moveVec.z, moveSpeed * 0.2f);
+    Move(moveVec.x, moveVec.z, moveVec.y, moveSpeed * 0.2f);
 
     Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed * 0.2f);
 
