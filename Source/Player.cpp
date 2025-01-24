@@ -459,6 +459,7 @@ void Player::TransitionDeathState()
     state = State::Death;
 
     model->PlayAnimation(GreatSword_Death, false);
+}
 
 void Player::UpdateDeathState(float elapsedTime)
 {
@@ -567,7 +568,7 @@ void Player::InputProjectile()
 bool Player::InputJump()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-   /* if (gamePad.GetButtonDown() & GamePad::BTN_A)
+   if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
         Jump(jumpSpeed);
 
