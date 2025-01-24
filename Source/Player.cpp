@@ -29,7 +29,7 @@ Player::Player()
 
     //エフェクト読み込み
     hitEffect = new Effect("Data/Effect/thunder.efk");
-    barrier = new Effect("Data/Effect/Barrer.efk");
+    barrier = new Effect("Data/Effect/Barrier.efkefc");
 
     //待機ステートへ遷移
     TransitionIdleState();
