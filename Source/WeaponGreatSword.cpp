@@ -1,12 +1,15 @@
 #include "WeaponGreatSword.h"
-#include <Player.h>
-
+#include <Graphics/Graphics.h>
+#include <Graphics/DebugRenderer.h>
+#include "Player.h"
+#include <EnemyManager.h>
+#include <Collision.h>
 WeaponGreatSword::WeaponGreatSword()
 {
     model = new Model("Data/Model/Sword/MagicSword.mdl");
 
     scale.x = scale.y = scale.z = 0.7;
-    angle.x = 0;
+    angle.x = DirectX::XMConvertToRadians(0);
     angle.y = DirectX::XMConvertToRadians(-90);
     angle.z = DirectX::XMConvertToRadians(-10);
 }
@@ -44,9 +47,95 @@ void WeaponGreatSword::Update(float elapsedTime)
     }
 
     model->UpdateTransform(transform);
+
+    if (player.GetAttackFlag())
+    {
+        CollisionWeaponVsEnemies();
+    }
+    
 }
 
 void WeaponGreatSword::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+
+    DirectX::XMMATRIX weaponMatrix = DirectX::XMLoadFloat4x4(&transform);
+    DirectX::XMVECTOR offset = DirectX::XMLoadFloat3(&weaponHitOffset);
+    DirectX::XMVECTOR hitPosition = DirectX::XMVector3Transform(offset, weaponMatrix);
+
+    DirectX::XMFLOAT3 weaponHitPosition;
+    DirectX::XMStoreFloat3(&weaponHitPosition, hitPosition);
+
+    Player& player = Player::Instance();
+    if (player.GetAttackFlag())
+    {
+        debugRenderer->DrawSphere(weaponHitPosition, weaponHitRadius, { 1,0,1,1 });
+    }
+    
+
     shader->Draw(dc, model);
+}
+
+
+//プレイヤーとエネミーとの衝突判定
+void WeaponGreatSword::CollisionWeaponVsEnemies()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    DirectX::XMMATRIX weaponMatrix = DirectX::XMLoadFloat4x4(&transform);
+    DirectX::XMVECTOR offset = DirectX::XMLoadFloat3(&weaponHitOffset);
+    DirectX::XMVECTOR hitPosition = DirectX::XMVector3Transform(offset, weaponMatrix);
+
+    DirectX::XMFLOAT3 weaponHitPosition;
+    DirectX::XMStoreFloat3(&weaponHitPosition, hitPosition);
+
+
+    //すべての敵と総当たりで衝突判定
+    int enemyCount = enemyManager.GetEnemyCount();
+
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+
+        DirectX::XMFLOAT3 outPosition;
+
+        if (Collision::IntersectSphereVsCylinder(
+            weaponHitPosition,
+            weaponHitRadius,
+            enemy->GetPosition(),
+            enemy->GetRadius(),
+            enemy->GetHeight(),
+            outPosition))
+        {
+            enemy->SetPosition(outPosition);
+
+            if (enemy->ApplyDamage(1))
+            {
+                {
+                    DirectX::XMFLOAT3 impulse{};
+
+                    const float power = 10.0f;
+                    const DirectX::XMFLOAT3& e = enemy->GetPosition();
+                    const DirectX::XMFLOAT3& p = weaponHitPosition;
+                    float vx = e.x - p.x;
+                    float vz = e.z - p.z;
+                    float lengthXZ = sqrtf(vx * vx + vz * vz);
+                    vx /= lengthXZ;
+                    vz /= lengthXZ;
+
+                    impulse.x = vx * power;
+                    impulse.y = power * 0.5f;
+                    impulse.z = vz * power;
+
+
+                    enemy->AddImpulse(impulse);
+                }
+            }
+
+            {
+                DirectX::XMFLOAT3 e = enemy->GetPosition();
+                e.y += enemy->GetHeight() * 0.5f;
+            }
+        }
+    }
 }

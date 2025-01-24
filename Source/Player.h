@@ -108,6 +108,8 @@ public:
     const int& GetRimit() const { return barrierRimit; }
 
     Model* GetModel() const { return model; }
+
+    const bool GetAttackFlag() const { return attackCollisionFlag; }
 private:
     //アニメーション
     enum Animation

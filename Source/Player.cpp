@@ -45,19 +45,6 @@ void Player::DrawDebugPrimitive()
     //debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 
     //projectileManager.DrawDebugPrimitive();
-
-    //攻撃衝突用の左手ノードのデバッグ球を描画
-    if (attackCollisionFlag)
-    {
-        Model::Node* leftHandBone = model->FindNode("mixamorig:LeftHand");
-        debugRenderer->DrawSphere(DirectX::XMFLOAT3(
-            leftHandBone->worldTransform._41,
-            leftHandBone->worldTransform._42,
-            leftHandBone->worldTransform._43),
-            leftHandRadius,
-            DirectX::XMFLOAT4(1, 0, 0, 1)
-        );
-    }
     
 }
 
@@ -268,11 +255,6 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
     }
 }
 
-void Player::AttachWeapon()
-{
-
-}
-
 
 
 void Player::TransitionIdleState()
@@ -392,14 +374,10 @@ void Player::UpdateAttackState(float elapsedTime)
 
     //任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
-    attackCollisionFlag = animationTime >= 0.3f && animationTime < 0.4f ? true : false;
+    attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
+        || (animationTime >= 1.7f && animationTime < 1.85f)
+        || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
 
-    if (attackCollisionFlag)
-    {
-        //左手ノードとエネミーの衝突処理
-        CollisionNodeVsEnemies("mixamorig:LeftHand", leftHandRadius);
-    }
-    
 }
 
 void Player::TransitionDamageState()
@@ -538,15 +516,9 @@ bool Player::InputJump()
     GamePad& gamePad = Input::Instance().GetGamePad();
     if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
-        if (jumpCount < jumpLimit)
-        {
-            jumpCount++;
-            Jump(jumpSpeed);
+        Jump(jumpSpeed);
 
-            return true;
-            
-        }
-        
+        return true;
     }
     return false;
 }
