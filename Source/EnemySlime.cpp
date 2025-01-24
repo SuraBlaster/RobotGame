@@ -467,6 +467,3 @@ void EnemySlime::OnDamaged()
 {
     TransitionDamageState();
 }
-
-
-
