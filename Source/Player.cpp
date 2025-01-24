@@ -109,8 +109,6 @@ void Player::Update(float elapsedTime)
     model->UpdateTransform(transform);
 
     UpdateBarrier();
-
-    barrier->UpdateEffectColor(barrierEffectHandle, elapsedTime);
 }
 
 
@@ -611,10 +609,10 @@ void Player::UpdateBarrier()
         barrierEffectHandle = -1;
     }
 
-    /*if (barrierRimit <= 4)
+    if (barrierRimit <= 4)
     {
         barrier->SetEffectColor(barrierEffectHandle,{255,0,0});
-    }*/
+    }
 
     
 
