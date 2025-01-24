@@ -186,6 +186,13 @@
     <ClInclude Include="Source\ResourceManager.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Weapon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponGreatSword.h">
 
     <ClInclude Include="Source\EnemySpider.h">
 
@@ -330,6 +337,13 @@
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Weapon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponGreatSword.cpp">
     <ClCompile Include="Source\EnemySpider.cpp">
     <ClCompile Include="Source\UI.cpp">
       <Filter>Source</Filter>
