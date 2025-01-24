@@ -4,6 +4,14 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
+struct SpriteData
+{
+	float dx = 0.0f, dy = 0.0f, dw = 0.0f, dh = 0.0f;
+	float sx = 0.0f, sy = 0.0f, sw = 0.0f, sh = 0.0f;
+	float angle = 0.0f;
+	float r = 1.0f, g = 1.0f, b = 1.0f, a = 1.0f;
+};
+
 // スプライト
 class Sprite
 {
@@ -27,6 +35,9 @@ public:
 		float sw, float sh,
 		float angle,
 		float r, float g, float b, float a) const;
+
+	void Render(ID3D11DeviceContext* immediate_context,
+		SpriteData sd);
 
 	// テクスチャ幅取得
 	int GetTextureWidth() const { return textureWidth; }

@@ -11,96 +11,96 @@ class Player : public Character
 private:
     DirectX::XMFLOAT3 GetMoveVec() const;
 
-    //ˆÚ“®“ü—Íˆ—
+    //ç§»å‹•å…¥åŠ›å‡¦ç†
     bool InputMove(float elapsedTime);
 
-    //Œ•UŒ‚‚ÌˆÚ“®“ü—Íˆ—
+    //å‰£æ”»æ’ƒæ™‚ã®ç§»å‹•å…¥åŠ›å‡¦ç†
     bool InputMoveSword(float elapsedTime);
 
-    //UŒ‚“ü—Íˆ—
+    //æ”»æ’ƒå…¥åŠ›å‡¦ç†
     bool InputAttack();
 
     void InputProjectile();
 
     void CollisionPlayerVsEnemies();
 
-    //‘Ò‹@ƒXƒe[ƒg‚Ö‘JˆÚ
+    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionIdleState();
 
-    //‘Ò‹@ƒXƒe[ƒgXVˆ—
+    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateIdleState(float elapsedTime);
 
-    //ˆÚ“®ƒXƒe[ƒg‚Ö‘JˆÚ
+    //ç§»å‹•ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionMoveState();
 
-    //ˆÚ“®ƒXƒe[ƒgXVˆ—
+    //ç§»å‹•ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateMoveState(float elapsedTime);
 
-    //ƒWƒƒƒ“ƒvƒXƒe[ƒg‚Ö‘JˆÚ
+    //ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionJumpState();
 
-    //ƒWƒƒƒ“ƒvƒXƒe[ƒgXVˆ—
+    //ã‚¸ãƒ£ãƒ³ãƒ—ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateJumpState(float elapsedTime);
 
-    //UŒ‚ƒXƒe[ƒg‚É‘JˆÚ
+    //æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     void TransitionAttackState();
 
-    //UŒ‚ƒXƒe[ƒgXVˆ—
+    //æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateAttackState(float elapsedTime);
 
-    //ƒ_ƒ[ƒWƒXƒe[ƒg‚É‘JˆÚ
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     void TransitionDamageState();
 
-    //ƒ_ƒ[ƒWƒXƒe[ƒgXVˆ—
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateDamageState(float elapsedTime);
 
-    //€–SƒXƒe[ƒg‚É‘JˆÚ
+    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     void TransitionDeathState();
 
-    //€–SƒXƒe[ƒgXVˆ—
+    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateDeathState(float elapsedTime);
 
-    //ƒoƒŠƒA“WŠJƒXƒe[ƒg‚É‘JˆÚ
+    //ãƒãƒªã‚¢å±•é–‹ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     void TransitionBarrierState();
 
-    //ƒoƒŠƒA“WŠJƒXƒe[ƒgXVˆ—
+    //ãƒãƒªã‚¢å±•é–‹ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateBarrierState(float elapsedTime);
 
-    //ƒm[ƒh‚ÆƒGƒlƒ~[‚ÌÕ“Ëˆ—
+    //ãƒãƒ¼ãƒ‰ã¨ã‚¨ãƒãƒŸãƒ¼ã®è¡çªå‡¦ç†
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
 protected:
-    //ƒ_ƒ[ƒW‚ğó‚¯‚½‚ÉŒÄ‚Î‚ê‚é
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãŸæ™‚ã«å‘¼ã°ã‚Œã‚‹
     void OnDamaged()override;
 
-    //€–S‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+    //æ­»äº¡ã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
     void OnDead()override;
 
 public:
     Player();
     ~Player()override;
 
-    //ƒCƒ“ƒXƒ^ƒ“ƒXæ“¾
+    //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—
     static Player& Instance();
 
-    //XVˆ—
+    //æ›´æ–°å‡¦ç†
     void Update(float elapsedTime);
 
-    //•`‰æˆ—
+    //æç”»å‡¦ç†
     void Render(ID3D11DeviceContext* dc, Shader* shader);
 
-    //GUI•`‰æ
+    //GUIæç”»
     void DrawDebugGUI();
 
-    //ƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
+    //ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
     void DrawDebugPrimitive();
 
-    //ƒWƒƒƒ“ƒv“ü—Íˆ—
+    //ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›å‡¦ç†
     bool InputJump();
 
     void CollisionprojectilesVsEnemies();
 
-    //ƒoƒŠƒAXVˆ—
+    //ãƒãƒªã‚¢æ›´æ–°å‡¦ç†
     void UpdateBarrier();
 
     void SetRimit(const int& rimit) { barrierRimit = rimit; }
@@ -110,8 +110,9 @@ public:
     Model* GetModel() const { return model; }
 
     const bool GetAttackFlag() const { return attackCollisionFlag; }
+    bool GetOnDamage() { return onDamage; }
 private:
-    //ƒAƒjƒ[ƒVƒ‡ƒ“
+    //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
     enum Animation
     {
         Dagger_Idle,
@@ -169,12 +170,14 @@ private:
 
     float leftHandRadius = 0.4f;
 
+    bool onDamage = false;
+
     State state = State::Idle;
 
-    //ƒoƒŠƒA‚Å–h‚°‚éc‚è‰ñ”
+    //ãƒãƒªã‚¢ã§é˜²ã’ã‚‹æ®‹ã‚Šå›æ•°
     int barrierRimit = 0;
 
-    //¡ƒoƒŠƒA‚ª“WŠJ‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
+    //ä»Šãƒãƒªã‚¢ãŒå±•é–‹ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹
     bool firstFlag = false;
 
     int attackStage = 0;

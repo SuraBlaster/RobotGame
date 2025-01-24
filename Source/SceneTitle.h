@@ -2,6 +2,7 @@
 
 #include "Graphics/Sprite.h"
 #include "Scene.h"
+#include <memory>
 
 class SceneTitle : public Scene
 {
@@ -22,5 +23,10 @@ public:
     void Render()override;
 
 private:
+    std::unique_ptr<Sprite> startSpr = nullptr;
+    std::unique_ptr<Sprite> gameCloseSpr = nullptr;
+
     Sprite* sprite = nullptr;
+    SpriteData startSD;
+    SpriteData gameCloseSD;
 };

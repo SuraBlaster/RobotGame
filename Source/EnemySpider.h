@@ -3,86 +3,88 @@
 #include "Graphics/Model.h"
 #include "Enemy.h"
 
+#include"ProjectileManager.h"
 
 
-
-//ã‚¹ãƒ©ã‚¤ãƒ 
-class EnemySlime : public Enemy
+//ƒXƒ‰ƒCƒ€
+class EnemySpider : public Enemy
 {
 public:
-    EnemySlime();
-    ~EnemySlime() override;
+    EnemySpider();
+    ~EnemySpider() override;
 
-    //æ›´æ–°å‡¦ç†
+    //XVˆ—
     void Update(float elapsedTime)override;
 
-    //æç”»å‡¦ç†
+    //•`‰æˆ—
     void Render(ID3D11DeviceContext* dc, Shader* shader)override;
 
-    //ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
+    //ƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
     void DrawDebugPrimitive()override;
 
-    //ç¸„å¼µã‚Šè¨­å®š
+    //“ê’£‚èİ’è
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
 
 private:
-    //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã‚’ãƒ©ãƒ³ãƒ€ãƒ è¨­å®š
+    //ƒ^[ƒQƒbƒgˆÊ’u‚ğƒ‰ƒ“ƒ_ƒ€İ’è
     void SetRandomTargetPosition();
 
-    //ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•
+    //–Ú•W’n“_‚ÖˆÚ“®
     void MoveToTarget(float elapsedTime, float speedrate);
 
-    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç´¢æ•µ
+    //ƒvƒŒƒCƒ„[õ“G
     bool SearchPlayer();
 
-    //ãƒãƒ¼ãƒ‰ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¡çªå‡¦ç†
+    //ƒm[ƒh‚ÆƒvƒŒƒCƒ„[‚ÌÕ“Ëˆ—
     void CollisionNodeVsPlayer(const char* nodeName, float boneRadius);
 
-    //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ãƒˆ
+    //œpœjƒXƒe[ƒg
     void TransitionWanderState();
 
-    //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //œpœjƒXƒe[ƒgXVˆ—
     void UpdateWanderState(float elapsedTime);
 
-    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
+    //‘Ò‹@ƒXƒe[ƒg‚Ö‘JˆÚ
     void TransitionIdleState();
 
-    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //‘Ò‹@ƒXƒe[ƒgXVˆ—
     void UpdateIdleState(float elapsedTime);
 
-    //è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
+    //’ÇÕƒXƒe[ƒg‚Ö‘JˆÚ
     void TransitionPursuitState();
 
-    //è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //’ÇÕƒXƒe[ƒgXVˆ—
     void UpdatePursuitState(float elapsedTime);
 
-    //æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
+    //UŒ‚ƒXƒe[ƒg‚Ö‘JˆÚ
     void TransitionAttackState();
 
-    //æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //UŒ‚ƒXƒe[ƒgXVˆ—
     void UpdateAttackState(float elapsedTime);
 
-    //æˆ¦é—˜å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
+    //í“¬‘Ò‹@ƒXƒe[ƒg‚É‘JˆÚ
     void TransitionIdleBattleState();
 
-    //æˆ¦é—˜å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //í“¬‘Ò‹@ƒXƒe[ƒgXVˆ—
     void UpdateIdleBattleState(float elapsedTime);
 
-    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
+    //ƒ_ƒ[ƒWƒXƒe[ƒg‚Ö‘JˆÚ
     void TransitionDamageState();
 
-    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //ƒ_ƒ[ƒWƒXƒe[ƒgXVˆ—
     void UpdateDamageState(float elapsedTime);
 
-    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
+    //€–SƒXƒe[ƒg‚Ö‘JˆÚ
     void TransitionDeathState();
 
-    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
+    //€–SƒXƒe[ƒgXVˆ—
     void UpdateDeathState(float elapsedTime);
+    //’eŠÛ”­Ë
+    void InputProjectile();
 
 private:
-    //ã‚¹ãƒ†ãƒ¼ãƒˆ
+    //ƒXƒe[ƒg
     enum class State
     {
         Wander,
@@ -94,7 +96,7 @@ private:
         Death,
     };
 
-    //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
+    //ƒAƒjƒ[ƒVƒ‡ƒ“
     enum Animation
     {
         Anim_IdleNormal,
@@ -114,10 +116,10 @@ private:
         Anim_Die,
     };
 protected:
-    //æ­»äº¡ã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
+    //€–S‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
     void OnDead() override;
 
-    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãŸæ™‚ã«å‘¼ã°ã‚Œã‚‹
+    //ƒ_ƒ[ƒW‚ğó‚¯‚½‚ÉŒÄ‚Î‚ê‚é
     void OnDamaged()override;
 private:
     Model* model = nullptr;
@@ -132,5 +134,6 @@ private:
     float attackRange = 1.0f;
     float syuziRange = 1.5f;
     bool atknow;
-    float delay = 0.0f;
+
+    ProjectileManager projectileManager;
 };
