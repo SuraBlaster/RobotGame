@@ -14,6 +14,9 @@ private:
     //移動入力処理
     bool InputMove(float elapsedTime);
 
+    //剣攻撃時の移動入力処理
+    bool InputMoveSword(float elapsedTime);
+
     //攻撃入力処理
     bool InputAttack();
 
@@ -65,9 +68,6 @@ private:
 
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
-
-    //武器のアタッチ処理
-    void AttachWeapon();
 
 protected:
     //ダメージを受けた時に呼ばれる
@@ -176,4 +176,6 @@ private:
 
     //今バリアが展開されているかどうか
     bool firstFlag = false;
+
+    int attackStage = 0;
 };

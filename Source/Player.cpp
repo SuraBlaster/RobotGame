@@ -126,6 +126,18 @@ bool Player::InputMove(float elapsedTime)
     return moveVec.x != 0 || moveVec.z != 0;
 }
 
+bool Player::InputMoveSword(float elapsedTime)
+{
+    //進行ベクトル取得
+    DirectX::XMFLOAT3 moveVec = GetMoveVec();
+
+    Move(moveVec.x, moveVec.z, moveSpeed * 0.2f);
+
+    Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed * 0.2f);
+
+    return moveVec.x != 0 || moveVec.z != 0;
+}
+
 bool Player::InputAttack()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
@@ -361,20 +373,58 @@ void Player::TransitionAttackState()
 
     //攻撃アニメーション再生
     model->PlayAnimation(GreatSword_Attack, false);
+
+    attackStage = 0;
 }
 
 void Player::UpdateAttackState(float elapsedTime)
 {
-    if (!model->IsPlayAnimation())
-    {
-        TransitionIdleState();
-    }
-
     //任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
     attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
-        || (animationTime >= 1.7f && animationTime < 1.85f)
+        || (animationTime >= 1.65f && animationTime < 1.85f)
         || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
+
+    InputMoveSword(elapsedTime);
+
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButtonUp() & GamePad::BTN_B)
+    {
+        if (animationTime <= 1.0f)
+        {
+            attackStage = 1;
+        }
+        else if (animationTime <= 1.85)
+        {
+            attackStage = 2;
+        }
+        else
+        {
+            attackStage = 3;
+        }
+    }
+
+    switch (attackStage)
+    {
+    case 1:
+        if (animationTime > 1.25f)
+        {
+            TransitionIdleState();
+        }
+        break;
+    case 2:
+        if (animationTime > 2.15f)
+        {
+            TransitionIdleState();
+        }
+        break;
+    case 3:
+        if (!model->IsPlayAnimation())
+        {
+            TransitionIdleState();
+        }
+        break;
+    }
 
 }
 

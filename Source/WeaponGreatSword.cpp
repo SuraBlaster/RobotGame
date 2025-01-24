@@ -114,7 +114,7 @@ void WeaponGreatSword::CollisionWeaponVsEnemies()
                 {
                     DirectX::XMFLOAT3 impulse{};
 
-                    const float power = 10.0f;
+                    const float power = 5.0f;
                     const DirectX::XMFLOAT3& e = enemy->GetPosition();
                     const DirectX::XMFLOAT3& p = weaponHitPosition;
                     float vx = e.x - p.x;
@@ -124,7 +124,7 @@ void WeaponGreatSword::CollisionWeaponVsEnemies()
                     vz /= lengthXZ;
 
                     impulse.x = vx * power;
-                    impulse.y = power * 0.5f;
+                    impulse.y = power * 0.4f;
                     impulse.z = vz * power;
 
 
