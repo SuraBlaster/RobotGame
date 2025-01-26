@@ -76,6 +76,49 @@ protected:
     //死亡したときに呼ばれる
     void OnDead()override;
 
+
+private:
+    //アニメーション
+    enum Animation
+    {
+        Dagger_Idle,
+        Dagger_Run,
+        Dagger_Shield,
+        Dagger_Jump,
+        Dagger_Attack,
+        Dagger_Damage,
+        Dagger_Death,
+        GreatSword_Idle,
+        GreatSword_Run,
+        GreatSword_Shield,
+        GreatSword_Jump,
+        GreatSword_Attack,
+        GreatSword_Damage,
+        GreatSword_Death,
+
+    };
+
+    enum class State
+    {
+        Idle,
+        Move,
+        Jump,
+        Attack,
+        Damage,
+        Death,
+        Barrier,
+    };
+
+public:
+
+    enum class WeaponType
+    {
+        GreatSword,
+        Dagger,
+    };
+
+    WeaponType weapon;
+   
 public:
     Player();
     ~Player()override;
@@ -103,6 +146,9 @@ public:
     //バリア更新処理
     void UpdateBarrier();
 
+    //武器交換
+    void ChangeWeapon();
+
     void SetRimit(const int& rimit) { barrierRimit = rimit; }
 
     const int& GetRimit() const { return barrierRimit; }
@@ -110,37 +156,8 @@ public:
     Model* GetModel() const { return model; }
 
     const bool GetAttackFlag() const { return attackCollisionFlag; }
-private:
-    //アニメーション
-    enum Animation
-    {
-        Dagger_Idle,
-        Dagger_Run,
-        Dagger_Shield,
-        Dagger_Jump,
-        Dagger_Attack,
-        Dagger_Damage,
-        Dagger_Death,
-        GreatSword_Idle,
-        GreatSword_Run,
-        GreatSword_Shield,
-        GreatSword_Jump,
-        GreatSword_Attack,
-        GreatSword_Damage,
-        GreatSword_Death,
-        
-    };
 
-    enum class State
-    {
-        Idle,
-        Move,
-        Jump,
-        Attack,
-        Damage,
-        Death,
-        Barrier,
-    };
+    WeaponType GetWeapon() const { return weapon; }
 
 private:
     ProjectileManager projectileManager;

@@ -10,6 +10,7 @@
 #include <Input/Input.h>
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
+#include <WeaponDagger.h>
 // ‰Šú‰»
 void SceneGame::Initialize()
 {
@@ -31,6 +32,9 @@ void SceneGame::Initialize()
 
 	WeaponGreatSword* greatsword = new WeaponGreatSword;
 	weaponManager.Register(greatsword);
+
+	WeaponDagger* dagger = new WeaponDagger;
+	weaponManager.Register(dagger);
 	
 	//ƒJƒƒ‰‰Šúİ’è
 	Graphics& graphics = Graphics::Instance();

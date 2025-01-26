@@ -1,25 +1,26 @@
-#include "WeaponGreatSword.h"
+#include "WeaponDagger.h"
 #include <Graphics/Graphics.h>
 #include <Graphics/DebugRenderer.h>
 #include <EnemyManager.h>
 #include <Collision.h>
-WeaponGreatSword::WeaponGreatSword()
-{
-    model = new Model("Data/Model/Sword/MagicSword.mdl");
 
-    scale.x = scale.y = scale.z = 0.7f;
-    angle.x = DirectX::XMConvertToRadians(0);
+WeaponDagger::WeaponDagger()
+{
+    model = new Model("Data/Model/Sword/Knife.mdl");
+
+    scale.x = scale.y = scale.z = 10.0f;
+    angle.x = DirectX::XMConvertToRadians(-30);
     angle.y = DirectX::XMConvertToRadians(-90);
-    angle.z = DirectX::XMConvertToRadians(-10);
+    angle.z = DirectX::XMConvertToRadians(80);
 }
 
-WeaponGreatSword::~WeaponGreatSword()
+WeaponDagger::~WeaponDagger()
 {
     delete model;
     model = nullptr;
 }
 
-void WeaponGreatSword::Update(float elapsedTime)
+void WeaponDagger::Update(float elapsedTime)
 {
     Player& player = Player::Instance();
 
@@ -29,6 +30,8 @@ void WeaponGreatSword::Update(float elapsedTime)
 
     UpdateTransform();
 
+  
+    
     //キャラクターモデルから右手ノードを検索する
     for (const Model::Node& node : player.GetModel()->GetNodes())
     {
@@ -46,26 +49,23 @@ void WeaponGreatSword::Update(float elapsedTime)
     }
 
     model->UpdateTransform(transform);
-        
-    if (player.GetWeapon() == Player::WeaponType::GreatSword)
+
+    if (player.GetWeapon() == Player::WeaponType::Dagger)
     {
         if (player.GetAttackFlag())
         {
             CollisionWeaponVsEnemies();
         }
 
-        scale.x = scale.y = scale.z = 0.7f;
+        scale.x = scale.y = scale.z = 10.0f;
     }
     else
     {
         scale.x = scale.y = scale.z = 0.0f;
     }
-
-    
-    
 }
 
-void WeaponGreatSword::Render(ID3D11DeviceContext* dc, Shader* shader)
+void WeaponDagger::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
@@ -77,18 +77,18 @@ void WeaponGreatSword::Render(ID3D11DeviceContext* dc, Shader* shader)
     DirectX::XMStoreFloat3(&weaponHitPosition, hitPosition);
 
     Player& player = Player::Instance();
-    if (player.GetAttackFlag() && player.GetWeapon() == Player::WeaponType::GreatSword)
+    if (player.GetAttackFlag() && player.GetWeapon() == Player::WeaponType::Dagger)
     {
         debugRenderer->DrawSphere(weaponHitPosition, weaponHitRadius, { 1,0,1,1 });
     }
-    
+
 
     shader->Draw(dc, model);
 }
 
 
 //プレイヤーとエネミーとの衝突判定
-void WeaponGreatSword::CollisionWeaponVsEnemies()
+void WeaponDagger::CollisionWeaponVsEnemies()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();
 
@@ -133,9 +133,9 @@ void WeaponGreatSword::CollisionWeaponVsEnemies()
                     vx /= lengthXZ;
                     vz /= lengthXZ;
 
-                    impulse.x = vx * power;
+                    impulse.x = vx * power * 20.0f;
                     impulse.y = power * 0.4f;
-                    impulse.z = vz * power;
+                    impulse.z = vz * power * 20.0f;
 
 
                     enemy->AddImpulse(impulse);

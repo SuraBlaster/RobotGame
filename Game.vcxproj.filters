@@ -195,6 +195,9 @@
     <ClInclude Include="Source\WeaponGreatSword.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\WeaponDagger.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -339,6 +342,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\WeaponGreatSword.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponDagger.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -27,11 +27,9 @@ Player::Player()
     //インスタンスポインタ取得
     instance = this;
 
-    
-
     //エフェクト読み込み
     hitEffect = new Effect("Data/Effect/thunder.efk");
-    barrier = new Effect("Data/Effect/Barrier.efk");
+    barrier = new Effect("Data/Effect/Barrier.efkefc");
 
     //待機ステートへ遷移
     TransitionIdleState();
@@ -109,6 +107,8 @@ void Player::Update(float elapsedTime)
     model->UpdateTransform(transform);
 
     UpdateBarrier();
+
+    ChangeWeapon();
 }
 
 
@@ -272,9 +272,15 @@ void Player::TransitionIdleState()
     state = State::Idle;
 
     //待機アニメーション再生
-    model->PlayAnimation(GreatSword_Idle, true);
-
-
+    switch (weapon)
+    {
+    case WeaponType::GreatSword:
+        model->PlayAnimation(GreatSword_Idle, true);
+        break;
+    case WeaponType::Dagger:
+        model->PlayAnimation(Dagger_Idle, true);
+        break;
+    }
 }
 
 void Player::UpdateIdleState(float elapsedTime)
@@ -315,7 +321,15 @@ void Player::TransitionMoveState()
     state = State::Move;
 
     //走りアニメーション再生
-    model->PlayAnimation(GreatSword_Run, true);
+    switch (weapon)
+    {
+    case WeaponType::GreatSword:
+        model->PlayAnimation(GreatSword_Run, true);
+        break;
+    case WeaponType::Dagger:
+        model->PlayAnimation(Dagger_Run, true);
+        break;
+    }
 }
 
 void Player::UpdateMoveState(float elapsedTime)
@@ -372,59 +386,118 @@ void Player::TransitionAttackState()
     state = State::Attack;
 
     //攻撃アニメーション再生
-    model->PlayAnimation(GreatSword_Attack, false);
-
+    switch (weapon)
+    {
+    case WeaponType::GreatSword:
+        model->PlayAnimation(GreatSword_Attack, false);
+        break;
+    case WeaponType::Dagger:
+        model->PlayAnimation(Dagger_Attack, false);
+        break;
+    }
+    
     attackStage = 0;
 }
 
 void Player::UpdateAttackState(float elapsedTime)
 {
-    //任意のアニメーション再生区間でのみ衝突判定処理をする
-    float animationTime = model->GetCurrentAnimationSeconds();
-    attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
-        || (animationTime >= 1.65f && animationTime < 1.85f)
-        || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
-
-    InputMoveSword(elapsedTime);
-
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonUp() & GamePad::BTN_B)
+    switch (weapon)
     {
-        if (animationTime <= 1.0f)
+    case WeaponType::GreatSword:
         {
-            attackStage = 1;
-        }
-        else if (animationTime <= 1.85)
-        {
-            attackStage = 2;
-        }
-        else
-        {
-            attackStage = 3;
-        }
-    }
+        //任意のアニメーション再生区間でのみ衝突判定処理をする
+        float animationTime = model->GetCurrentAnimationSeconds();
+        attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
+            || (animationTime >= 1.65f && animationTime < 1.85f)
+            || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
 
-    switch (attackStage)
-    {
-    case 1:
-        if (animationTime > 1.25f)
+        InputMoveSword(elapsedTime);
+
+        GamePad& gamePad = Input::Instance().GetGamePad();
+        if (gamePad.GetButtonUp() & GamePad::BTN_B)
         {
-            TransitionIdleState();
+            if (animationTime <= 1.0f)
+            {
+                attackStage = 1;
+            }
+            else if (animationTime <= 1.85)
+            {
+                attackStage = 2;
+            }
+            else
+            {
+                attackStage = 3;
+            }
+        }
+
+        switch (attackStage)
+        {
+        case 1:
+            if (animationTime > 1.25f)
+            {
+                TransitionIdleState();
+            }
+            break;
+        case 2:
+            if (animationTime > 2.15f)
+            {
+                TransitionIdleState();
+            }
+            break;
+        case 3:
+            if (!model->IsPlayAnimation())
+            {
+                TransitionIdleState();
+            }
+            break;
+        }
+        
         }
         break;
-    case 2:
-        if (animationTime > 2.15f)
+
+    case WeaponType::Dagger:
         {
-            TransitionIdleState();
-        }
-        break;
-    case 3:
-        if (!model->IsPlayAnimation())
-        {
-            TransitionIdleState();
+            float animationTime = model->GetCurrentAnimationSeconds();
+            attackCollisionFlag = (animationTime >= 0.5f && animationTime < 0.8f)
+                || (animationTime >= 1.0f && animationTime < 1.6f)
+                || (animationTime >= 2.3f && animationTime < 2.8f) ? true : false;
+
+            InputMoveSword(elapsedTime);
+
+            GamePad& gamePad = Input::Instance().GetGamePad();
+            if (gamePad.GetButtonUp() & GamePad::BTN_B)
+            {
+                if (animationTime <= 0.8f)
+                {
+                    attackStage = 1;
+                }
+                else
+                {
+                    attackStage = 2;
+                }
+            }
+
+            switch (attackStage)
+            {
+            case 1:
+                if (animationTime > 1.0f)
+                {
+                    attackCollisionFlag = false;
+                    TransitionIdleState();
+                }
+                break;
+            case 2:
+                if (!model->IsPlayAnimation())
+                {
+                    TransitionIdleState();
+                }
+                break;
+            }
+
         }
         break;
     }
+    
 
 }
 
@@ -433,7 +506,15 @@ void Player::TransitionDamageState()
     state = State::Damage;
 
     //ダメージアニメーション再生
-    model->PlayAnimation(GreatSword_Damage, false);
+    switch (weapon)
+    {
+    case WeaponType::GreatSword:
+        model->PlayAnimation(GreatSword_Damage, false);
+        break;
+    case WeaponType::Dagger:
+        model->PlayAnimation(Dagger_Damage, false);
+        break;
+    }
 }
 
 void Player::UpdateDamageState(float elapsedTime)
@@ -450,7 +531,16 @@ void Player::TransitionDeathState()
     state = State::Death;
 
     //死亡アニメーション再生
-    model->PlayAnimation(GreatSword_Death, false);
+    switch (weapon)
+    {
+    case WeaponType::GreatSword:
+        model->PlayAnimation(GreatSword_Death, false);
+        break;
+    case WeaponType::Dagger:
+        model->PlayAnimation(Dagger_Death, false);
+        break;
+    }
+ 
 }
 
 void Player::UpdateDeathState(float elapsedTime)
@@ -466,8 +556,15 @@ void Player::TransitionBarrierState()
     state = State::Barrier;
 
     //障壁展開っぽいアニメーション再生
-    model->PlayAnimation(GreatSword_Shield, false);
-    
+    switch (weapon)
+    {
+    case WeaponType::GreatSword:
+        model->PlayAnimation(GreatSword_Shield, false);
+        break;
+    case WeaponType::Dagger:
+        model->PlayAnimation(Dagger_Shield, false);
+        break;
+    }
 }
 
 void Player::UpdateBarrierState(float elapsedTime)
@@ -664,10 +761,22 @@ void Player::UpdateBarrier()
         barrier->SetEffectColor(barrierEffectHandle,{255,0,0});
     }
 
-    
-
-
     barrier->SetPosition(barrierEffectHandle, position);
+}
+
+void Player::ChangeWeapon()
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButtonDown() & GamePad::BTN_2)
+    {
+        weapon = WeaponType::GreatSword;
+        TransitionIdleState();
+    }
+    else if (gamePad.GetButtonDown() & GamePad::BTN_3)
+    {
+        weapon = WeaponType::Dagger;
+        TransitionIdleState();
+    }
 }
 
 //描画処理
