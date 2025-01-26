@@ -133,9 +133,9 @@ void WeaponDagger::CollisionWeaponVsEnemies()
                     vx /= lengthXZ;
                     vz /= lengthXZ;
 
-                    impulse.x = vx * power * 20.0f;
-                    impulse.y = power * 0.4f;
-                    impulse.z = vz * power * 20.0f;
+                    impulse.x = vx * power * 5.0f;
+                    impulse.y = power * 0.1f;
+                    impulse.z = vz * power * 5.0f;
 
 
                     enemy->AddImpulse(impulse);

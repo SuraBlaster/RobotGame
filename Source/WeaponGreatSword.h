@@ -23,6 +23,6 @@ private:
 
     float weaponHitRadius = 0.7f;
 
-    DirectX::XMFLOAT3					weaponHitOffset = { 0, 0, 130.0f };
+    DirectX::XMFLOAT3					weaponHitOffset = { 0, 0, 100.0f };
 
 };

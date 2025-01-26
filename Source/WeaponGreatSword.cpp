@@ -133,9 +133,9 @@ void WeaponGreatSword::CollisionWeaponVsEnemies()
                     vx /= lengthXZ;
                     vz /= lengthXZ;
 
-                    impulse.x = vx * power;
-                    impulse.y = power * 0.4f;
-                    impulse.z = vz * power;
+                    impulse.x = vx * power * 5.0f;
+                    impulse.y = power * 0.1f;
+                    impulse.z = vz * power * 5.0f;
 
 
                     enemy->AddImpulse(impulse);
