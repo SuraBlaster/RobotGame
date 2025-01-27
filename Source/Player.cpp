@@ -153,8 +153,9 @@ bool Player::InputMoveSword(float elapsedTime)
 bool Player::InputAttack()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_B)
+    Mouse& mouse = Input::Instance().GetMouse();
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     {
         return true;
     }
@@ -393,7 +394,9 @@ void Player::UpdateAttackState(float elapsedTime)
     InputMoveSword(elapsedTime);
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonUp() & GamePad::BTN_B)
+    Mouse& mouse = Input::Instance().GetMouse();
+    if(mouse.GetButtonDown()& Mouse::BTN_LEFT)
+    //if (gamePad.GetButtonUp() & GamePad::BTN_B)
     {
         if (animationTime <= 1.0f)
         {
