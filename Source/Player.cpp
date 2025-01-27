@@ -8,6 +8,8 @@
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include <ProjectileHoming.h>
+#include "SceneLoading.h"
+#include "SceneTitle.h"
 
 static Player* instance = nullptr;
 
@@ -470,7 +472,7 @@ void Player::UpdateDeathState(float elapsedTime)
 {
     if (!model->IsPlayAnimation())
     {
-        
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
 }
 
