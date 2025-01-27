@@ -398,8 +398,8 @@ void Player::UpdateAttackState(float elapsedTime)
 
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
-    if(mouse.GetButtonDown()& Mouse::BTN_LEFT)
-    //if (gamePad.GetButtonUp() & GamePad::BTN_B)
+    
+    if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
     {
         if (animationTime <= 1.0f)
         {
