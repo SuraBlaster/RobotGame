@@ -31,6 +31,8 @@ Player::Player()
     hitEffect = new Effect("Data/Effect/thunder.efk");
     barrier = new Effect("Data/Effect/Barrier.efkefc");
 
+    gravityDirection = GravityDirection::Under;
+
     //待機ステートへ遷移
     TransitionIdleState();
 }
@@ -109,6 +111,8 @@ void Player::Update(float elapsedTime)
     UpdateBarrier();
 
     ChangeWeapon();
+
+    ChangeGravity();
 }
 
 
@@ -776,6 +780,173 @@ void Player::ChangeWeapon()
     {
         weapon = WeaponType::Dagger;
         TransitionIdleState();
+    }
+}
+
+void Player::ChangeGravity()
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    switch (gravityDirection)
+    {
+    case GravityDirection::Under:
+        if (gamePad.GetButtonDown() & GamePad::BTN_UP)
+        {
+            gravityDirection = GravityDirection::Up;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            gravityDirection = GravityDirection::Left;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+        {
+            gravityDirection = GravityDirection::Right;
+        }
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_UP))
+        {
+            gravityDirection = GravityDirection::Front;
+        }*/
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_DOWN))
+        {
+            gravityDirection = GravityDirection::Back;
+        }*/
+
+        break;
+    case GravityDirection::Up:
+        if (gamePad.GetButtonDown() & GamePad::BTN_UP)
+        {
+            gravityDirection = GravityDirection::Under;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            gravityDirection = GravityDirection::Left;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+        {
+            gravityDirection = GravityDirection::Right;
+        }
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_UP))
+        {
+            gravityDirection = GravityDirection::Front;
+        }
+
+        if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_DOWN))
+        {
+            gravityDirection = GravityDirection::Back;
+        }*/
+        break;
+    case GravityDirection::Left:
+        if (gamePad.GetButtonDown() & GamePad::BTN_UP)
+        {
+            gravityDirection = GravityDirection::Right;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            gravityDirection = GravityDirection::Front;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+        {
+            gravityDirection = GravityDirection::Back;
+        }
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_UP))
+        {
+            gravityDirection = GravityDirection::Under;
+        }
+
+        if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_DOWN))
+        {
+            gravityDirection = GravityDirection::Up;
+        }*/
+        break;
+    case GravityDirection::Right:
+        if (gamePad.GetButtonDown() & GamePad::BTN_UP)
+        {
+            gravityDirection = GravityDirection::Left;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            gravityDirection = GravityDirection::Back;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+        {
+            gravityDirection = GravityDirection::Front;
+        }
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_UP))
+        {
+            gravityDirection = GravityDirection::Up;
+        }
+
+        if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_DOWN))
+        {
+            gravityDirection = GravityDirection::Under;
+        }*/
+        break;
+    case GravityDirection::Front:
+        if (gamePad.GetButtonDown() & GamePad::BTN_UP)
+        {
+            gravityDirection = GravityDirection::Back;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            gravityDirection = GravityDirection::Right;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+        {
+            gravityDirection = GravityDirection::Left;
+        }
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_UP))
+        {
+            gravityDirection = GravityDirection::Up;
+        }
+
+        if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_DOWN))
+        {
+            gravityDirection = GravityDirection::Under;
+        }*/
+        break;
+
+    case GravityDirection::Back:
+        if (gamePad.GetButtonDown() & GamePad::BTN_UP)
+        {
+            gravityDirection = GravityDirection::Front;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+        {
+            gravityDirection = GravityDirection::Left;
+        }
+
+        if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT)
+        {
+            gravityDirection = GravityDirection::Right;
+        }
+
+        /*if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_UP))
+        {
+            gravityDirection = GravityDirection::Under;
+        }
+
+        if (gamePad.GetButtonDown() & (GamePad::BTN_SHIFT && GamePad::BTN_DOWN))
+        {
+            gravityDirection = GravityDirection::Up;
+        }*/
+        break;
     }
 }
 

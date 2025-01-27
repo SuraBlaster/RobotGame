@@ -135,18 +135,46 @@ void GamePad::Update()
 		float ly = 0.0f;
 		float rx = 0.0f;
 		float ry = 0.0f;
+
+		// WASDで左スティックを操作
 		if (GetAsyncKeyState('W') & 0x8000) ly = 1.0f;
 		if (GetAsyncKeyState('A') & 0x8000) lx = -1.0f;
 		if (GetAsyncKeyState('S') & 0x8000) ly = -1.0f;
 		if (GetAsyncKeyState('D') & 0x8000) lx = 1.0f;
+
+		// IJKLで右スティックを操作
 		if (GetAsyncKeyState('I') & 0x8000) ry = 1.0f;
 		if (GetAsyncKeyState('J') & 0x8000) rx = -1.0f;
 		if (GetAsyncKeyState('K') & 0x8000) ry = -1.0f;
 		if (GetAsyncKeyState('L') & 0x8000) rx = 1.0f;
+
+		// 左スティック（WASD）の正規化
+		if (lx != 0.0f || ly != 0.0f) {
+			float power = ::sqrtf(lx * lx + ly * ly);
+			axisLx = lx / power;
+			axisLy = ly / power;
+		}
+		else {
+			axisLx = 0.0f;
+			axisLy = 0.0f;
+		}
+
+		// 右スティック（IJKL）の正規化
+		if (rx != 0.0f || ry != 0.0f) {
+			float power = ::sqrtf(rx * rx + ry * ry);
+			axisRx = rx / power;
+			axisRy = ry / power;
+		}
+		else {
+			axisRx = 0.0f;
+			axisRy = 0.0f;
+		}
+
 		if (GetAsyncKeyState('Z') & 0x8000) newButtonState |= BTN_A;
 		if (GetAsyncKeyState('X') & 0x8000) newButtonState |= BTN_B;
 		if (GetAsyncKeyState('C') & 0x8000) newButtonState |= BTN_X;
 		if (GetAsyncKeyState('V') & 0x8000) newButtonState |= BTN_Y;
+
 		if (GetAsyncKeyState(VK_UP) & 0x8000)	newButtonState |= BTN_UP;
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)	newButtonState |= BTN_RIGHT;
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000)	newButtonState |= BTN_DOWN;
@@ -157,29 +185,8 @@ void GamePad::Update()
 		if (GetAsyncKeyState('3') & 0x8000) newButtonState |= BTN_3;
 		if (GetAsyncKeyState('4') & 0x8000) newButtonState |= BTN_4;
 
-#if 1
-		if (newButtonState & BTN_UP)    ly = 1.0f;
-		if (newButtonState & BTN_RIGHT) lx = 1.0f;
-		if (newButtonState & BTN_DOWN)  ly = -1.0f;
-		if (newButtonState & BTN_LEFT)  lx = -1.0f;
-#endif
-
-		if (lx >= 1.0f || lx <= -1.0f || ly >= 1.0f || ly <= -1.0)
-		{
-			float power = ::sqrtf(lx * lx + ly * ly);
-			axisLx = lx / power;
-			axisLy = ly / power;
-		}
-
-		if (rx >= 1.0f || rx <= -1.0f || ry >= 1.0f || ry <= -1.0)
-		{
-			float power = ::sqrtf(rx * rx + ry * ry);
-			axisRx = rx / power;
-			axisRy = ry / power;
-		}
+		if(GetAsyncKeyState(VK_SHIFT) & 0x8000) newButtonState |= BTN_SHIFT;
 	}
-
-
 
 	// ボタン情報の更新
 	{

@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "Mathf.h"
 #include "StageManager.h"
+#include <Player.h>
 //行列更新処理
 void Character::UpdateTransform()
 {
@@ -144,7 +145,31 @@ void Character::UpdateInvincibleTimer(float elapsedTime)
 void Character::UpdateVerticalVelocity(float elapsedFrame)
 {
     //重力処理
-    velocity.y += gravity * elapsedFrame;
+    switch (gravityDirection)
+    {
+    case GravityDirection::Under:
+        velocity.y += gravity * elapsedFrame;
+        break;
+    case GravityDirection::Up:
+        velocity.y -= gravity * elapsedFrame;
+        angle.z = DirectX::XMConvertToRadians(180);
+        break;
+    case GravityDirection::Left:
+        velocity.x += gravity * elapsedFrame;
+        angle.z = DirectX::XMConvertToRadians(-90);
+        break;
+    case GravityDirection::Right:
+        velocity.x -= gravity * elapsedFrame;
+        angle.z = DirectX::XMConvertToRadians(90);
+        break;
+    case GravityDirection::Front:
+        velocity.z += gravity * elapsedFrame;
+        break;
+    case GravityDirection::Back:
+        velocity.z -= gravity * elapsedFrame;
+        break;
+    }
+    
 }
 
 void Character::UpdateVerticalMove(float elapsedTime)
@@ -220,7 +245,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
         float friction = this->friction * elapsedFrame;
 
         //空中にいるときは摩擦力を減らす
-        //if (!&IsGround) friction *= airControl;
 
         if (length > friction)
         {
@@ -248,7 +272,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
             float acceleration = this->acceleration * elapsedFrame;
 
             //空中にいるときは加速力を減らす
-            //if (!&IsGround) friction *= airControl;
 
             //移動ベクトルによる加速処理
             velocity.x += moveVecX * acceleration;

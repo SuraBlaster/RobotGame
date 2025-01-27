@@ -149,6 +149,9 @@ public:
     //•ŠíŒğŠ·
     void ChangeWeapon();
 
+    //d—Í‘€ì
+    void ChangeGravity();
+
     void SetRimit(const int& rimit) { barrierRimit = rimit; }
 
     const int& GetRimit() const { return barrierRimit; }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <DirectXMath.h>
-
 class Character
 {
 public:
@@ -86,6 +85,22 @@ private:
 
     //…•½ˆÚ“®XVˆ—
     void UpdateHorizontalMove(float elapsedTime);
+
+public:
+
+    enum class GravityDirection
+    {
+        Under,
+        Up,
+        Left,
+        Right,
+        Front,
+        Back,
+    };
+
+    GravityDirection gravityDirection;
+
+
 protected:
     DirectX::XMFLOAT3 position = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle    = { 0, 0, 0 };
