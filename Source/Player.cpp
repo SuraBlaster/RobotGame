@@ -8,6 +8,8 @@
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include <ProjectileHoming.h>
+#include <SceneLoading.h>
+#include <SceneTitle.h>
 
 static Player* instance = nullptr;
 
@@ -33,6 +35,7 @@ Player::Player()
 
     //待機ステートへ遷移
     TransitionIdleState();
+
 }
 
 void Player::DrawDebugPrimitive()
@@ -121,9 +124,8 @@ void Player::Update(float elapsedTime)
     } 
     
     UpdateBarrier();
+
 }
-
-
 
 
 bool Player::InputMove(float elapsedTime)
@@ -368,7 +370,6 @@ void Player::UpdateJumpState(float elapsedTime)
     {
         TransitionIdleState();
     }
-
     //�e�ۓ��͏���
     //InputProjectile();
 }
@@ -469,7 +470,7 @@ void Player::UpdateDeathState(float elapsedTime)
 {
     if (!model->IsPlayAnimation())
     {
-        
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
 }
 
@@ -518,7 +519,7 @@ void Player::InputProjectile()
 
         ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
         projectile->Launch(dir, pos);
-        //projectileManager.Register(projectile);
+        projectileManager.Register(projectile);
 
     }
 

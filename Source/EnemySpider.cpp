@@ -7,6 +7,7 @@
 #include "ProjectileStraight.h"
 #include "Input/Input.h"
 #include "Input/GamePad.h"
+#include <EnemyManager.h>
 
 EnemySpider::EnemySpider()
 {
@@ -84,6 +85,10 @@ void EnemySpider::Update(float elapsedTime)
     model->UpdateTransform(transform);
 
     projectileManager.Update(elapsedTime);
+
+    delay -= elapsedTime;
+
+    LimitPosition();
 }
 
 
@@ -114,6 +119,28 @@ void EnemySpider::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
 {
     territoryOrigin = origin;
     territoryRange = range;
+}
+
+void EnemySpider::LimitPosition()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    //‚·‚×‚Ä‚Ì“G‚Æ‘“–‚½‚è‚ÅÕ“Ë”»’è
+    int enemyCount = enemyManager.GetEnemyCount();
+
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+
+        if (enemy->GetPosition().y > 10.0f ||
+            (enemy->GetPosition().x < -10.0f || enemy->GetPosition().x < 10.0f) ||
+            enemy->GetPosition().z < -10.0f || enemy->GetPosition().z < 10.0f)
+        {
+            position.y = 10.0f;
+
+        }
+
+    }
 }
 
 void EnemySpider::SetRandomTargetPosition()
@@ -193,6 +220,7 @@ void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 
         Player& player = Player::Instance();
         DirectX::XMFLOAT3 outPosition;
+        int playerLimit = player.GetRimit();
         if (Collision::IntersectSphereVsCylinder(
             nodePosition,
             nodeRadius,
@@ -201,28 +229,39 @@ void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
             player.GetHeight(),
             outPosition))
         {
-            //ƒ_ƒ[ƒW‚ğ—^‚¦‚é
-            if (player.ApplyDamage(1))
+            if (playerLimit > 0 && delay <= 0.0f)
             {
-                //“G‚ğ‚Á”ò‚Î‚·ƒxƒNƒgƒ‹‚ğZo
-                DirectX::XMFLOAT3 vec;
-                vec.x = outPosition.x - nodePosition.x;
-                vec.z = outPosition.z - nodePosition.z;
-                float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
-                vec.x /= length;
-                vec.z /= length;
-
-                //XZ•½–Ê‚É‚Á”ò‚Î‚·—Í‚ğŠ|‚¯‚é
-                float power = 1.0f;
-                vec.x *= power;
-                vec.z *= power;
-
-                //Y•ûŒü‚É‚à—Í‚ğŠ|‚¯‚é
-                vec.y = 1.0f;
-
-                //‚Á”ò‚Î‚·
-               // player.AddImpulse(vec);
+                playerLimit--;
+                delay = 0.1f;
+                player.SetRimit(playerLimit);
             }
+            else if (delay <= 0.0f)
+            {
+                //ƒ_ƒ[ƒW‚ğ—^‚¦‚é
+                if (player.ApplyDamage(1))
+                {
+                    //“G‚ğ‚Á”ò‚Î‚·ƒxƒNƒgƒ‹‚ğZo
+                    DirectX::XMFLOAT3 vec;
+                    vec.x = outPosition.x - nodePosition.x;
+                    vec.z = outPosition.z - nodePosition.z;
+                    float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
+                    vec.x /= length;
+                    vec.z /= length;
+
+                    //XZ•½–Ê‚É‚Á”ò‚Î‚·—Í‚ğŠ|‚¯‚é
+                    float power = 1.0f;
+                    vec.x *= power;
+                    vec.z *= power;
+
+                    //Y•ûŒü‚É‚à—Í‚ğŠ|‚¯‚é
+                    vec.y = 1.0f;
+
+                    //‚Á”ò‚Î‚·
+                   // player.AddImpulse(vec);
+                }
+            }
+            
+            
         }
     }
 }
