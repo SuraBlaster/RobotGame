@@ -501,74 +501,74 @@ void Player::UpdateBarrierState(float elapsedTime)
 
 
 
-void Player::InputProjectile()
-{
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_X)
-    {
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.y);
-        dir.y = 0.0f;
-        dir.z = cosf(angle.y);
-
-        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
-        
-        DirectX::XMFLOAT3 pos;
-        pos.x = Player::GetPosition().x;
-        pos.y = Player::GetPosition().y + Player::GetHeight() / 2;
-        pos.z = Player::GetPosition().z;
-
-        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-        projectile->Launch(dir, pos);
-        //projectileManager.Register(projectile);
-
-    }
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_Y)
-    {
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.y);
-        dir.y = 0.0f;
-        dir.z = cosf(angle.y);
-
-        DirectX::XMFLOAT3 pos;
-        pos.x = position.x;
-        pos.y = position.y + height / 2;
-        pos.z = position.z;
-
-        DirectX::XMFLOAT3 target;
-        target.x = pos.x + dir.x * 1000.0f;
-        target.y = pos.y + dir.y * 1000.0f;
-        target.z = pos.z + dir.z * 1000.0f;
-
-        float dist = FLT_MAX;
-        EnemyManager& enemyManager = EnemyManager::Instance();
-        int enemyCount = enemyManager.GetEnemyCount();
-
-        for (int i = 0; i < enemyCount; ++i)
-        {
-            Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
-            DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
-            DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
-            DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
-            DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
-
-            float d;
-            DirectX::XMStoreFloat(&d, D);
-            if (d < dist)
-            {
-                dist = d;
-                target = enemy->GetPosition();
-                target.y += enemy->GetHeight() * 0.5f;
-            }
-        }
-
-        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
-        projectile->Launch(dir, pos, target);
-    }
-    
-}
+//void Player::InputProjectile()
+//{
+//    GamePad& gamePad = Input::Instance().GetGamePad();
+//
+//    if (gamePad.GetButtonDown() & GamePad::BTN_X)
+//    {
+//        DirectX::XMFLOAT3 dir;
+//        dir.x = sinf(angle.y);
+//        dir.y = 0.0f;
+//        dir.z = cosf(angle.y);
+//
+//        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
+//        
+//        DirectX::XMFLOAT3 pos;
+//        pos.x = Player::GetPosition().x;
+//        pos.y = Player::GetPosition().y + Player::GetHeight() / 2;
+//        pos.z = Player::GetPosition().z;
+//
+//        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
+//        projectile->Launch(dir, pos);
+//        //projectileManager.Register(projectile);
+//
+//    }
+//
+//    if (gamePad.GetButtonDown() & GamePad::BTN_Y)
+//    {
+//        DirectX::XMFLOAT3 dir;
+//        dir.x = sinf(angle.y);
+//        dir.y = 0.0f;
+//        dir.z = cosf(angle.y);
+//
+//        DirectX::XMFLOAT3 pos;
+//        pos.x = position.x;
+//        pos.y = position.y + height / 2;
+//        pos.z = position.z;
+//
+//        DirectX::XMFLOAT3 target;
+//        target.x = pos.x + dir.x * 1000.0f;
+//        target.y = pos.y + dir.y * 1000.0f;
+//        target.z = pos.z + dir.z * 1000.0f;
+//
+//        float dist = FLT_MAX;
+//        EnemyManager& enemyManager = EnemyManager::Instance();
+//        int enemyCount = enemyManager.GetEnemyCount();
+//
+//        for (int i = 0; i < enemyCount; ++i)
+//        {
+//            Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
+//            DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
+//            DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
+//            DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
+//            DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
+//
+//            float d;
+//            DirectX::XMStoreFloat(&d, D);
+//            if (d < dist)
+//            {
+//                dist = d;
+//                target = enemy->GetPosition();
+//                target.y += enemy->GetHeight() * 0.5f;
+//            }
+//        }
+//
+//        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
+//        projectile->Launch(dir, pos, target);
+//    }
+//    
+//}
 
 
 //ジャンプ入力

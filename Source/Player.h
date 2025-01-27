@@ -21,7 +21,7 @@ private:
     //攻撃入力処理
     bool InputAttack();
 
-    void InputProjectile();
+    //void InputProjectile();
 
     void CollisionPlayerVsEnemies();
 
