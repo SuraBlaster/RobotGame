@@ -247,9 +247,9 @@ void SceneGame::Render()
 
 	// 3Dデバッグ描画
 	{
-		EnemyManager::Instance().DrawDebugPrimitive();
+		//EnemyManager::Instance().DrawDebugPrimitive();
 
-		player->DrawDebugPrimitive();
+		//player->DrawDebugPrimitive();
 		// ラインレンダラ描画実行
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
 
