@@ -265,7 +265,7 @@ void SceneGame::Render()
 
 	// 2DデバッグGUI描画
 	{
-		player->DrawDebugGUI();
+		//player->DrawDebugGUI();
 	}
 }
 
