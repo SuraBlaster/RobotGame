@@ -230,7 +230,7 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                     vec.z *= power;
 
                     //Y方向にも力を掛ける
-                    vec.y = 5.0f;
+                    //vec.y = 5.0f;
 
                     //吹っ飛ばす
                     //player.AddImpulse(vec);

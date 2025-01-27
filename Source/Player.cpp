@@ -195,11 +195,12 @@ void Player::CollisionPlayerVsEnemies()
             if (normal.y > 0.8f)
 
                 //小ジャンプ
-                Jump(jumpSpeed * 0.5f);
+                Jump(jumpSpeed * 0.5f); 
+            enemy->SetPosition(outPosition);
         }
         else
         {
-            enemy->SetPosition(outPosition);
+           
         }
 
 
