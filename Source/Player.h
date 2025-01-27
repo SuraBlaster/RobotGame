@@ -5,6 +5,7 @@
 #include "Character.h"
 #include "ProjectileManager.h"
 #include "Effect.h"
+#include "SceneManager.h"
 
 class Player : public Character
 {
@@ -181,4 +182,5 @@ private:
     bool firstFlag = false;
 
     int attackStage = 0;
+
 };
