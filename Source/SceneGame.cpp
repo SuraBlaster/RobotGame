@@ -397,6 +397,7 @@ void SceneGame::RenderEnemyGauge(
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	//if(gamePad.GetButtonUp()& GamePad::BTN_B)
+	//ここ敵の増殖
 	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
 	{
 		DirectX::XMFLOAT3 screenPosition;
