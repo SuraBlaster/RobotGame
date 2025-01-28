@@ -11,7 +11,7 @@
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
 #include <WeaponDagger.h>
-#include "ShieldGauge.h"
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -179,7 +179,7 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		ShieldGauge::Render();
+		shieldGauge->Render();
 
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 	}
