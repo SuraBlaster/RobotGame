@@ -2,6 +2,7 @@
 #include "Debugs/Debug.h"
 #include "Input/Input.h"
 #include "Camera.h"
+#include "imgui.h"
 
 Debug::Debug()
 {
@@ -44,16 +45,16 @@ bool Debug::Update(float elapsedTime, DirectX::XMFLOAT3 beforeTarget)
 
 void Debug::RenderGui()
 {
-#ifdef USE_IMGUI
+
     ImGui::SetNextWindowPos(ImVec2(1069, 34), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(183, 130), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Debugs", nullptr, ImGuiWindowFlags_None))
     {
-        if (!_isDebugMode)
+        if (!isDebugMode)
         {
             if (ImGui::Button("DebugModeOn"))
             {
-                _isDebugMode = true;
+                isDebugMode = true;
             }
         }
         else
@@ -66,27 +67,27 @@ void Debug::RenderGui()
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 1.0f,0.2f,0.2f,1.0f });
             if (ImGui::Button("DebugModeOff"))
             {
-                _isDebugMode = false;
+                isDebugMode = false;
             }
             ImGui::PopStyleColor(3);
         }
-        if (_isDebugMode)
+        if (isDebugMode)
         {
             if (ImGui::Button("SpeedDown"))
             {
-                _speed -= 5.0f;
+                speed -= 5.0f;
             }
 
-            ImGui::DragFloat("Speed", &_speed, 0.01f);
+            ImGui::DragFloat("Speed", &speed, 0.01f);
 
             if (ImGui::Button("SpeedUp"))
             {
-                _speed += 5.0f;
+                speed += 5.0f;
             }
         }
     }
     ImGui::End();
-#endif
+
 }
 
 DirectX::XMFLOAT3 Debug::GetMoveVec()

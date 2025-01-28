@@ -4,7 +4,7 @@
 #include "Stage.h"
 #include "Debugs/Debug.h"
 #include "Input/Input.h"
-//#include "Imgui/imgui.h"
+#include "imgui.h"
 
 void CameraController::Update(float elapsedTime)
 {
@@ -225,7 +225,6 @@ void CameraController::UpdateNormal(float elapsedTime, float range)
 
 void CameraController::DrawDebugGUI()
 {
-#ifdef USE_IMGUI
     ImGui::SetNextWindowPos(ImVec2(961, 201), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("CameraContollor", nullptr, ImGuiWindowFlags_None))
@@ -234,21 +233,20 @@ void CameraController::DrawDebugGUI()
         {
             //位置
             //ImGui::InputFloat3("Target", &target.x);
-            ImGui::SliderFloat3("Target", &_target.x, -100, +100);
+            ImGui::SliderFloat3("Target", &target.x, -100, +100);
             //回転
             DirectX::XMFLOAT3 a;
-            a.x = DirectX::XMConvertToDegrees(_angle.x);
-            a.y = DirectX::XMConvertToDegrees(_angle.y);
-            a.z = DirectX::XMConvertToDegrees(_angle.z);
+            a.x = DirectX::XMConvertToDegrees(angle.x);
+            a.y = DirectX::XMConvertToDegrees(angle.y);
+            a.z = DirectX::XMConvertToDegrees(angle.z);
             ImGui::InputFloat3("angle", &a.x);
-            _angle.x = DirectX::XMConvertToRadians(a.x);
-            _angle.y = DirectX::XMConvertToRadians(a.y);
-            _angle.z = DirectX::XMConvertToRadians(a.z);
+            angle.x = DirectX::XMConvertToRadians(a.x);
+            angle.y = DirectX::XMConvertToRadians(a.y);
+            angle.z = DirectX::XMConvertToRadians(a.z);
 
             //スケール
             //ImGui::InputFloat3("scale", &scale.x);
         }
     }
     ImGui::End();
-#endif
 }

@@ -12,6 +12,8 @@
 #include "StageMoveFloor.h"
 #include "SceneManager.h"
 #include <Input/Input.h>
+#include "Debugs/Debug.h"
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -146,6 +148,9 @@ void SceneGame::Update(float elapsedTime)
 	target.y += 0.5f;
 	if (!isPause)
 	{
+		if (Debug::Instance().Update(elapsedTime, target))
+			return;
+
 		//ステージ更新処理
 		StageManager::Instance().Update(elapsedTime);
 
@@ -271,6 +276,9 @@ void SceneGame::Render()
 	// 2DデバッグGUI描画
 	{
 		player->DrawDebugGUI();
+		cameraController->DrawDebugGUI();
+		Debug::Instance().RenderGui();
+
 	}
 }
 
