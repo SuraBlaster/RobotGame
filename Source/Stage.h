@@ -6,7 +6,7 @@
 class Stage
 {
 public:
-    Stage(){}
+    Stage();
     virtual ~Stage(){}
 
     //更新処理
@@ -16,6 +16,7 @@ public:
     virtual void Render(ID3D11DeviceContext* dc, Shader* shader) = 0;
 
     //レイキャスト
-    virtual bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
-        HitResult& hit) = 0;
+    virtual bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit) = 0;
+    static Stage& Instance();
+    //bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 };
