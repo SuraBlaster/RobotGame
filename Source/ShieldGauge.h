@@ -5,15 +5,20 @@
 class ShieldGauge
 {
 public:
-    ShieldGauge();
-    ~ShieldGauge();
+    ShieldGauge() {};
+    ~ShieldGauge() {};
 
-    void Update();
+    void Initialize();
+
+    void Update(float elapsedTime);
 
     void Render();
 
 private:
     std::unique_ptr<Sprite> sprite[2];
-    float ShieldTimer = 0;
+  
+    float ShieldDelay = 0;
     float ShieldBack = 0;
+    float ShieldTimer = 0;
+    bool hit = false;
 };

@@ -57,6 +57,9 @@ void SceneGame::Initialize()
 
 	//ゲージスプライト
 	gauge = new Sprite();
+
+	shieldGauge = std::make_unique<ShieldGauge>();
+	shieldGauge->Initialize();
 }
 
 // 終了化
@@ -115,6 +118,8 @@ void SceneGame::Update(float elapsedTime)
 
 	//エフェクト更新処理
 	EffectManager::Instance().Update(elapsedTime);
+
+	shieldGauge->Update(elapsedTime);
 }
 
 // 描画処理

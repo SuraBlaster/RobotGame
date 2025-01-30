@@ -106,9 +106,10 @@ void Player::Update(float elapsedTime)
 
     model->UpdateTransform(transform);
 
-    UpdateBarrier();
+    UpdateBarrier(elapsedTime);
 
     ChangeWeapon();
+
 }
 
 
@@ -573,8 +574,8 @@ void Player::UpdateBarrierState(float elapsedTime)
 
     if (animationTime >= 0.5f)
     {
-        firstFlag = true;
-        barrierRimit = 5;
+        ShieldTimer = 30;
+        ShieldFlag = true;
     }
 
     if (!model->IsPlayAnimation())
@@ -742,26 +743,33 @@ void Player::CollisionprojectilesVsEnemies()
     }
 }
 
-void Player::UpdateBarrier()
+void Player::UpdateBarrier(float elapsedTime)
 {
-    if (barrierRimit > 0 && barrierEffectHandle < 0)
+
+    if (ShieldTimer <= 30 && barrierEffectHandle < 0 && ShieldFlag == true)
     {
         barrierEffectHandle = barrier->Play(position, 0.5f);
-        firstFlag = false;
     }
 
-    if (barrierRimit <= 0)
+    if (ShieldTimer < 0 && ShieldFlag)
     {
         barrier->Stop(barrierEffectHandle);
         barrierEffectHandle = -1;
+        ShieldFlag = false;
     }
 
-    if (barrierRimit <= 4)
+    if (ShieldTimer <= 10 && ShieldFlag)
     {
         barrier->SetEffectColor(barrierEffectHandle,{255,0,0});
     }
 
     barrier->SetPosition(barrierEffectHandle, position);
+
+    if (ShieldTimer > 0)
+    {
+        ShieldTimer -= elapsedTime;
+    }
+    
 }
 
 void Player::ChangeWeapon()

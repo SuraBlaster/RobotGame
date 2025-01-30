@@ -3,6 +3,7 @@
 #include "Mathf.h"
 #include "Player.h"
 #include "Collision.h"
+#include <ShieldGauge.h>
 
 EnemySlime::EnemySlime()
 {
@@ -172,9 +173,10 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
         );
 
         Player& player = Player::Instance();
+
         DirectX::XMFLOAT3 outPosition;
 
-        int playerLimit = player.GetRimit();
+        int playerTimer = player.GetTimer();
 
         if (Collision::IntersectSphereVsCylinder(
             nodePosition,
@@ -184,11 +186,19 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
             player.GetHeight(),
             outPosition))
         {
-            if (playerLimit > 0 && delay <= 0.0f)
+            if (playerTimer > 0 && delay <= 0.0f)
             {
-                playerLimit--;
+                if (delay <= 0)
+                {
+                    player.SetHit(true);
+                }
+
                 delay = 0.1f;
-                player.SetRimit(playerLimit);
+ 
+                playerTimer -= 6.0f;
+                player.SetTimer(playerTimer);
+
+                
             }
             else if(delay <= 0.0f)
             {

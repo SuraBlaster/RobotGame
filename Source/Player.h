@@ -144,14 +144,10 @@ public:
     void CollisionprojectilesVsEnemies();
 
     //バリア更新処理
-    void UpdateBarrier();
+    void UpdateBarrier(float elapsedTime);
 
     //武器交換
     void ChangeWeapon();
-
-    void SetRimit(const int& rimit) { barrierRimit = rimit; }
-
-    const int& GetRimit() const { return barrierRimit; }
 
     Model* GetModel() const { return model; }
 
@@ -159,6 +155,13 @@ public:
 
     WeaponType GetWeapon() const { return weapon; }
 
+    float GetTimer() const { return ShieldTimer; }
+
+    void SetTimer(const float timer) { ShieldTimer = timer; }
+
+    bool GetHit() const { return hit; }
+
+    void SetHit(bool hit) { this->hit = hit; }
 private:
     ProjectileManager projectileManager;
 
@@ -188,11 +191,12 @@ private:
 
     State state = State::Idle;
 
-    //バリアで防げる残り回数
-    int barrierRimit = 0;
-
     //今バリアが展開されているかどうか
-    bool firstFlag = false;
+    bool ShieldFlag = false;
+
+    float ShieldTimer = 0;
+
+    bool hit = false;
 
     int attackStage = 0;
 };
