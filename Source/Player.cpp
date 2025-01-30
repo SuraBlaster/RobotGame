@@ -199,10 +199,12 @@ void Player::CollisionPlayerVsEnemies()
 
                 //小ジャンプ
                 Jump(jumpSpeed * 0.5f);
+            
+            enemy->SetPosition(outPosition);
         }
         else
         {
-            enemy->SetPosition(outPosition);
+            
         }
 
 
