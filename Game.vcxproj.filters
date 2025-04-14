@@ -201,6 +201,9 @@
     <ClInclude Include="Source\ShieldGauge.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ShieldIcon.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -351,6 +354,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShieldGauge.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShieldIcon.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

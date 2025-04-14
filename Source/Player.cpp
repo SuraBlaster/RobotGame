@@ -33,6 +33,8 @@ Player::Player()
 
     //待機ステートへ遷移
     TransitionIdleState();
+
+    ShieldCount = 3;
 }
 
 void Player::DrawDebugPrimitive()
@@ -311,10 +313,14 @@ void Player::UpdateIdleState(float elapsedTime)
         TransitionAttackState();
     }
 
-    if (gamepad.GetButtonDown() & GamePad::BTN_1)
+    if (ShieldCount > 0 && ShieldTimer <= 0)
     {
-        TransitionBarrierState();
+        if (gamepad.GetButtonDown() & GamePad::BTN_1)
+        {
+            TransitionBarrierState();
+        }
     }
+    
 }
 
 void Player::TransitionMoveState()
@@ -566,6 +572,8 @@ void Player::TransitionBarrierState()
         model->PlayAnimation(Dagger_Shield, false);
         break;
     }
+
+    ShieldCount--;
 }
 
 void Player::UpdateBarrierState(float elapsedTime)
@@ -751,7 +759,7 @@ void Player::UpdateBarrier(float elapsedTime)
         barrierEffectHandle = barrier->Play(position, 0.5f);
     }
 
-    if (ShieldTimer < 0 && ShieldFlag)
+    if (ShieldTimer <= 0 && ShieldFlag)
     {
         barrier->Stop(barrierEffectHandle);
         barrierEffectHandle = -1;
@@ -768,6 +776,11 @@ void Player::UpdateBarrier(float elapsedTime)
     if (ShieldTimer > 0)
     {
         ShieldTimer -= elapsedTime;
+    }
+
+    if (ShieldTimer < 0)
+    {
+        ShieldTimer = 0;
     }
     
 }

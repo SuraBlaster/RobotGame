@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Graphics/Sprite.h"
 #include "ShieldGauge.h"
+#include "ShieldIcon.h"
 
 // ÉQÅ[ÉÄÉVÅ[Éì
 class SceneGame : public Scene
@@ -41,4 +42,6 @@ private:
 	Sprite* gauge = nullptr;
 
 	std::unique_ptr<ShieldGauge> shieldGauge = nullptr;
+
+	std::unique_ptr<ShieldIcon> shieldIcon = nullptr;
 };

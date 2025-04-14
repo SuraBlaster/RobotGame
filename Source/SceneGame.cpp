@@ -60,6 +60,10 @@ void SceneGame::Initialize()
 
 	shieldGauge = std::make_unique<ShieldGauge>();
 	shieldGauge->Initialize();
+
+	shieldIcon = std::make_unique<ShieldIcon>();
+	shieldIcon->Initialize();
+
 }
 
 // 終了化
@@ -185,6 +189,8 @@ void SceneGame::Render()
 	// 2Dスプライト描画
 	{
 		shieldGauge->Render();
+
+		shieldIcon->Render();
 
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 	}

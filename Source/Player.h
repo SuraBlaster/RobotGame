@@ -162,6 +162,12 @@ public:
     bool GetHit() const { return hit; }
 
     void SetHit(bool hit) { this->hit = hit; }
+
+    int GetShieldCount() const { return ShieldCount; }
+
+    void SetShieldCount(int shieldCount) { this->ShieldCount = shieldCount; }
+
+
 private:
     ProjectileManager projectileManager;
 
@@ -199,4 +205,6 @@ private:
     bool hit = false;
 
     int attackStage = 0;
+
+    int ShieldCount = 0;
 };
