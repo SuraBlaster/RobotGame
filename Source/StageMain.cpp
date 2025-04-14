@@ -5,7 +5,9 @@
 //コンストラクタ
 StageMain::StageMain()
 {
-    model = new Model("Data/Model/ExampleStage/ExampleStage.mdl");
+    //model = new Model("Data/Model/ExampleStage/ExampleStage.mdl");
+    model = new Model("Data/Model/ExampleStage/tile2.mdl");
+
 }
 
 //デストラクタ
