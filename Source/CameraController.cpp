@@ -42,7 +42,7 @@ void CameraController::Update(float elapsedTime)
     }
 
     //カメラの回転値を回転行列に変換
-    DirectX::XMMATRIX transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);1
+    DirectX::XMMATRIX transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
 
     //回転行列から前方向ベクトルを取り出す
     DirectX::XMVECTOR Front = transform.r[2];
