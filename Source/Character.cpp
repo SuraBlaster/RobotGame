@@ -145,7 +145,10 @@ void Character::UpdateInvincibleTimer(float elapsedTime)
 void Character::UpdateVerticalVelocity(float elapsedFrame)
 {
     //èdóÕèàóù
-    velocity.y += gravity * elapsedFrame;
+    
+    velocity.x += gravity.x * elapsedFrame;
+    velocity.y += gravity.y * elapsedFrame;
+    velocity.z += gravity.z * elapsedFrame;
 }
 
 void Character::UpdateVerticalMove(float elapsedTime)
@@ -387,6 +390,8 @@ void Character::UpdateHorizontalMove(float elapsedTime)
             position.x = o.x;
             position.z = o.z;
 
+            velocity.x = 0.0f;
+            velocity.z = 0.0f;
         }
         else
         {

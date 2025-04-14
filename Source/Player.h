@@ -72,6 +72,18 @@ private:
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
+    //プレイヤーに対して垂直速力更新処理
+    void UpdatePVerticalVelocity(float elapsedFrame);
+
+    //プレイヤーに対して垂直移動更新処理
+    void UpdatePVerticalMove(float elapsedTime);
+
+    //プレイヤーに対して水平速力更新処理
+    void UpdatePHorizontalVelocity(float elapsedFrame);
+
+    //プレイヤーに対して水平移動更新処理
+    void UpdatePHorizontalMove(float elapsedTime);
+
 protected:
     //ダメージを受けた時に呼ばれる
     void OnDamaged()override;
@@ -105,6 +117,9 @@ public:
     void OnLanding() override;
 
     void CollisionprojectilesVsEnemies();
+
+    void UpdatePlayerVelocity(float elapsedTime);
+
 
     //バリア更新処理
     void UpdateBarrier();
@@ -179,4 +194,6 @@ private:
 
     //今バリアが展開されているかどうか
     bool firstFlag = false;
+
+    DirectX::XMFLOAT3 playerGravity = { 0.0f, -1.0f, 0.0f };
 };
