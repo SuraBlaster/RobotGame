@@ -417,8 +417,6 @@ void SceneGame::RenderEnemyGauge(
 		screenPosition.z = 0.0f;
 		DirectX::XMVECTOR WorldPosition{};
 
-
-
 		WorldPosition = DirectX::XMVector3Unproject(
 			DirectX::XMLoadFloat3(&screenPosition),
 			viewport.TopLeftX,
@@ -454,17 +452,21 @@ void SceneGame::RenderEnemyGauge(
 		DirectX::XMFLOAT3 end = { worldPosition };
 
 		HitResult hit;
+		//if (StageManager::Instance().RayCast(start, end, hit))
+		//{
+		//	EnemySlime* enemy = new EnemySlime;
+		//	enemy->SetPosition(hit.position);
+		//	EnemyManager::Instance().Register(enemy);
+		//}
+		//if (StageManager::Instance().RayCast(start, end, hit))
+		//{
+		//	EnemySpider* enemyS = new EnemySpider;
+		//	enemyS->SetPosition(hit.position);
+		//	EnemyManager::Instance().Register(enemyS);
+		//}
 		if (StageManager::Instance().RayCast(start, end, hit))
 		{
-			EnemySlime* enemy = new EnemySlime;
-			enemy->SetPosition(hit.position);
-			EnemyManager::Instance().Register(enemy);
-		}
-		if (StageManager::Instance().RayCast(start, end, hit))
-		{
-			EnemySpider* enemyS = new EnemySpider;
-			enemyS->SetPosition(hit.position);
-			EnemyManager::Instance().Register(enemyS);
+			player->ChangeGravity(hit);
 		}
 	}
 }

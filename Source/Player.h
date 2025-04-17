@@ -5,6 +5,7 @@
 #include "Character.h"
 #include "ProjectileManager.h"
 #include "Effect.h"
+#include "Collision.h"
 
 class Player : public Character
 {
@@ -84,6 +85,13 @@ private:
     //プレイヤーに対して水平移動更新処理
     void UpdatePHorizontalMove(float elapsedTime);
 
+    void UpdateGravityDown();
+    void UpdateGravityUp();
+    void UpdateGravityNoth();
+    void UpdateGravityWest();
+    void UpdateGravitySouth();
+    void UpdateGravityEast();
+
 protected:
     //ダメージを受けた時に呼ばれる
     void OnDamaged()override;
@@ -129,6 +137,8 @@ public:
     const int& GetRimit() const { return barrierRimit; }
     
     bool GetOnDamage() { return onDamage; }
+
+    void ChangeGravity(HitResult hit);
 private:
     //アニメーション
     enum Animation
@@ -157,6 +167,16 @@ private:
         Damage,
         Death,
         Barrier,
+    };
+
+    enum class Gravity
+    {
+        Down,
+        Up,
+        Noth,
+        West,
+        South,
+        East
     };
 private:
     ProjectileManager projectileManager;
@@ -196,4 +216,7 @@ private:
     bool firstFlag = false;
 
     DirectX::XMFLOAT3 playerGravity = { 0.0f, -1.0f, 0.0f };
+    DirectX::XMFLOAT3 playerDirection = { 0.0f, -1.0f, 0.0f };
+
+    Gravity gravity = Gravity::Down;
 };

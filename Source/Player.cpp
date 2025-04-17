@@ -110,7 +110,8 @@ void Player::Update(float elapsedTime)
     UpdateTransform();
     
     //走力速度更新
-    UpdateVelocity(elapsedTime);
+    //UpdateVelocity(elapsedTime);
+    UpdatePlayerVelocity(elapsedTime);
 
     UpdateInvincibleTimer(elapsedTime);
 
@@ -118,22 +119,13 @@ void Player::Update(float elapsedTime)
 
     CollisionPlayerVsEnemies();
 
-    CollisionprojectilesVsEnemies();
+    //CollisionprojectilesVsEnemies();
 
     model->UpdateAnimation(elapsedTime);
 
     model->UpdateTransform(transform);
 
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    //if (gamePad.GetButtonDown() & GamePad::BTN_SPACE)
-    //{
-    //    velocity.y+=1;
-    //} 
-    // if (gamePad.GetButtonDown() & GamePad::BTN_CONTROL)
-    //{
-    //    velocity.y-=1;
-    //} 
+    GamePad& gamePad = Input::Instance().GetGamePad(); 
     
     UpdateBarrier();
 
@@ -659,7 +651,7 @@ void Player::CollisionprojectilesVsEnemies()
                     e.y += enemy->GetHeight() * 0.5f;
                     hitEffect->Play(e);
                 }
-           }
+            }
         }
     }
 }
@@ -668,6 +660,28 @@ void Player::UpdatePlayerVelocity(float elapsedTime)
 {
     //経過フレーム
     float elapsedFrame = 60.0f * elapsedTime;
+
+    switch (gravity)
+    {
+    case Gravity::Down:
+        UpdateGravityDown();
+        break;
+    case Gravity::Up:
+        UpdateGravityUp();
+        break;
+    case Gravity::Noth:
+        UpdateGravityNoth();
+        break;
+    case Gravity::West:
+        UpdateGravityWest();
+        break;
+    case Gravity::South:
+        UpdateGravitySouth();
+        break;
+    case Gravity::East:
+        UpdateGravityEast();
+        break;
+    }
 
     //プレイヤーに対して垂直速力更新処理
     UpdatePVerticalVelocity(elapsedFrame);
@@ -680,48 +694,28 @@ void Player::UpdatePlayerVelocity(float elapsedTime)
 
     //プレイヤーに対して水平移動更新処理
     UpdatePHorizontalMove(elapsedTime);
+
+    velocity = playerDirection;
 }
 
 void Player::UpdatePVerticalVelocity(float elapsedFrame)
 {
     //重力処理
-    velocity.x += playerGravity.x * elapsedFrame;
-    velocity.y += playerGravity.y * elapsedFrame;
-    velocity.z += playerGravity.z * elapsedFrame;
+    playerDirection.x += playerGravity.x * elapsedFrame;
+    playerDirection.y += playerGravity.y * elapsedFrame;
+    playerDirection.z += playerGravity.z * elapsedFrame;
 }
 
 void Player::UpdatePVerticalMove(float elapsedTime)
 {
-    //プレイヤーの下方向
-    DirectX::XMFLOAT3 localDown = { velocity.x * elapsedTime,
-                                    velocity.y * elapsedTime,
-                                    velocity.z * elapsedTime };
+    float my = playerDirection.y * elapsedTime;
 
-    //重力方向
-    DirectX::XMFLOAT3 GravityNormal = playerGravity;
+    DirectX::XMFLOAT3 normal = { 0,1,0 };
 
-    //正規化したプレイヤーの下方向
-    DirectX::XMFLOAT3 NormalizeDown;
-    DirectX::XMStoreFloat3(&NormalizeDown,
-        DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&localDown)));
-
-    DirectX::XMFLOAT3 normal = { -NormalizeDown.x,
-                                 -NormalizeDown.y,
-                                 -NormalizeDown.z };
-
-    //落下中
-    if (NormalizeDown.x == GravityNormal.x ||
-        NormalizeDown.y == GravityNormal.y ||
-        NormalizeDown.z == GravityNormal.z)
+    if (my < 0.0f)
     {
-        DirectX::XMFLOAT3 start =
-        { position.x + (stepOffset * -GravityNormal.x),
-            position.y + (stepOffset * -GravityNormal.y),
-            position.z + (stepOffset * -GravityNormal.z) };
-        DirectX::XMFLOAT3 end =
-        { position.x + localDown.x,
-            position.y + localDown.y,
-            position.z + localDown.z };
+        DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
+        DirectX::XMFLOAT3 end = { position.x, position.y + my, position.z };
 
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit))
@@ -729,36 +723,32 @@ void Player::UpdatePVerticalMove(float elapsedTime)
             position = hit.position;
             normal = hit.normal;
 
+
+
             if (!isGround)
             {
                 OnLanding();
+
             }
             isGround = true;
-            if (GravityNormal.x != 0.0f) { velocity.x = 0.0f; }
-            if (GravityNormal.y != 0.0f) { velocity.y = 0.0f; }
-            if (GravityNormal.z != 0.0f) { velocity.z = 0.0f; }
+            playerDirection.y = 0.0f;
 
             angle.x += hit.rotation.x;
             angle.y += hit.rotation.y;
             angle.z += hit.rotation.z;
+
         }
         else
         {
-            position.x += localDown.x;
-            position.y += localDown.y;
-            position.z += localDown.z;
+            position.y += my;
             isGround = false;
         }
 
 
     }
-    else if (NormalizeDown.x != GravityNormal.x ||
-        NormalizeDown.y != GravityNormal.y ||
-        NormalizeDown.z != GravityNormal.z)
+    else if (my > 0.0f)
     {
-        position.x += localDown.x;
-        position.y += localDown.y;
-        position.z += localDown.z;
+        position.y += my;
         isGround = false;
     }
 
@@ -776,14 +766,366 @@ void Player::UpdatePVerticalMove(float elapsedTime)
         angle.z = Mathf::Lerp(angle.z, test.z, 0.1f);
 
     }
+    ////プレイヤーの下方向
+    //DirectX::XMFLOAT3 localDown = { velocity.x * elapsedTime,
+    //                                velocity.y * elapsedTime,
+    //                                velocity.z * elapsedTime };
+
+    ////重力方向
+    //DirectX::XMFLOAT3 GravityNormal = playerGravity;
+
+    ////正規化したプレイヤーの下方向
+    //DirectX::XMFLOAT3 NormalizeDown;
+    //DirectX::XMStoreFloat3(&NormalizeDown,
+    //    DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&localDown)));
+
+    //DirectX::XMFLOAT3 normal = { -NormalizeDown.x,
+    //                             -NormalizeDown.y,
+    //                             -NormalizeDown.z };
+
+    ////落下中
+    //if (NormalizeDown.x == GravityNormal.x ||
+    //    NormalizeDown.y == GravityNormal.y ||
+    //    NormalizeDown.z == GravityNormal.z)
+    //{
+    //    DirectX::XMFLOAT3 start =
+    //    { position.x + (stepOffset * -GravityNormal.x),
+    //        position.y + (stepOffset * -GravityNormal.y),
+    //        position.z + (stepOffset * -GravityNormal.z) };
+    //    DirectX::XMFLOAT3 end =
+    //    { position.x + localDown.x,
+    //        position.y + localDown.y,
+    //        position.z + localDown.z };
+
+    //    HitResult hit;
+    //    if (StageManager::Instance().RayCast(start, end, hit))
+    //    {
+    //        position = hit.position;
+    //        normal = hit.normal;
+
+    //        if (!isGround)
+    //        {
+    //            OnLanding();
+    //        }
+    //        isGround = true;
+    //        if (GravityNormal.x != 0.0f) { velocity.x = 0.0f; }
+    //        if (GravityNormal.y != 0.0f) { velocity.y = 0.0f; }
+    //        if (GravityNormal.z != 0.0f) { velocity.z = 0.0f; }
+
+    //        angle.x += hit.rotation.x;
+    //        angle.y += hit.rotation.y;
+    //        angle.z += hit.rotation.z;
+    //    }
+    //    else
+    //    {
+    //        position.x += localDown.x;
+    //        position.y += localDown.y;
+    //        position.z += localDown.z;
+    //        isGround = false;
+    //    }
+
+
+    //}
+    //else if (NormalizeDown.x != GravityNormal.x ||
+    //    NormalizeDown.y != GravityNormal.y ||
+    //    NormalizeDown.z != GravityNormal.z)
+    //{
+    //    position.x += localDown.x;
+    //    position.y += localDown.y;
+    //    position.z += localDown.z;
+    //    isGround = false;
+    //}
+
+    ////地面の向きに沿うようにXZ軸回転
+    //{
+    //    //Y軸が法線ベクトル方向に向くようにオイラー角回転を算出する
+    //    DirectX::XMFLOAT3 test = { angle.x,angle.y,angle.z };
+
+    //    test.x = atan2(normal.z, normal.y);
+    //    test.z = atan2(-normal.x, normal.y);
+
+
+    //    //線形補完で滑らかに回転する
+    //    angle.x = Mathf::Lerp(angle.x, test.x, 0.1f);
+    //    angle.z = Mathf::Lerp(angle.z, test.z, 0.1f);
+    //}
 }
 
 void Player::UpdatePHorizontalVelocity(float elapsedFrame)
 {
+    //XZ
+    float length = sqrtf(playerDirection.x * playerDirection.x + playerDirection.z * playerDirection.z);
+    //Y
+    float lenY = sqrtf(playerDirection.y * playerDirection.y + length * length);
+
+    //XZ
+    if (length > 0.0f)
+    {
+        float friction = this->friction * elapsedFrame;
+
+        //空中にいるときは摩擦力を減らす
+        //if (!&IsGround) friction *= airControl;
+
+        if (length > friction)
+        {
+            float vx = playerDirection.x / length;
+            float vz = playerDirection.z / length;
+
+            playerDirection.x -= vx * friction;
+            playerDirection.z -= vz * friction;
+        }
+        else
+        {
+            playerDirection.x = 0.0f;
+            playerDirection.z = 0.0f;
+        }
+    }
+    //XZ平面の走力加速
+    if (length <= maxMoveSpeed)
+    {
+        float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
+
+        if (moveVecLength > 0.0f)
+        {
+            //加速力
+            float acceleration = this->acceleration * elapsedFrame;
+
+            //空中にいるときは加速力を減らす
+            //if (!&IsGround) friction *= airControl;
+
+            //移動ベクトルによる加速処理
+            playerDirection.x += moveVecX * acceleration;
+            playerDirection.z += moveVecZ * acceleration;
+
+            //最大速度制限
+            float length = sqrtf(playerDirection.x * playerDirection.x + playerDirection.z * playerDirection.z);
+
+            if (length > maxMoveSpeed)
+            {
+                float vx = playerDirection.x / length;
+                float vz = playerDirection.z / length;
+
+                playerDirection.x = vx * maxMoveSpeed;
+                playerDirection.z = vz * maxMoveSpeed;
+            }
+        }
+    }
+    //Y
+    if (lenY > 0.0f)
+    {
+        float friction = this->friction * elapsedFrame;
+
+        //空中にいるときは摩擦力を減らす
+        //if (!&IsGround) friction *= airControl;
+
+        if (lenY > friction)
+        {
+            float vy = playerDirection.y / lenY;
+
+            playerDirection.x -= vy * friction;
+        }
+        else
+        {
+            playerDirection.y = 0.0f;
+        }
+    }
+
+    //Yの走力加速
+    if (lenY <= maxMoveSpeed)
+    {
+        float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
+
+        float moveVecLenY = sqrtf(moveVecY * moveVecY + moveVecLength * moveVecLength);
+        if (moveVecLength > 0.0f)
+        {
+            //加速力
+            float acceleration = this->acceleration * elapsedFrame;
+
+            //空中にいるときは加速力を減らす
+            //if (!&IsGround) friction *= airControl;
+
+            //移動ベクトルによる加速処理
+            playerDirection.y += moveVecY * acceleration;
+
+
+            //最大速度制限
+            float length = sqrtf(playerDirection.x * playerDirection.x + playerDirection.z * playerDirection.z);
+
+            float lenY = sqrtf(playerDirection.y * playerDirection.y + length * length);
+            if (lenY > maxMoveSpeed)
+            {
+                float vy = playerDirection.y / lenY;
+
+                playerDirection.y = vy * maxMoveSpeed;
+            }
+        }
+    }
+
+    moveVecX = 0.0f;
+    moveVecZ = 0.0f;
+    moveVecY = 0.0f;
 }
 
 void Player::UpdatePHorizontalMove(float elapsedTime)
 {
+    /*position.x += velocity.x * elapsedTime;
+position.z += velocity.z * elapsedTime;*/
+
+//水平速力量計算
+    float velocityLengthXZ = (playerDirection.x * playerDirection.x + playerDirection.z * playerDirection.z);
+    if (velocityLengthXZ > 0.0f)
+    {
+        //水平移動値
+        float mx = playerDirection.x * elapsedTime;
+        float mz = playerDirection.z * elapsedTime;
+
+        //レイの開始位置と終点位置
+        DirectX::XMFLOAT3 start = { position.x,position.y + stepOffset,position.z };
+        DirectX::XMFLOAT3 end = { position.x + mx,position.y,position.z + mz };
+
+        //レイキャストによる壁判定
+        HitResult hit;
+        if (StageManager::Instance().RayCast(start, end, hit))
+        {
+            //壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&hit.position);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            //壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            //入射ベクトルを法線に射影
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Vec, DirectX::XMVectorNegate(Normal));
+
+            //補正位置の計算
+            /*DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&hit.position);
+
+            DirectX::XMVECTOR PB = DirectX::XMVectorSubtract(End, P);
+
+            DirectX::XMVECTOR N = DirectX::XMVector3Normalize(Normal);
+
+            DirectX::XMVECTOR a = DirectX::XMVector3Dot(PB, N);
+
+            DirectX::XMVECTOR R = */
+
+            float a = DirectX::XMVectorGetX(Dot);
+            a *= 1.1;
+
+            DirectX::XMVECTOR R = DirectX::XMVectorAdd(Vec, DirectX::XMVectorScale(Normal, a));
+
+            DirectX::XMVECTOR O = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, a));
+
+            DirectX::XMFLOAT3 o;
+            DirectX::XMStoreFloat3(&o, O);
+            position.x = o.x;
+            position.z = o.z;
+
+            playerDirection.x = 0.0f;
+            playerDirection.z = 0.0f;
+        }
+        else
+        {
+            //移動
+            position.x += mx;
+            position.z += mz;
+        }
+    }
+}
+
+void Player::UpdateGravityDown()
+{
+    playerDirection = velocity;
+}
+
+void Player::UpdateGravityUp()
+{
+    playerDirection.x = -velocity.x;
+    playerDirection.y = -velocity.y;
+    playerDirection.z = -velocity.z;
+}
+
+void Player::UpdateGravityNoth()
+{
+    playerDirection.x = velocity.x;
+    playerDirection.y = -velocity.z;
+    playerDirection.z = velocity.y;
+}
+
+void Player::UpdateGravityWest()
+{
+    playerDirection.x = velocity.z;
+    playerDirection.y = velocity.x;
+    playerDirection.z = velocity.y;
+}
+
+void Player::UpdateGravitySouth()
+{
+    playerDirection.x = velocity.x;
+    playerDirection.y = velocity.z;
+    playerDirection.z = -velocity.y;
+}
+
+void Player::UpdateGravityEast()
+{
+    playerDirection.x = velocity.y;
+    playerDirection.y = -velocity.x;
+    playerDirection.z = velocity.z;
+}
+
+void Player::ChangeGravity(HitResult hit)
+{
+    DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+    DirectX::XMFLOAT3 normal;
+    DirectX::XMStoreFloat3(&normal, DirectX::XMVector3Normalize(Normal));
+
+    if (normal.x >= 0.8f)
+    {
+        playerGravity.x = -1.0f;
+        gravity = Gravity::East;
+    }
+    else
+        playerGravity.x = 0.0f;
+
+    if (normal.x <= -0.8f)
+    {
+        playerGravity.x = 1.0f;
+        gravity = Gravity::West;
+    }
+    else
+        playerGravity.x = 0.0f;
+
+    if (normal.y >= 0.8f)
+    {
+        playerGravity.y = -1.0f;
+        gravity = Gravity::Up;
+    }
+    else
+        playerGravity.y = 0.0f;
+
+    if (normal.y <= -0.8f)
+    {
+        playerGravity.y = 1.0f;
+        gravity = Gravity::Down;
+    }
+    else
+        playerGravity.y = 0.0f;
+
+    if (normal.z >= 0.8f)
+    {
+        playerGravity.z = -1.0f;
+        gravity = Gravity::Noth;
+    }
+    else
+        playerGravity.z = 0.0f;
+
+    if (normal.z <= -0.8f)
+    {
+        playerGravity.z = 1.0f;
+        gravity = Gravity::South;
+    }
+    else
+        playerGravity.z = 0.0f;
 }
 
 void Player::UpdateBarrier()
@@ -843,6 +1185,8 @@ void Player::DrawDebugGUI()
             ImGui::InputFloat3("Scale", &scale.x);
 
             ImGui::InputFloat3("Velocity", &velocity.x);
+
+            ImGui::InputFloat3("Gravity", &playerGravity.x);
 
             ImGui::InputFloat("invincible", &invincibleTimer);
         }

@@ -145,10 +145,7 @@ void Character::UpdateInvincibleTimer(float elapsedTime)
 void Character::UpdateVerticalVelocity(float elapsedFrame)
 {
     //èdóÕèàóù
-    
-    velocity.x += gravity.x * elapsedFrame;
-    velocity.y += gravity.y * elapsedFrame;
-    velocity.z += gravity.z * elapsedFrame;
+    velocity.y += gravity * elapsedFrame;
 }
 
 void Character::UpdateVerticalMove(float elapsedTime)
@@ -160,7 +157,6 @@ void Character::UpdateVerticalMove(float elapsedTime)
     if (my < 0.0f)
     {
         DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
-
         DirectX::XMFLOAT3 end = { position.x, position.y + my, position.z };
 
         HitResult hit;
@@ -400,6 +396,4 @@ void Character::UpdateHorizontalMove(float elapsedTime)
             position.z += mz;
         }
     }
-
-
 }
