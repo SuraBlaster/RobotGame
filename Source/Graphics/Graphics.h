@@ -8,6 +8,7 @@
 #include "Graphics/LineRenderer.h"
 #include "Graphics/ImGuiRenderer.h"
 #include <mutex>
+#include "HDRTexture.h"
 
 // グラフィックス
 class Graphics
@@ -67,6 +68,7 @@ private:
 	std::unique_ptr<DebugRenderer>					debugRenderer;
 	std::unique_ptr<LineRenderer>					lineRenderer;
 	std::unique_ptr<ImGuiRenderer>					imguiRenderer;
+	std::unique_ptr<HDRTexture>                     environment_map;
 
 	float	screenWidth;
 	float	screenHeight;

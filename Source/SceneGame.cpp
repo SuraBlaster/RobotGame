@@ -64,6 +64,8 @@ void SceneGame::Initialize()
 	shieldIcon = std::make_unique<ShieldIcon>();
 	shieldIcon->Initialize();
 
+	lightdir = { 0.0f,-1.0f,0.0f,1.0f };
+
 }
 
 // 終了化
@@ -142,7 +144,8 @@ void SceneGame::Render()
 
 	// 描画処理
 	RenderContext rc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ライト方向（下方向）
+	rc.lightDirection = { lightdir.x, lightdir.y, lightdir.z, lightdir.w };	// ライト方向（下方向）
+	rc.lightColor = { 1,1,1,1 };
 
 	//カメラ初期設定
 	Camera& camera = Camera::Instance();
@@ -199,6 +202,22 @@ void SceneGame::Render()
 	{
 		player->DrawDebugGUI();
 	}
+
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
+	{
+		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::SliderFloat4("Light", &lightdir.x, -1.0f, 1.0f);
+
+
+		}
+	}
+
+
+	ImGui::End();
 }
 
 void SceneGame::RenderEnemyGauge(
@@ -317,9 +336,9 @@ void SceneGame::RenderEnemyGauge(
 		HitResult hit;
 		if (StageManager::Instance().RayCast(start, end, hit))
 		{
-			EnemySlime* enemy = new EnemySlime;
+			/*EnemySlime* enemy = new EnemySlime;
 			enemy->SetPosition(hit.position);
-			EnemyManager::Instance().Register(enemy);
+			EnemyManager::Instance().Register(enemy);*/
 		}
 	}
 }

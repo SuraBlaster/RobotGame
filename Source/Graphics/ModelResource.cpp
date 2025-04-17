@@ -274,6 +274,94 @@ void ModelResource::BuildModel(ID3D11Device* device, const char* dirname)
 				_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 			}
 		}
+
+		// パス分解  "texture/abc.png"
+		char folder[32]; // "texture/"
+		char fname[32];  // "abc"
+		char ext[6];     // ".png"
+		_splitpath_s(material.textureFilename.c_str(), NULL, 0, folder, 32, fname, 32, ext, 6);
+
+		// ノーマルマップ読み込み
+		{
+			// 相対パスの解決
+			char filenameN[256];
+			sprintf_s(filenameN, 256, "%s%s%s_n%s", dirname, folder, fname, ext);
+
+			// マルチバイト文字からワイド文字へ変換
+			wchar_t wfilename[256];
+			::MultiByteToWideChar(CP_ACP, 0, filenameN, -1, wfilename, 256);
+
+			// テクスチャ読み込み
+			Microsoft::WRL::ComPtr<ID3D11Resource> resource;
+			HRESULT hr = DirectX::CreateWICTextureFromFile(device, wfilename, resource.GetAddressOf(), material.SRV_Normal.GetAddressOf());
+			if (FAILED(hr))
+			{
+				// WICでサポートされていないフォーマットの場合（TGAなど）は
+				// STBで画像読み込みをしてテクスチャを生成する
+				int width, height, bpp;
+				unsigned char* pixels = stbi_load(filename, &width, &height, &bpp, STBI_rgb_alpha);
+				if (pixels != nullptr)
+				{
+					D3D11_TEXTURE2D_DESC desc = { 0 };
+					desc.Width = width;
+					desc.Height = height;
+					desc.MipLevels = 1;
+					desc.ArraySize = 1;
+					desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+					desc.SampleDesc.Count = 1;
+					desc.SampleDesc.Quality = 0;
+					desc.Usage = D3D11_USAGE_DEFAULT;
+					desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+					desc.CPUAccessFlags = 0;
+					desc.MiscFlags = 0;
+					D3D11_SUBRESOURCE_DATA data;
+					::memset(&data, 0, sizeof(data));
+					data.pSysMem = pixels;
+					data.SysMemPitch = width * 4;
+
+					Microsoft::WRL::ComPtr<ID3D11Texture2D>	texture;
+					HRESULT hr = device->CreateTexture2D(&desc, &data, texture.GetAddressOf());
+					_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+					hr = device->CreateShaderResourceView(texture.Get(), nullptr, material.shaderResourceView.GetAddressOf());
+					_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+					// 後始末
+					stbi_image_free(pixels);
+				}
+				else
+				{
+					// 読み込み失敗したらダミーテクスチャを作る
+					LOG("load failed : %s\n", filename);
+
+					UINT color = 0xFFFF8080;
+
+					D3D11_TEXTURE2D_DESC desc = { 0 };
+					desc.Width = 1;
+					desc.Height = 1;
+					desc.MipLevels = 1;
+					desc.ArraySize = 1;
+					desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+					desc.SampleDesc.Count = 1;
+					desc.SampleDesc.Quality = 0;
+					desc.Usage = D3D11_USAGE_IMMUTABLE;
+					desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+					desc.CPUAccessFlags = 0;
+					desc.MiscFlags = 0;
+					D3D11_SUBRESOURCE_DATA data;
+					data.pSysMem = &color;
+					data.SysMemPitch = desc.Width;
+
+					Microsoft::WRL::ComPtr<ID3D11Texture2D>	texture;
+					HRESULT hr = device->CreateTexture2D(&desc, &data, texture.GetAddressOf());
+					_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+					hr = device->CreateShaderResourceView(texture.Get(), nullptr, material.SRV_Normal.GetAddressOf());
+					_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+				}
+			}
+		}
+
 	}
 
 	for (Mesh& mesh : meshes)

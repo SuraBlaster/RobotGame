@@ -35,6 +35,7 @@ public:
 		DirectX::XMFLOAT4	color = { 0.8f, 0.8f, 0.8f, 1.0f };
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> SRV_Normal;
 
 		template<class Archive>
 		void serialize(Archive& archive, int version);

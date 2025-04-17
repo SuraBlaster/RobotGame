@@ -1,4 +1,5 @@
 #include "Misc.h"
+#include "Graphics/DefaultLitShader.h"
 #include "Graphics/LambertShader.h"
 #include "Graphics/Graphics.h"
 
@@ -130,7 +131,13 @@ Graphics::Graphics(HWND hWnd)
 
 	// シェーダー
 	{
-		shader = std::make_unique<LambertShader>(device.Get());
+		environment_map = std::make_unique<HDRTexture>();
+		environment_map->Load("Data/Environment/hausdorf_clear_sky_2k.hdr");
+
+		shader = std::make_unique<DefaultLitShader>(device.Get());
+
+
+		environment_map->Set(15);
 	}
 
 	// レンダラ

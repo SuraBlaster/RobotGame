@@ -44,4 +44,6 @@ private:
 	std::unique_ptr<ShieldGauge> shieldGauge = nullptr;
 
 	std::unique_ptr<ShieldIcon> shieldIcon = nullptr;
+
+	DirectX::XMFLOAT4 lightdir;
 };
