@@ -157,6 +157,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
     if (my < 0.0f)
     {
         DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
+
         DirectX::XMFLOAT3 end = { position.x, position.y + my, position.z };
 
         HitResult hit;
@@ -164,13 +165,13 @@ void Character::UpdateVerticalMove(float elapsedTime)
         {
             position = hit.position;
             normal = hit.normal;
-            
+
 
 
             if (!isGround)
             {
                 OnLanding();
-                
+
             }
             isGround = true;
             velocity.y = 0.0f;
@@ -186,7 +187,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
             isGround = false;
         }
 
-        
+
     }
     else if (my > 0.0f)
     {
@@ -202,7 +203,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
         test.x = atan2(normal.z, normal.y);
         test.z = atan2(-normal.x, normal.y);
 
-    
+
         //線形補完で滑らかに回転する
         angle.x = Mathf::Lerp(angle.x, test.x, 0.1f);
         angle.z = Mathf::Lerp(angle.z, test.z, 0.1f);
@@ -212,24 +213,23 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 void Character::UpdateHorizontalVelocity(float elapsedFrame)
 {
-    //XZ平面の速力を減速する
+
     float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+
     if (length > 0.0f)
     {
-        //摩擦
         float friction = this->friction * elapsedFrame;
 
-        if (!isGround) friction *= airControl;
+        //空中にいるときは摩擦力を減らす
+        //if (!&IsGround) friction *= airControl;
 
-        //摩擦の減速処理
         if (length > friction)
         {
-            //単位ベクトル
             float vx = velocity.x / length;
             float vz = velocity.z / length;
+
             velocity.x -= vx * friction;
             velocity.z -= vz * friction;
-
         }
         else
         {
@@ -238,17 +238,18 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
         }
     }
 
-    //XZ平面の速力を加速する
+    //XZ平面の走力加速
     if (length <= maxMoveSpeed)
     {
-        //移動ベクトルが0でないなら加速
         float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
+
         if (moveVecLength > 0.0f)
         {
             //加速力
             float acceleration = this->acceleration * elapsedFrame;
 
-            if (!isGround) acceleration *= airControl;
+            //空中にいるときは加速力を減らす
+            //if (!&IsGround) friction *= airControl;
 
             //移動ベクトルによる加速処理
             velocity.x += moveVecX * acceleration;
@@ -256,18 +257,14 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 
             //最大速度制限
             float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+
             if (length > maxMoveSpeed)
             {
                 float vx = velocity.x / length;
                 float vz = velocity.z / length;
+
                 velocity.x = vx * maxMoveSpeed;
                 velocity.z = vz * maxMoveSpeed;
-            }
-
-            // 下り坂でガタガタしないようにする
-            if (isGround && slopeRate > 0.0f)
-            {
-                velocity.y -= length * slopeRate * elapsedFrame;
             }
         }
     }
@@ -299,7 +296,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
             //壁までのベクトル
             DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&hit.position);
             DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
-            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End,Start);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
 
             //壁の法線
             DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
@@ -330,8 +327,6 @@ void Character::UpdateHorizontalMove(float elapsedTime)
             position.x = o.x;
             position.z = o.z;
 
-            velocity.x = 0.0f;
-            velocity.z = 0.0f;
         }
         else
         {
@@ -340,4 +335,6 @@ void Character::UpdateHorizontalMove(float elapsedTime)
             position.z += mz;
         }
     }
+
+
 }
