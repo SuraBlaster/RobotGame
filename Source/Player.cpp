@@ -110,8 +110,8 @@ void Player::Update(float elapsedTime)
     UpdateTransform();
     
     //走力速度更新
-    //UpdateVelocity(elapsedTime);
-    UpdatePlayerVelocity(elapsedTime);
+    UpdateVelocity(elapsedTime);
+    //UpdatePlayerVelocity(elapsedTime);
 
     UpdateInvincibleTimer(elapsedTime);
 
@@ -349,8 +349,7 @@ void Player::UpdateMoveState(float elapsedTime)
 void Player::TransitionJumpState()
 {
     state = State::Jump;
-
-
+    
     //ジャンプアニメーション再生
     model->PlayAnimation(Anim_Jump, false);
 }
@@ -564,9 +563,7 @@ bool Player::InputJump()
             Jump(jumpSpeed);
 
             return true;
-            
         }
-        
     }
     return false;
 }
@@ -1084,10 +1081,7 @@ void Player::ChangeGravity(HitResult hit)
         playerGravity.x = -1.0f;
         gravity = Gravity::East;
     }
-    else
-        playerGravity.x = 0.0f;
-
-    if (normal.x <= -0.8f)
+    else if (normal.x <= -0.8f)
     {
         playerGravity.x = 1.0f;
         gravity = Gravity::West;
@@ -1100,10 +1094,7 @@ void Player::ChangeGravity(HitResult hit)
         playerGravity.y = -1.0f;
         gravity = Gravity::Up;
     }
-    else
-        playerGravity.y = 0.0f;
-
-    if (normal.y <= -0.8f)
+    else if (normal.y <= -0.8f)
     {
         playerGravity.y = 1.0f;
         gravity = Gravity::Down;
@@ -1116,10 +1107,7 @@ void Player::ChangeGravity(HitResult hit)
         playerGravity.z = -1.0f;
         gravity = Gravity::Noth;
     }
-    else
-        playerGravity.z = 0.0f;
-
-    if (normal.z <= -0.8f)
+    else if (normal.z <= -0.8f)
     {
         playerGravity.z = 1.0f;
         gravity = Gravity::South;
