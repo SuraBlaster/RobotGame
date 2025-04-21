@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
-#include"EnemySpider.h"
+#include "EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
 #include "StageMain.h"
@@ -466,7 +466,7 @@ void SceneGame::RenderEnemyGauge(
 		//}
 		if (StageManager::Instance().RayCast(start, end, hit))
 		{
-			player->ChangeGravity(hit);
+			StageMain::Instance().ChangeGravity(hit);
 		}
 	}
 }
