@@ -212,27 +212,24 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 void Character::UpdateHorizontalVelocity(float elapsedFrame)
 {
-
-    //XZ
+    //XZ平面の速力を減速する
     float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-    //Y
-    float lenY = sqrtf(velocity.y * velocity.y + length *length);
-
-    //XZ
     if (length > 0.0f)
     {
+        //摩擦
         float friction = this->friction * elapsedFrame;
 
-        //空中にいるときは摩擦力を減らす
-        //if (!&IsGround) friction *= airControl;
+        if (!isGround) friction *= airControl;
 
+        //摩擦の減速処理
         if (length > friction)
         {
+            //単位ベクトル
             float vx = velocity.x / length;
             float vz = velocity.z / length;
-
             velocity.x -= vx * friction;
             velocity.z -= vz * friction;
+
         }
         else
         {
@@ -240,18 +237,18 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
             velocity.z = 0.0f;
         }
     }
-     //XZ平面の走力加速
+
+    //XZ平面の速力を加速する
     if (length <= maxMoveSpeed)
     {
+        //移動ベクトルが0でないなら加速
         float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-
         if (moveVecLength > 0.0f)
         {
             //加速力
             float acceleration = this->acceleration * elapsedFrame;
 
-            //空中にいるときは加速力を減らす
-            //if (!&IsGround) friction *= airControl;
+            if (!isGround) acceleration *= airControl;
 
             //移動ベクトルによる加速処理
             velocity.x += moveVecX * acceleration;
@@ -259,76 +256,23 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 
             //最大速度制限
             float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-
             if (length > maxMoveSpeed)
             {
                 float vx = velocity.x / length;
                 float vz = velocity.z / length;
-
                 velocity.x = vx * maxMoveSpeed;
                 velocity.z = vz * maxMoveSpeed;
             }
+
+            // 下り坂でガタガタしないようにする
+            if (isGround && slopeRate > 0.0f)
+            {
+                velocity.y -= length * slopeRate * elapsedFrame;
+            }
         }
     }
-    //Y
-      if (lenY > 0.0f)
-    {
-        float friction = this->friction * elapsedFrame;
-
-        //空中にいるときは摩擦力を減らす
-        //if (!&IsGround) friction *= airControl;
-
-        if (lenY > friction)
-        {
-            float vy = velocity.y / lenY;
-
-
-            velocity.x -= vy * friction;
-           
-        }
-        else
-        {
-            velocity.y = 0.0f;
-          
-        }
-    }
-
-      //Yの走力加速
-      if (lenY <= maxMoveSpeed)
-      {
-          float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-
-          float moveVecLenY= sqrtf(moveVecY * moveVecY + moveVecLength * moveVecLength);
-          if (moveVecLength > 0.0f)
-          {
-              //加速力
-              float acceleration = this->acceleration * elapsedFrame;
-
-              //空中にいるときは加速力を減らす
-              //if (!&IsGround) friction *= airControl;
-
-              //移動ベクトルによる加速処理
-              velocity.y += moveVecY * acceleration;
-            
-
-              //最大速度制限
-              float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-
-              float lenY = sqrtf(velocity.y * velocity.y + length * length);
-              if (lenY > maxMoveSpeed)
-              {
-                  float vy = velocity.y / lenY;
-                  
-
-                  velocity.y = vy * maxMoveSpeed;
-                 
-              }
-          }
-      }
-   
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
-    moveVecY = 0.0f;
 }
 
 void Character::UpdateHorizontalMove(float elapsedTime)
