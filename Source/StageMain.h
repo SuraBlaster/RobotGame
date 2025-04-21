@@ -20,11 +20,14 @@ public:
     bool RayCast(const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
 
-    void ChangeGravity(HitResult hit);
-private:
-    Model* model = nullptr;
+    //ƒgƒ‹ƒNÝ’è
+    void SetTorque(const DirectX::XMFLOAT3& torque) { this->torque = torque; }
 
+    void ChangeGravity(HitResult hit) override;
 private:
+    void RotationStage(float elapsedTime);
+    void UpdateTransform();
+
     enum GravityDirection {
         Down,
         Up,
@@ -34,15 +37,25 @@ private:
         South
     };
 
-    void RotationStage(float elapsedTime);
-
+    GravityDirection selectedDirection = GravityDirection::Down;
     DirectX::XMVECTOR GetGravityVector(GravityDirection dir);
+private:
+    Model* model = nullptr;
 
     DirectX::XMVECTOR currentGravityDir = DirectX::XMVectorSet(0, -1, 0, 0); // ‰ºŒü‚«
 
     DirectX::XMVECTOR currentStageRotation = DirectX::XMQuaternionIdentity(); // –³‰ñ“];
 
-    GravityDirection selectedDirection = GravityDirection::Gravity_Down;
 
-    float rotateDuration = 3.0f
+    DirectX::XMFLOAT3 position = { 0,0,0 };
+    DirectX::XMFLOAT3 angle = { 0,0,0 };
+    DirectX::XMFLOAT3 oldAngle = { 0,0,0 };
+    DirectX::XMFLOAT3 scale = { 1,1,1 };
+    DirectX::XMFLOAT4X4 transform = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+    DirectX::XMFLOAT4X4 oldTransform = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+
+    DirectX::XMFLOAT3 torque = { 0,0,0 };
+
+    float rotateDuration = 3.0f;
+
 };

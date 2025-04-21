@@ -17,6 +17,8 @@ public:
 
     //レイキャスト
     virtual bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit) = 0;
+    virtual void ChangeGravity(HitResult hit) = 0;
+
     static Stage& Instance();
     //bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 

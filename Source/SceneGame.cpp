@@ -22,11 +22,11 @@ void SceneGame::Initialize()
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
 
-	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
-	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
-	stageMoveFloor->SetGoalPoint(DirectX::XMFLOAT3(10, 2, 3));
-	stageMoveFloor->SetTorque(DirectX::XMFLOAT3(0, 1.0f, 0));
-	stageManager.Register(stageMoveFloor);
+	//StageMoveFloor* stageMoveFloor = new StageMoveFloor();
+	//stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
+	//stageMoveFloor->SetGoalPoint(DirectX::XMFLOAT3(10, 2, 3));
+	//stageMoveFloor->SetTorque(DirectX::XMFLOAT3(0, 1.0f, 0));
+	//stageManager.Register(stageMoveFloor);
 
 	//プレイヤー初期化
 	player = new Player;
