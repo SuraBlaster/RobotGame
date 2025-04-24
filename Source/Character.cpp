@@ -166,12 +166,9 @@ void Character::UpdateVerticalMove(float elapsedTime)
             position = hit.position;
             normal = hit.normal;
 
-
-
             if (!isGround)
             {
                 OnLanding();
-
             }
             isGround = true;
             velocity.y = 0.0f;

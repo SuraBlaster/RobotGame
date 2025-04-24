@@ -1070,51 +1070,51 @@ void Player::UpdateGravityEast()
     playerDirection.z = velocity.z;
 }
 
-void Player::ChangeGravity(HitResult hit)
-{
-    DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
-    DirectX::XMFLOAT3 normal;
-    DirectX::XMStoreFloat3(&normal, DirectX::XMVector3Normalize(Normal));
-
-    if (normal.x >= 0.8f)
-    {
-        playerGravity.x = -1.0f;
-        gravity = Gravity::East;
-    }
-    else if (normal.x <= -0.8f)
-    {
-        playerGravity.x = 1.0f;
-        gravity = Gravity::West;
-    }
-    else
-        playerGravity.x = 0.0f;
-
-    if (normal.y >= 0.8f)
-    {
-        playerGravity.y = -1.0f;
-        gravity = Gravity::Up;
-    }
-    else if (normal.y <= -0.8f)
-    {
-        playerGravity.y = 1.0f;
-        gravity = Gravity::Down;
-    }
-    else
-        playerGravity.y = 0.0f;
-
-    if (normal.z >= 0.8f)
-    {
-        playerGravity.z = -1.0f;
-        gravity = Gravity::Noth;
-    }
-    else if (normal.z <= -0.8f)
-    {
-        playerGravity.z = 1.0f;
-        gravity = Gravity::South;
-    }
-    else
-        playerGravity.z = 0.0f;
-}
+//void Player::ChangeGravity(HitResult hit)
+//{
+//    DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+//    DirectX::XMFLOAT3 normal;
+//    DirectX::XMStoreFloat3(&normal, DirectX::XMVector3Normalize(Normal));
+//
+//    if (normal.x >= 0.8f)
+//    {
+//        playerGravity.x = -1.0f;
+//        gravity = Gravity::East;
+//    }
+//    else if (normal.x <= -0.8f)
+//    {
+//        playerGravity.x = 1.0f;
+//        gravity = Gravity::West;
+//    }
+//    else
+//        playerGravity.x = 0.0f;
+//
+//    if (normal.y >= 0.8f)
+//    {
+//        playerGravity.y = -1.0f;
+//        gravity = Gravity::Up;
+//    }
+//    else if (normal.y <= -0.8f)
+//    {
+//        playerGravity.y = 1.0f;
+//        gravity = Gravity::Down;
+//    }
+//    else
+//        playerGravity.y = 0.0f;
+//
+//    if (normal.z >= 0.8f)
+//    {
+//        playerGravity.z = -1.0f;
+//        gravity = Gravity::Noth;
+//    }
+//    else if (normal.z <= -0.8f)
+//    {
+//        playerGravity.z = 1.0f;
+//        gravity = Gravity::South;
+//    }
+//    else
+//        playerGravity.z = 0.0f;
+//}
 
 void Player::UpdateBarrier()
 {

@@ -138,7 +138,7 @@ public:
     
     bool GetOnDamage() { return onDamage; }
 
-    void ChangeGravity(HitResult hit);
+    //oid ChangeGravity(HitResult hit);
 private:
     //アニメーション
     enum Animation
