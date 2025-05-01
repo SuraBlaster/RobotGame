@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "Mathf.h"
 #include "StageManager.h"
+#include "StageMain.h"
 //行列更新処理
 void Character::UpdateTransform()
 {
@@ -122,7 +123,8 @@ void Character::UpdateVelocity(float elapsedTime)
     float elapsedFrame = 60.0f * elapsedTime;
 
     //垂直速力更新処理
-    UpdateVerticalVelocity(elapsedFrame);
+    if (!StageMain::Instance().GetIsRotation())
+        UpdateVerticalVelocity(elapsedFrame);
 
     //水平走力更新処理
     UpdateHorizontalVelocity(elapsedFrame);

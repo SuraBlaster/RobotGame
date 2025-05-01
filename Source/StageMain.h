@@ -10,6 +10,7 @@ public:
     StageMain();
     ~StageMain()override;
 
+    static StageMain& Instance();
 
     //XVˆ—
     void Update(float elapsedTime)override;
@@ -25,6 +26,8 @@ public:
     //void SetTorque(const DirectX::XMFLOAT3& torque) { this->torque = torque; }
 
     void ChangeGravity(HitResult hit) override;
+
+    bool GetIsRotation() { return isRotationAnimation; }
 private:
 
     enum GravityDirection {
@@ -41,6 +44,7 @@ private:
     Transform transform;
     DirectX::XMFLOAT3 nowAngle = {};
 private:
+    bool isRotationAnimation = false;
     Model* model = nullptr;
 
     float rotateDuration = 3.0f;
