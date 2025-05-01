@@ -4,6 +4,7 @@
 bool quaternionToRollPitchYaw(const DirectX::XMFLOAT4& q, float& pitch, float& yaw, float& roll);
 bool matrixToRollPitchYaw(const DirectX::XMFLOAT4X4& m, float& pitch, float& yaw, float& roll);
 DirectX::XMFLOAT3 getDirection(const DirectX::XMFLOAT4& rotation, const DirectX::XMFLOAT3& local_direction);
+DirectX::XMFLOAT3 quaternionToEuler(const DirectX::XMFLOAT4& quaternion);
 
 Transform::Transform():
     position(0.0f, 0.0f, 0.0f),
@@ -73,9 +74,7 @@ void Transform::updateMatrix()
 
 DirectX::XMFLOAT3 Transform::getAngle() const
 {
-    DirectX::XMFLOAT3 angle;
-    quaternionToRollPitchYaw(rotation, angle.x, angle.y, angle.z);
-    return angle;
+    return quaternionToEuler(rotation);
     //return Matrix::quaternionToEuler(_rotation);
 }
 
@@ -113,6 +112,40 @@ DirectX::XMFLOAT3 Transform::getFront() const
 DirectX::XMFLOAT3 Transform::getBack() const
 {
     return getDirection(rotation, { 0, 0, -1 });
+}
+
+DirectX::XMFLOAT3 quaternionToEuler(const DirectX::XMFLOAT4& quaternion)
+{
+    // 回転行列に変換
+    DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternion));
+
+    // 回転行列から各成分を取得
+    float yaw, pitch, roll;
+
+    // ピッチ (X軸回転)
+    if (rotationMatrix.r[2].m128_f32[1] > 0.998f) // 特殊なケース: +90度
+    {
+        yaw = atan2f(rotationMatrix.r[0].m128_f32[2], rotationMatrix.r[0].m128_f32[0]);
+        pitch = DirectX::XM_PIDIV2;
+        roll = 0.0f;
+    }
+    else if (rotationMatrix.r[2].m128_f32[1] < -0.998f) // 特殊なケース: -90度
+    {
+        yaw = atan2f(rotationMatrix.r[0].m128_f32[2], rotationMatrix.r[0].m128_f32[0]);
+        pitch = -DirectX::XM_PIDIV2;
+        roll = 0.0f;
+    }
+    else
+    {
+        yaw = atan2f(rotationMatrix.r[2].m128_f32[0], rotationMatrix.r[2].m128_f32[2]);
+        pitch = asinf(-rotationMatrix.r[2].m128_f32[1]);
+        roll = atan2f(rotationMatrix.r[0].m128_f32[1], rotationMatrix.r[1].m128_f32[1]);
+    }
+
+    // オイラー角を返す
+    DirectX::XMFLOAT3 euler;
+    euler = { pitch, yaw, roll };
+    return euler;
 }
 
 bool quaternionToRollPitchYaw(const DirectX::XMFLOAT4& q, float& pitch, float& yaw, float& roll)

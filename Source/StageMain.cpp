@@ -54,66 +54,68 @@ DirectX::XMVECTOR StageMain::GetGravityVector(GravityDirection dir)
 
 void StageMain::RotationStage(float elapsedTime)
 {
-//    DirectX::XMVECTOR oldGravity = DirectX::XMLoadFloat4(&transform.rotation);
-//    DirectX::XMVECTOR newGravity = GetGravityVector(selectedDirection);
-//
-//    DirectX::XMVECTOR rotationAxis = DirectX::XMVector3Cross(oldGravity, newGravity);
-//    float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(oldGravity, newGravity));
-//    dot = max(min(dot, 1.0f), -1.0f); // 安全のためClamp
-//
-//    //// 180度反転の場合はクロス積がゼロになるので補正が必要
-//    //if (DirectX::XMVector3Equal(rotationAxis, DirectX::XMVectorZero())) {
-//    //    // 重力が完全に逆（例: Down→Up）なので、適当な垂直軸で180度回転
-//    //    DirectX::XMVECTOR fallbackAxis = DirectX::XMVectorSet(1, 0, 0, 0); // Y軸に近ければX軸とか
-//    //    rotationAxis = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(oldGravity, fallbackAxis));
-//    //}
-//
-//    float angle = acosf(dot);
-//    DirectX::XMVECTOR rotationQuat = DirectX::XMQuaternionRotationAxis(DirectX::XMVector3Normalize(rotationAxis), angle);
-//
-//
-//    // ステージ回転
-//    DirectX::XMVECTOR stageQuat = oldGravity;
-//
-//    // 合成して新しい姿勢へ
-//    DirectX::XMVECTOR targetStageQuat = DirectX::XMQuaternionMultiply(rotationQuat, stageQuat);
-//    targetStageQuat = DirectX::XMQuaternionNormalize(targetStageQuat);
-//
-//    // 補間：徐々に回す（例: 1秒かけて回転）
-//    timer = std::clamp(elapsedTime / rotateDuration, 0.0f, 1.0f);
-//    DirectX::XMStoreFloat4(&transform.rotation, DirectX::XMQuaternionSlerp(stageQuat, targetStageQuat, timer));
-
     DirectX::XMVECTOR up, front, right;
 
     up  = DirectX::XMLoadFloat3(&transform.getUp());
     front = DirectX::XMLoadFloat3(&transform.getFront());
     right = DirectX::XMLoadFloat3(&transform.getRight());
     DirectX::XMVECTOR Rotation = DirectX::XMLoadFloat4(&transform.rotation);
+    const float ragian90 = DirectX::XMConvertToRadians(90);
 
     switch (selectedDirection) {
     case Down:
     {
+        nowAngle = transform.getAngle();
         return;
     }
     case West:
     {
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, 3 * PIDIV180 * elapsedTime);
+        float rotationVelocity = 20 * PIDIV180 * elapsedTime;
+        if (transform.getAngle().z + rotationVelocity >= ragian90)
+            rotationVelocity = ragian90 - transform.getAngle().z;
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
         Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
+        ;
+        if (std::abs(nowAngle.z - transform.getAngle().z) >= ragian90)
+            selectedDirection = Down;
+        break;
     }
     case East:
     {
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, -3 * PIDIV180 * elapsedTime);
+        float rotationVelocity = -20 * PIDIV180 * elapsedTime;
+        if (transform.getAngle().z - rotationVelocity >= ragian90)
+            rotationVelocity = ragian90 - transform.getAngle().z;
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
         Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
+        if (std::abs(nowAngle.z - transform.getAngle().z) >= ragian90)
+            selectedDirection = Down;
+        break;
     }
     case North:
     {
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, -3 * PIDIV180 * elapsedTime);
+        float rotationVelocity = 20 * PIDIV180 * elapsedTime;
+        if (transform.getAngle().x + rotationVelocity >= ragian90)
+            rotationVelocity = ragian90 - transform.getAngle().x;
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
         Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
+        if (std::abs(nowAngle.x - transform.getAngle().x ) >= ragian90)
+            selectedDirection = Down;
+        break;
     }
     case South:
     {
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, 3 * PIDIV180 * elapsedTime);
+        float rotationVelocity = -20 * PIDIV180 * elapsedTime;
+        if (transform.getAngle().x - rotationVelocity >= ragian90)
+            rotationVelocity = ragian90 - transform.getAngle().x;
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
         Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
+        if (std::abs(nowAngle.x - transform.getAngle().x) >= ragian90)
+            selectedDirection = Down;
+        break;
     }
     }
 
@@ -148,32 +150,5 @@ void StageMain::ChangeGravity(HitResult hit)
             selectedDirection = West;
         }
     }
-
-    //if (normal.x >= 0.8f)
-    //{
-    //    selectedDirection = West;
-    //}
-    //else if (normal.x <= -0.8f)
-    //{
-    //    selectedDirection = East;
-    //}
-
-    //if (normal.y >= 0.8f)
-    //{
-    //    selectedDirection = Down;
-    //}
-    //else if (normal.y <= -0.8f)
-    //{
-    //    selectedDirection = Up;
-    //}
-
-    //if (normal.z >= 0.8f)
-    //{
-    //    selectedDirection = South;
-    //}
-    //else if (normal.z <= -0.8f)
-    //{
-    //    selectedDirection = East;
-    //}
 }
 

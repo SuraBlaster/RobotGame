@@ -39,6 +39,7 @@ private:
 
     void RotationStage(float elapsedTime);
     Transform transform;
+    DirectX::XMFLOAT3 nowAngle = {};
 private:
     Model* model = nullptr;
 
