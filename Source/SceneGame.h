@@ -6,6 +6,7 @@
 #include "Graphics/Sprite.h"
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
+#include "Graphics/RenderTarget.h"
 
 // ÉQÅ[ÉÄÉVÅ[Éì
 class SceneGame : public Scene
@@ -46,4 +47,6 @@ private:
 	std::unique_ptr<ShieldIcon> shieldIcon = nullptr;
 
 	DirectX::XMFLOAT4 lightdir;
+
+	std::unique_ptr<RenderTarget> Screen;
 };

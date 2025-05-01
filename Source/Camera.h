@@ -1,11 +1,13 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <d3d11.h>
+#include <wrl.h>
 
 class Camera
 {
 private:
-    Camera() {}
+    Camera();
     ~Camera() {}
 
 public:
@@ -47,4 +49,22 @@ private:
     DirectX::XMFLOAT3 front;
     DirectX::XMFLOAT3 right;
 
+    // ポストエフェクト関連
+private:
+    struct CBPostEffectParam
+    {
+        float contrast;
+        float saturation;
+        float chromatic_aberration;
+        float dummy; //4個区切り用
+
+        DirectX::XMFLOAT3 ColorFilter;
+        float dummy2; //4個区切り用
+    };
+    CBPostEffectParam posteffect;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> CBPostEffect;
+
+    // ポストエフェクト関連
+public:
+    void SetPostEffect();
 };

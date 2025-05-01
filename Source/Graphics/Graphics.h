@@ -7,6 +7,7 @@
 #include "Graphics/DebugRenderer.h"
 #include "Graphics/LineRenderer.h"
 #include "Graphics/ImGuiRenderer.h"
+#include "Graphics/RenderState.h"
 #include <mutex>
 #include "HDRTexture.h"
 
@@ -54,6 +55,11 @@ public:
 	ImGuiRenderer* GetImGuiRenderer() const { return imguiRenderer.get(); }
 
 	std::mutex& GetMutex() { return mutex; }
+
+	// レンダーステート取得
+	RenderState* GetRenderState() { return renderState.get(); }
+
+	void SetEnvironmentSampler(ID3D11Device* mDevice, ID3D11DeviceContext* deviceContext);
 private:
 	static Graphics*								instance;
 
@@ -63,7 +69,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	renderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D>			depthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	depthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> EnvironmentSS;
 
+	std::unique_ptr<RenderState>					renderState;
 	std::unique_ptr<Shader>							shader;
 	std::unique_ptr<DebugRenderer>					debugRenderer;
 	std::unique_ptr<LineRenderer>					lineRenderer;

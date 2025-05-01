@@ -5,6 +5,27 @@
 
 Graphics* Graphics::instance = nullptr;
 
+void Graphics::SetEnvironmentSampler(ID3D11Device* mDevice, ID3D11DeviceContext* deviceContext)
+{
+	D3D11_SAMPLER_DESC desc = {};
+
+	desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	// 左右は繰り返し、上下は繰り返し無し
+	desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+	desc.MaxAnisotropy = (mDevice->GetFeatureLevel() > D3D_FEATURE_LEVEL_9_1) ? D3D11_MAX_MAXANISOTROPY : 2u;
+
+	desc.MaxLOD = FLT_MAX;
+	desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+	HRESULT hr = mDevice->CreateSamplerState(&desc, EnvironmentSS.GetAddressOf());
+
+	//サンプラーステートのSlot2にセット
+	deviceContext->PSSetSamplers(2, 1, EnvironmentSS.GetAddressOf());
+}
+
 // コンストラクタ
 Graphics::Graphics(HWND hWnd)
 {
@@ -136,8 +157,12 @@ Graphics::Graphics(HWND hWnd)
 
 		shader = std::make_unique<DefaultLitShader>(device.Get());
 
+		// レンダーステート生成
+		renderState = std::make_unique<RenderState>(device.Get());
 
 		environment_map->Set(15);
+
+		//SetEnvironmentSampler(device.Get(), immediateContext.Get());
 	}
 
 	// レンダラ
@@ -152,3 +177,5 @@ Graphics::Graphics(HWND hWnd)
 Graphics::~Graphics()
 {
 }
+
+

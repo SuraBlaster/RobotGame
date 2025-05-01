@@ -1,4 +1,34 @@
 #include "Camera.h"
+#include "Graphics/Graphics.h"
+#include "Graphics/GpuResourceUtils.h"
+
+Camera::Camera()
+{
+    // ポストエフェクト初期化
+    GpuResourceUtils::CreateConstantBuffer(
+        Graphics::Instance().GetDevice(),
+        sizeof(CBPostEffectParam),
+        CBPostEffect.GetAddressOf());
+
+    // パラメータ初期化
+    posteffect.contrast = 1.3f;
+    posteffect.saturation = 0.7f;
+    posteffect.ColorFilter = { 0.9f, 1.0f, 1.05f };
+    posteffect.chromatic_aberration = 0.01f;
+
+}
+
+void Camera::SetPostEffect()
+{
+    ID3D11DeviceContext* dc = Graphics::Instance().GetDeviceContext();
+    // posteffect構造体の内容でコンスタントバッファ更新
+    dc->UpdateSubresource(CBPostEffect.Get(), 0, 0, &posteffect, 0, 0);
+
+    // ピクセルシェーダーSlot5に設定
+    dc->PSSetConstantBuffers(5, 1, CBPostEffect.GetAddressOf());
+
+}
+
 
 void Camera::SetLookAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& focus, const
     DirectX::XMFLOAT3& up)

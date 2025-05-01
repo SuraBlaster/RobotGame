@@ -15,6 +15,14 @@
 // 初期化
 void SceneGame::Initialize()
 {
+	ID3D11Device* device = Graphics::Instance().GetDevice();
+	float screenWidth = Graphics::Instance().GetScreenWidth();
+	float screenHeight = Graphics::Instance().GetScreenHeight();
+
+	// レンダーターゲット
+	Screen = std::make_unique<RenderTarget>(
+		device, screenWidth, screenHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+
 	//ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
 	StageMain* stageMain = new StageMain();
@@ -158,15 +166,23 @@ void SceneGame::Render()
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 
-		//ステージ描画
-		StageManager::Instance().Render(dc, shader);
+		Screen->Begin();
+		{
+			//ステージ描画
+			StageManager::Instance().Render(dc, shader);
 
-		//プレイヤー描画
-		player->Render(dc, shader);
+			//プレイヤー描画
+			player->Render(dc, shader);
 
-		WeaponManager::Instance().Render(dc, shader);
+			WeaponManager::Instance().Render(dc, shader);
 
-		EnemyManager::Instance().Render(dc, shader);
+			EnemyManager::Instance().Render(dc, shader);
+
+		}
+		Screen->End();
+
+		camera.SetPostEffect();
+		Screen->Render();
 
 		shader->End(dc);
 	}
