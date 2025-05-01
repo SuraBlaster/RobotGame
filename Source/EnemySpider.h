@@ -25,6 +25,8 @@ public:
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
+    void LimitPosition();
+
 
 private:
     //ターゲット位置をランダム設定
@@ -136,4 +138,6 @@ private:
     bool atknow;
 
     ProjectileManager projectileManager;
+
+    float delay = 0.0f;
 };

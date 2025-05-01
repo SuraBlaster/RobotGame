@@ -7,6 +7,7 @@
 #include "ProjectileStraight.h"
 #include "Input/Input.h"
 #include "Input/GamePad.h"
+#include <EnemyManager.h>
 
 //メモ//
 //
@@ -86,7 +87,11 @@ void EnemySpider::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
-    projectileManager.Update(elapsedTime);
+    //projectileManager.Update(elapsedTime);
+
+    delay -= elapsedTime;
+
+    LimitPosition();
 }
 
 
@@ -117,6 +122,28 @@ void EnemySpider::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
 {
     territoryOrigin = origin;
     territoryRange = range;
+}
+
+void EnemySpider::LimitPosition()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    //すべての敵と総当たりで衝突判定
+    int enemyCount = enemyManager.GetEnemyCount();
+
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+
+        if (enemy->GetPosition().y > 10.0f ||
+            (enemy->GetPosition().x < -10.0f || enemy->GetPosition().x < 10.0f) ||
+            enemy->GetPosition().z < -10.0f || enemy->GetPosition().z < 10.0f)
+        {
+            position.y = 10.0f;
+
+        }
+
+    }
 }
 
 void EnemySpider::SetRandomTargetPosition()
@@ -196,6 +223,7 @@ void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 
         Player& player = Player::Instance();
         DirectX::XMFLOAT3 outPosition;
+        int playerLimit = player.GetRimit();
         if (Collision::IntersectSphereVsCylinder(
             nodePosition,
             nodeRadius,
@@ -204,28 +232,39 @@ void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
             player.GetHeight(),
             outPosition))
         {
-            //ダメージを与える
-            if (player.ApplyDamage(1))
+            if (playerLimit > 0 && delay <= 0.0f)
             {
-                //敵を吹っ飛ばすベクトルを算出
-                DirectX::XMFLOAT3 vec;
-                vec.x = outPosition.x - nodePosition.x;
-                vec.z = outPosition.z - nodePosition.z;
-                float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
-                vec.x /= length;
-                vec.z /= length;
-
-                //XZ平面に吹っ飛ばす力を掛ける
-                float power = 1.0f;
-                vec.x *= power;
-                vec.z *= power;
-
-                //Y方向にも力を掛ける
-                vec.y = 1.0f;
-
-                //吹っ飛ばす
-               // player.AddImpulse(vec);
+                playerLimit--;
+                delay = 0.1f;
+                player.SetRimit(playerLimit);
             }
+            else if (delay <= 0.0f)
+            {
+                //ダメージを与える
+                if (player.ApplyDamage(1))
+                {
+                    //敵を吹っ飛ばすベクトルを算出
+                    DirectX::XMFLOAT3 vec;
+                    vec.x = outPosition.x - nodePosition.x;
+                    vec.z = outPosition.z - nodePosition.z;
+                    float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
+                    vec.x /= length;
+                    vec.z /= length;
+
+                    //XZ平面に吹っ飛ばす力を掛ける
+                    float power = 1.0f;
+                    vec.x *= power;
+                    vec.z *= power;
+
+                    //Y方向にも力を掛ける
+                    vec.y = 1.0f;
+
+                    //吹っ飛ばす
+                   // player.AddImpulse(vec);
+                }
+            }
+            
+            
         }
     }
 }
@@ -474,70 +513,70 @@ void EnemySpider::OnDamaged()
 //弾丸発射
 void EnemySpider::InputProjectile()
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
+   // GamePad& gamePad = Input::Instance().GetGamePad();
 
-    //向いてる方向に発射
-    if (gamePad.GetButtonDown() & GamePad::BTN_X)
-    {
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.y);
-        dir.y = 0.0f;
-        dir.z = cosf(angle.y);
+   // //向いてる方向に発射
+   // if (gamePad.GetButtonDown() & GamePad::BTN_X)
+   // {
+   //     DirectX::XMFLOAT3 dir;
+   //     dir.x = sinf(angle.y);
+   //     dir.y = 0.0f;
+   //     dir.z = cosf(angle.y);
 
-        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
+   //     DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
 
-        DirectX::XMFLOAT3 pos;
-        pos.x = position.x;
-        pos.y = position.y + scale.y / 2;
-        pos.z = position.z;
+   //     DirectX::XMFLOAT3 pos;
+   //     pos.x = position.x;
+   //     pos.y = position.y + scale.y / 2;
+   //     pos.z = position.z;
 
-        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-        projectile->Launch(dir, pos);
-        projectileManager.Register(projectile);
+   //     ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
+   //     projectile->Launch(dir, pos);
+   //     projectileManager.Register(projectile);
 
-    }
-    //ホーミング
-   // if (gamePad.GetButtonDown() & GamePad::BTN_Y)
-    {
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.y);
-        dir.y = 0.0f;
-        dir.z = cosf(angle.y);
+   // }
+   // //ホーミング
+   //// if (gamePad.GetButtonDown() & GamePad::BTN_Y)
+   // {
+   //     DirectX::XMFLOAT3 dir;
+   //     dir.x = sinf(angle.y);
+   //     dir.y = 0.0f;
+   //     dir.z = cosf(angle.y);
 
-        DirectX::XMFLOAT3 pos;
-        pos.x = position.x;
-        pos.y = position.y + height / 2;
-        pos.z = position.z;
+   //     DirectX::XMFLOAT3 pos;
+   //     pos.x = position.x;
+   //     pos.y = position.y + height / 2;
+   //     pos.z = position.z;
 
-        DirectX::XMFLOAT3 target;
-        target.x = pos.x + dir.x * 1000.0f;
-        target.y = pos.y + dir.y * 1000.0f;
-        target.z = pos.z + dir.z * 1000.0f;
+   //     DirectX::XMFLOAT3 target;
+   //     target.x = pos.x + dir.x * 1000.0f;
+   //     target.y = pos.y + dir.y * 1000.0f;
+   //     target.z = pos.z + dir.z * 1000.0f;
 
-        float dist = FLT_MAX;
-       // EnemyManager& enemyManager = EnemyManager::Instance();
-       // int enemyCount = enemyManager.GetEnemyCount();
+   //     float dist = FLT_MAX;
+   //    // EnemyManager& enemyManager = EnemyManager::Instance();
+   //    // int enemyCount = enemyManager.GetEnemyCount();
 
-       // for (int i = 0; i < enemyCount; ++i)
-       // {
-       //     Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
-       //     DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
-       //     DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
-       //     DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
-       //     DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
+   //    // for (int i = 0; i < enemyCount; ++i)
+   //    // {
+   //    //     Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
+   //    //     DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
+   //    //     DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
+   //    //     DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
+   //    //     DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
 
-       //     float d;
-       //     DirectX::XMStoreFloat(&d, D);
-       //     if (d < dist)
-       //     {
-       //         dist = d;
-       //         target = enemy->GetPosition();
-       //         target.y += enemy->GetHeight() * 0.5f;
-       //     }
-       // }
+   //    //     float d;
+   //    //     DirectX::XMStoreFloat(&d, D);
+   //    //     if (d < dist)
+   //    //     {
+   //    //         dist = d;
+   //    //         target = enemy->GetPosition();
+   //    //         target.y += enemy->GetHeight() * 0.5f;
+   //    //     }
+   //    // }
 
-        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
-        projectile->Launch(dir, pos, target);
-    }
+   //     ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
+   //     projectile->Launch(dir, pos, target);
+   // }
 
 }

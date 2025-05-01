@@ -48,6 +48,9 @@ public:
     //Å‘åŒ’Nó‘Ô‚ğæ“¾
     int GetMaxHealth() const { return maxHealth; }
 
+    //s—ñ‚ğæ“¾
+    DirectX::XMFLOAT4X4 GetTransform() const { return transform; }
+
 protected:
     //ˆÚ“®ˆ—
     void Move(float vx, float vz,float vy, float speed);

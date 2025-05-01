@@ -3,6 +3,7 @@
 #include "Mathf.h"
 #include "Player.h"
 #include "Collision.h"
+#include <EnemyManager.h>
 
 
 
@@ -84,6 +85,7 @@ void EnemySlime::Update(float elapsedTime)
     model->UpdateTransform(transform);
 
     delay -= elapsedTime;
+
 }
     
 
@@ -452,6 +454,8 @@ void EnemySlime::UpdateDeathState(float elapsedTime)
         Destroy();
     }
 }
+
+
 
 void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)
 {

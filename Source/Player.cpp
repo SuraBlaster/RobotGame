@@ -8,6 +8,8 @@
 #include "Collision.h"
 #include "ProjectileStraight.h"
 #include <ProjectileHoming.h>
+#include "SceneLoading.h"
+#include "SceneTitle.h"
 
 static Player* instance = nullptr;
 
@@ -19,17 +21,17 @@ Player& Player::Instance()
 //コンストラクタ
 Player::Player()
 {
-    model = new Model("Data/Model/Jammo/Jammo.mdl");
+    model = new Model("Data/Model/Player/Player2.mdl");
+
+    //�X�P�[�����O
+    scale.x = scale.y = scale.z = 0.01f;
 
     //インスタンスポインタ取得
     instance = this;
 
-    //スケーリング
-    scale.x = scale.y = scale.z = 0.01f;
-
     //エフェクト読み込み
     hitEffect = new Effect("Data/Effect/thunder.efk");
-    barrier = new Effect("Data/Effect/Barrier.efk");
+    barrier = new Effect("Data/Effect/Barrier.efkefc");
 
     //待機ステートへ遷移
     TransitionIdleState();
@@ -39,23 +41,13 @@ void Player::DrawDebugPrimitive()
 {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
     
+    //�Փ˔���p�̃f�o�b�O�~����`��
+    //debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
+
+    //projectileManager.DrawDebugPrimitive();
     //衝突判定用のデバッグ円柱を描画
     debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 
-    //projectileManager.DrawDebugPrimitive();
-
-    //攻撃衝突用の左手ノードのデバッグ球を描画
-    if (attackCollisionFlag)
-    {
-        Model::Node* leftHandBone = model->FindNode("mixamorig:LeftHand");
-        debugRenderer->DrawSphere(DirectX::XMFLOAT3(
-            leftHandBone->worldTransform._41,
-            leftHandBone->worldTransform._42,
-            leftHandBone->worldTransform._43),
-            leftHandRadius,
-            DirectX::XMFLOAT4(1, 0, 0, 1)
-        );
-    }
     
 }
 
@@ -88,9 +80,6 @@ void Player::Update(float elapsedTime)
         break;
     case State::Jump:
         UpdateJumpState(elapsedTime);
-        break;
-    case State::Land:
-        UpdateLandState(elapsedTime);
         break;
     case State::Attack:
         UpdateAttackState(elapsedTime);
@@ -134,8 +123,6 @@ void Player::Update(float elapsedTime)
     } 
     
     UpdateBarrier();
-
-    //barrier->UpdateEffectColor(barrierEffectHandle, elapsedTime);
 }
 
 
@@ -153,11 +140,25 @@ bool Player::InputMove(float elapsedTime)
     return moveVec.x != 0 || moveVec.z != 0;
 }
 
+bool Player::InputMoveSword(float elapsedTime)
+{
+    //�i�s�x�N�g���擾
+    DirectX::XMFLOAT3 moveVec = GetMoveVec();
+
+    Move(moveVec.x, moveVec.z, moveVec.y, moveSpeed * 0.2f);
+
+    Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed * 0.2f);
+
+    return moveVec.x != 0 || moveVec.z != 0;
+}
+
 bool Player::InputAttack()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_B)
+    //マウス
+    Mouse& mouse = Input::Instance().GetMouse();
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     {
         return true;
     }
@@ -196,20 +197,15 @@ void Player::CollisionPlayerVsEnemies()
             DirectX::XMStoreFloat3(&normal, N);
 
             if (normal.y > 0.8f)
-
-                //小ジャンプ
-                Jump(jumpSpeed * 0.5f);
-            
-            enemy->SetPosition(outPosition);
+            {
+              Jump(jumpSpeed * 0.5f);
+            }
+             else
+            {
+              enemy->SetPosition(outPosition);
+            }
         }
-        else
-        {
-            
-        }
-
-
     }
-
 }
 
 void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
@@ -286,8 +282,7 @@ void Player::TransitionIdleState()
 {
     state = State::Idle;
 
-    //待機アニメーション再生
-    model->PlayAnimation(Anim_Idle, true);
+    model->PlayAnimation(GreatSword_Idle, true);
 }
 
 void Player::UpdateIdleState(float elapsedTime)
@@ -327,9 +322,7 @@ void Player::UpdateIdleState(float elapsedTime)
 void Player::TransitionMoveState()
 {
     state = State::Move;
-
-    //走りアニメーション再生
-    model->PlayAnimation(Anim_Running, true);
+    model->PlayAnimation(GreatSword_Run, true);
 }
 
 void Player::UpdateMoveState(float elapsedTime)
@@ -363,9 +356,7 @@ void Player::TransitionJumpState()
 {
     state = State::Jump;
 
-
-    //ジャンプアニメーション再生
-    model->PlayAnimation(Anim_Jump, false);
+    model->PlayAnimation(GreatSword_Jump, false);
 }
 
 void Player::UpdateJumpState(float elapsedTime)
@@ -374,68 +365,82 @@ void Player::UpdateJumpState(float elapsedTime)
     
     if (IsGround())
     {
-        TransitionLandState();
-    }
-
-    if (InputJump())
-    {
-        //ジャンプアニメーション再生
-        model->PlayAnimation(Anim_Jump_Flip, false);
+        TransitionIdleState();
     }
 
     //�e�ۓ��͏���
     //InputProjectile();
 }
 
-void Player::TransitionLandState()
-{
-    state = State::Land;
-
-    //着地アニメーション再生
-    model->PlayAnimation(Anim_Landing, false);
-}
-
-void Player::UpdateLandState(float elapsedTime)
-{
-    if (!model->IsPlayAnimation())
-    {
-        TransitionIdleState();
-    }
-}
-
 void Player::TransitionAttackState()
 {
     state = State::Attack;
 
-    //攻撃アニメーション再生
-    model->PlayAnimation(Anim_Attack, false);
+    model->PlayAnimation(GreatSword_Attack, false);
+
+    attackStage = 0;
 }
 
 void Player::UpdateAttackState(float elapsedTime)
 {
-    if (!model->IsPlayAnimation())
-    {
-        TransitionIdleState();
-    }
 
     //任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
-    attackCollisionFlag = animationTime >= 0.3f && animationTime < 0.4f ? true : false;
+    attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
+        || (animationTime >= 1.65f && animationTime < 1.85f)
+        || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
 
-    if (attackCollisionFlag)
-    {
-        //左手ノードとエネミーの衝突処理
-        CollisionNodeVsEnemies("mixamorig:LeftHand", leftHandRadius);
-    }
+    InputMoveSword(elapsedTime);
+
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    Mouse& mouse = Input::Instance().GetMouse();
     
+    if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
+    {
+        if (animationTime <= 1.0f)
+        {
+            attackStage = 1;
+        }
+        else if (animationTime <= 1.85)
+        {
+            attackStage = 2;
+        }
+        else
+        {
+            attackStage = 3;
+        }
+    }
+
+    switch (attackStage)
+    {
+    case 1:
+        if (animationTime > 1.25f)
+        {
+            TransitionIdleState();
+        }
+        break;
+    case 2:
+        if (animationTime > 2.15f)
+        {
+            TransitionIdleState();
+        }
+        break;
+    case 3:
+        if (!model->IsPlayAnimation())
+        {
+            TransitionIdleState();
+        }
+        break;
+    }
+
 }
 
 void Player::TransitionDamageState()
 {
     state = State::Damage;
+    //�_���[�W�A�j���[�V�����Đ�
+    model->PlayAnimation(GreatSword_Damage, false);
     onDamage = true;
-    //ダメージアニメーション再生
-    model->PlayAnimation(Anim_GetHit1, false);
 }
 
 void Player::UpdateDamageState(float elapsedTime)
@@ -456,15 +461,14 @@ void Player::TransitionDeathState()
 {
     state = State::Death;
 
-    //死亡アニメーション再生
-    model->PlayAnimation(Anim_Death, false);
+    model->PlayAnimation(GreatSword_Death, false);
 }
 
 void Player::UpdateDeathState(float elapsedTime)
 {
     if (!model->IsPlayAnimation())
     {
-        
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
 }
 
@@ -472,9 +476,7 @@ void Player::TransitionBarrierState()
 {
     state = State::Barrier;
 
-    //障壁展開っぽいアニメーション再生
-    model->PlayAnimation(Anim_GetHit1, false);
-    
+    model->PlayAnimation(GreatSword_Shield, false);
 }
 
 void Player::UpdateBarrierState(float elapsedTime)
@@ -495,104 +497,87 @@ void Player::UpdateBarrierState(float elapsedTime)
 
 
 
-void Player::InputProjectile()
-{
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_X)
-    {
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.y);
-        dir.y = 0.0f;
-        dir.z = cosf(angle.y);
-
-        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
-        
-        DirectX::XMFLOAT3 pos;
-        pos.x = Player::GetPosition().x;
-        pos.y = Player::GetPosition().y + Player::GetHeight() / 2;
-        pos.z = Player::GetPosition().z;
-
-        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-        projectile->Launch(dir, pos);
-        //projectileManager.Register(projectile);
-
-    }
-
-    if (gamePad.GetButtonDown() & GamePad::BTN_Y)
-    {
-        DirectX::XMFLOAT3 dir;
-        dir.x = sinf(angle.y);
-        dir.y = 0.0f;
-        dir.z = cosf(angle.y);
-
-        DirectX::XMFLOAT3 pos;
-        pos.x = position.x;
-        pos.y = position.y + height / 2;
-        pos.z = position.z;
-
-        DirectX::XMFLOAT3 target;
-        target.x = pos.x + dir.x * 1000.0f;
-        target.y = pos.y + dir.y * 1000.0f;
-        target.z = pos.z + dir.z * 1000.0f;
-
-        float dist = FLT_MAX;
-        EnemyManager& enemyManager = EnemyManager::Instance();
-        int enemyCount = enemyManager.GetEnemyCount();
-
-        for (int i = 0; i < enemyCount; ++i)
-        {
-            Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
-            DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
-            DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
-            DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
-            DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
-
-            float d;
-            DirectX::XMStoreFloat(&d, D);
-            if (d < dist)
-            {
-                dist = d;
-                target = enemy->GetPosition();
-                target.y += enemy->GetHeight() * 0.5f;
-            }
-        }
-
-        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
-        projectile->Launch(dir, pos, target);
-    }
-    
-}
+//void Player::InputProjectile()
+//{
+//    GamePad& gamePad = Input::Instance().GetGamePad();
+//
+//    if (gamePad.GetButtonDown() & GamePad::BTN_X)
+//    {
+//        DirectX::XMFLOAT3 dir;
+//        dir.x = sinf(angle.y);
+//        dir.y = 0.0f;
+//        dir.z = cosf(angle.y);
+//
+//        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
+//        
+//        DirectX::XMFLOAT3 pos;
+//        pos.x = Player::GetPosition().x;
+//        pos.y = Player::GetPosition().y + Player::GetHeight() / 2;
+//        pos.z = Player::GetPosition().z;
+//
+//        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
+//        projectile->Launch(dir, pos);
+//        //projectileManager.Register(projectile);
+//
+//    }
+//
+//    if (gamePad.GetButtonDown() & GamePad::BTN_Y)
+//    {
+//        DirectX::XMFLOAT3 dir;
+//        dir.x = sinf(angle.y);
+//        dir.y = 0.0f;
+//        dir.z = cosf(angle.y);
+//
+//        DirectX::XMFLOAT3 pos;
+//        pos.x = position.x;
+//        pos.y = position.y + height / 2;
+//        pos.z = position.z;
+//
+//        DirectX::XMFLOAT3 target;
+//        target.x = pos.x + dir.x * 1000.0f;
+//        target.y = pos.y + dir.y * 1000.0f;
+//        target.z = pos.z + dir.z * 1000.0f;
+//
+//        float dist = FLT_MAX;
+//        EnemyManager& enemyManager = EnemyManager::Instance();
+//        int enemyCount = enemyManager.GetEnemyCount();
+//
+//        for (int i = 0; i < enemyCount; ++i)
+//        {
+//            Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
+//            DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
+//            DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
+//            DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
+//            DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
+//
+//            float d;
+//            DirectX::XMStoreFloat(&d, D);
+//            if (d < dist)
+//            {
+//                dist = d;
+//                target = enemy->GetPosition();
+//                target.y += enemy->GetHeight() * 0.5f;
+//            }
+//        }
+//
+//        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
+//        projectile->Launch(dir, pos, target);
+//    }
+//    
+//}
 
 
 //ジャンプ入力
 bool Player::InputJump()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-   /* if (gamePad.GetButtonDown() & GamePad::BTN_A)
+   if (gamePad.GetButtonDown() & GamePad::BTN_A)
     {
-        if (jumpCount < jumpLimit)
-        {
-            jumpCount++;
-            Jump(jumpSpeed);
+        Jump(jumpSpeed);
 
-            return true;
-            
-        }
-        
-    }*/
-    return false;
-}
-
-//着地したときに呼ばれる
-void Player::OnLanding()
-{
-    jumpCount = 0;
-
-    if (state != State::Damage && state != State::Death)
-    {
-        TransitionLandState();
+        return true;
     }
+    return false;
 }
 
 void Player::OnDamaged()
@@ -699,6 +684,7 @@ void Player::UpdateBarrier()
 void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
+
 
     projectileManager.Render(dc, shader);
 }
