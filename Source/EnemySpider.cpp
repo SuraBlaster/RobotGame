@@ -9,12 +9,15 @@
 #include "Input/GamePad.h"
 #include <EnemyManager.h>
 
+//メモ//
+//
+
 EnemySpider::EnemySpider()
 {
-    model = new Model("Data/Model/Slime/Slime.mdl");
+    model = new Model("Data/Model/spider/spider.mdl");
 
     //スケーリング
-    scale.x = scale.y = scale.z = 0.01f;
+    scale.x = scale.y = scale.z = 0.4f;
 
     radius = 0.5f;
 

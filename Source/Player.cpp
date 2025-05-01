@@ -197,19 +197,15 @@ void Player::CollisionPlayerVsEnemies()
             DirectX::XMStoreFloat3(&normal, N);
 
             if (normal.y > 0.8f)
-
-                //小ジャンプ
-                Jump(jumpSpeed * 0.5f); 
-            enemy->SetPosition(outPosition);
+            {
+              Jump(jumpSpeed * 0.5f);
+            }
+             else
+            {
+              enemy->SetPosition(outPosition);
+            }
         }
-        else
-        {
-           
-        }
-
-
     }
-
 }
 
 void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
