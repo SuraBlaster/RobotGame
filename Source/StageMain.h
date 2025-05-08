@@ -22,10 +22,12 @@ public:
     bool RayCast(const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
 
+    void UpdateTransform();
+
     //ƒgƒ‹ƒNÝ’è
     //void SetTorque(const DirectX::XMFLOAT3& torque) { this->torque = torque; }
 
-    void ChangeGravity(HitResult hit) override;
+    void ChangeGravity() override;
 
     bool GetIsRotation() { return isRotationAnimation; }
 private:
