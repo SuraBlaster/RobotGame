@@ -56,22 +56,22 @@ bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3&
 
 void StageMain::UpdateTransform()
 {
-    ////スケール行列を作成
-    //DirectX::XMMATRIX S = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
+    //スケール行列を作成
+    DirectX::XMMATRIX S = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
 
-    ////回転行列を作成
-    ////DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-    //DirectX::XMFLOAT3 angle = transform.getAngle();
-    //DirectX::XMMATRIX X = DirectX::XMMatrixRotationX(angle.x);
-    //DirectX::XMMATRIX Y = DirectX::XMMatrixRotationY(angle.y);
-    //DirectX::XMMATRIX Z = DirectX::XMMatrixRotationZ(angle.z);
-    //DirectX::XMMATRIX R = Y * X * Z;
-    ////位置行列を作成
-    //DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
-    ////3つの行列を組み合わせ、ワールド行列を作成
-    //DirectX::XMMATRIX W = S * R * T;
-    ////計算したワールド座標を取り出す
-    //DirectX::XMStoreFloat4x4(&transform.x, W);
+    //回転行列を作成
+    //DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
+    DirectX::XMFLOAT3 angle = transform.getAngle();
+    DirectX::XMMATRIX X = DirectX::XMMatrixRotationX(angle.x);
+    DirectX::XMMATRIX Y = DirectX::XMMatrixRotationY(angle.y);
+    DirectX::XMMATRIX Z = DirectX::XMMatrixRotationZ(angle.z);
+    DirectX::XMMATRIX R = Y * X * Z;
+    //位置行列を作成
+    DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
+    //3つの行列を組み合わせ、ワールド行列を作成
+    DirectX::XMMATRIX W = S * R * T;
+    //計算したワールド座標を取り出す
+    DirectX::XMStoreFloat4x4(&transform.x, W);
 }
 
 DirectX::XMVECTOR StageMain::GetGravityVector(GravityDirection dir)
