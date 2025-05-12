@@ -204,6 +204,12 @@
     <ClInclude Include="Source\ShieldIcon.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SelectStage1.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneSelect.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -357,6 +363,15 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShieldIcon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SelectStage1.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stage.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneSelect.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

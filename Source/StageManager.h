@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Stage.h"
+#include <set>
 
 class StageManager
 {
@@ -29,10 +30,15 @@ public:
     //ステージ全削除
     void Clear();
 
+    //指定のステージ消去
+    void Remove(Stage* stage);
+
     //レイキャスト
     bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
         HitResult& hit);
 
 private:
     std::vector<Stage*> stages;
+
+    std::set<Stage*> removes;
 };
