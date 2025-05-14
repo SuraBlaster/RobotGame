@@ -213,6 +213,9 @@
     <ClInclude Include="Source\SelectStage2.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\EnemyBomber.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -378,6 +381,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SelectStage2.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBomber.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

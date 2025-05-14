@@ -87,7 +87,7 @@ void WeaponGreatSword::Render(ID3D11DeviceContext* dc, Shader* shader)
 }
 
 
-//プレイヤーとエネミーとの衝突判定
+//武器とエネミーとの衝突判定
 void WeaponGreatSword::CollisionWeaponVsEnemies()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();

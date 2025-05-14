@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include "EnemyBomber.h"
 #include "EffectManager.h"
 #include "StageManager.h"
 #include "StageMain.h"
@@ -28,6 +29,15 @@ void SceneGame::Initialize()
 
 	//ƒvƒŒƒCƒ„[‰Šú‰»
 	player = new Player;
+
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i)
+	{
+		EnemyBomber* slime = new EnemyBomber;
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}
 
 	WeaponManager& weaponManager = WeaponManager::Instance();
 
