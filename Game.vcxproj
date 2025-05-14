@@ -157,6 +157,7 @@
     <ClInclude Include="Source\SceneSelect.h" />
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\SelectStage1.h" />
+    <ClInclude Include="Source\SelectStage2.h" />
     <ClInclude Include="Source\ShieldGauge.h" />
     <ClInclude Include="Source\ShieldIcon.h" />
     <ClInclude Include="Source\Stage.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Source\SceneSelect.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\SelectStage1.cpp" />
+    <ClCompile Include="Source\SelectStage2.cpp" />
     <ClCompile Include="Source\ShieldGauge.cpp" />
     <ClCompile Include="Source\ShieldIcon.cpp" />
     <ClCompile Include="Source\Stage.cpp" />

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Stage.h"
 #include <set>
+#include <SceneSelect.h>
 
 class StageManager
 {
@@ -37,8 +38,22 @@ public:
     bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
         HitResult& hit);
 
+    SceneSelect::Stage GetStage() { return stage; }
+
+    void SetStage(SceneSelect::Stage stage) { this->stage = stage; }
+
+    bool GetButtonFlag() { return ButtonFlag; }
+
+    void SetButtonFlag(bool buttonFlag) { ButtonFlag = buttonFlag; }
+
+
 private:
     std::vector<Stage*> stages;
 
     std::set<Stage*> removes;
+
+    SceneSelect::Stage stage;
+
+    bool ButtonFlag;
+
 };

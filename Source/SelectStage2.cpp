@@ -1,24 +1,24 @@
-#include "SelectStage1.h"
+#include "SelectStage2.h"
 #include "StageManager.h"
-#include "SceneSelect.h"
 
 //コンストラクタ
-SelectStage1::SelectStage1()
+SelectStage2::SelectStage2()
 {
-    model = new Model("Data/Model/SelectStage/SelectMap1.mdl");
+    model = new Model("Data/Model/SelectStage/SelectMap2.mdl");
 
-    scale.x = scale.y = scale.z = 0.005f;
+    scale.y = scale.z = 0.006f;
+    scale.x = 0.0013f;
 }
 
 //デストラクタ
-SelectStage1::~SelectStage1()
+SelectStage2::~SelectStage2()
 {
     //ステージモデルを破棄
     delete model;
 }
 
 //更新処理
-void SelectStage1::Update(float elapsedTime)
+void SelectStage2::Update(float elapsedTime)
 {
     SceneSelect::Stage stage = StageManager::Instance().GetStage();
     ButtonFlag = StageManager::Instance().GetButtonFlag();
@@ -26,6 +26,11 @@ void SelectStage1::Update(float elapsedTime)
     switch (stage)
     {
     case SceneSelect::Stage::Stage1:
+        turnSpeed = DirectX::XMConvertToRadians(1);
+        scale.y = scale.z = 0.006f;
+        scale.x = 0.0013f;
+        break;
+    case SceneSelect::Stage::Stage2:
         if (ButtonFlag)
         {
             turnSpeed = DirectX::XMConvertToRadians(3);
@@ -35,15 +40,12 @@ void SelectStage1::Update(float elapsedTime)
             turnSpeed = DirectX::XMConvertToRadians(1);
         }
         
-        scale.x = scale.y = scale.z = 0.006f;
-        break;
-    case SceneSelect::Stage::Stage2:
-        turnSpeed = DirectX::XMConvertToRadians(1);
-        scale.x = scale.y = scale.z = 0.005f;
+        scale.y = scale.z = 0.007f;
+        scale.x = 0.0014f;
         break;
 
     }
-    
+
     position.y += sinf(angle.y * 0.5f) * 0.025f;
     angle.y += turnSpeed;
 
@@ -52,13 +54,13 @@ void SelectStage1::Update(float elapsedTime)
     model->UpdateTransform(transform);
 }
 
-void SelectStage1::Render(ID3D11DeviceContext* dc, Shader* shader)
+void SelectStage2::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     //シェーダーにモデルを描画してもらう
     shader->Draw(dc, model);
 }
 
-bool SelectStage1::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
+bool SelectStage2::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
     return Collision::IntersectRayVsModel(start, end, model, hit);
 }

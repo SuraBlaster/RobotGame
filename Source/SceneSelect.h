@@ -25,9 +25,13 @@ public:
 	// •`‰æˆ—
 	void Render()override;
 
+	enum class Stage
+	{
+		Stage1,
+		Stage2,
+	};
+	Stage stage = Stage::Stage1;
 private:
-
-	Model* model = nullptr;
-
 	Sprite* sprite = nullptr;
+	float timer;
 };

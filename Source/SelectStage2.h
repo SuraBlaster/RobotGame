@@ -2,13 +2,12 @@
 
 #include "Graphics/Model.h"
 #include "Stage.h"
-#include "SceneSelect.h"
 
-class SelectStage1 : public Stage
+class SelectStage2 : public Stage
 {
 public:
-    SelectStage1();
-    ~SelectStage1()override;
+    SelectStage2();
+    ~SelectStage2()override;
 
 
     //XVˆ—
@@ -24,6 +23,4 @@ private:
     Model* model = nullptr;
     float turnSpeed;
     bool ButtonFlag = false;
-    
-     
 };
