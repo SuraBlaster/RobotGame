@@ -172,6 +172,7 @@ void SceneGame::Update(float elapsedTime)
 {
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
+	Mouse& mouse = Input::Instance().GetMouse();
 	if (!isPause)
 	{
 		//ステージ更新処理
@@ -194,6 +195,11 @@ void SceneGame::Update(float elapsedTime)
 		isCameraControll = true;
 		isOldCameraControll = true;
 		UI->Update(elapsedTime);
+
+		if (mouse.GetWheel() > 0.0f)
+		{
+			StageMain::Instance().ChangeGravity();
+		}
 	}
 	else
 	{
@@ -204,7 +210,6 @@ void SceneGame::Update(float elapsedTime)
 		}
 	}
 
-	Mouse& mouse = Input::Instance().GetMouse();
 	mouse.updataNormal(isCameraControll);
 
 	//カメラコントローラー更新処理
