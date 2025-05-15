@@ -25,6 +25,8 @@ void SceneGame::Initialize()
 	//ステージ初期化
 	heremap = SceneSelect::Instance().GetMap();
 	StageManager& stageManager = StageManager::Instance();
+
+
 	if(heremap==0)
 	{
 	StageMain* stageMain = new StageMain();

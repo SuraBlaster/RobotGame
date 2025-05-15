@@ -27,7 +27,7 @@ public:
 	// 描画処理
 	void Render()override;
 
-	int heremap=0;
+	int heremap;
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,
