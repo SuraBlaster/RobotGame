@@ -85,13 +85,6 @@ private:
     //プレイヤーに対して水平移動更新処理
     void UpdatePHorizontalMove(float elapsedTime);
 
-    void UpdateGravityDown();
-    void UpdateGravityUp();
-    void UpdateGravityNoth();
-    void UpdateGravityWest();
-    void UpdateGravitySouth();
-    void UpdateGravityEast();
-
 protected:
     //ダメージを受けた時に呼ばれる
     void OnDamaged()override;
@@ -125,9 +118,6 @@ public:
     void OnLanding() override;
 
     void CollisionprojectilesVsEnemies();
-
-    void UpdatePlayerVelocity(float elapsedTime);
-
 
     //バリア更新処理
     void UpdateBarrier();
