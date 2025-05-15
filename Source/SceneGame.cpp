@@ -16,6 +16,7 @@
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
 #include <WeaponDagger.h>
+#include "StageMain.h"
 
 void SceneGame::Initialize()
 {
