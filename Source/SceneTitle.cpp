@@ -59,7 +59,7 @@ void SceneTitle::Update(float elapsedTime)
         startSD.r = startSD.g = startSD.b = 0.7f;
         if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
         {
-            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSelect));
         }
     }
     else

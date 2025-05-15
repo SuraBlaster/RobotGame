@@ -53,7 +53,6 @@ void Player::DrawDebugPrimitive()
     
 }
 
-
 Player::~Player()
 {
     delete hitEffect;
@@ -149,10 +148,10 @@ bool Player::InputMoveSword(float elapsedTime)
 bool Player::InputAttack()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
+    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //マウス
     Mouse& mouse = Input::Instance().GetMouse();
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
-    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     {
         return true;
     }
@@ -192,7 +191,7 @@ void Player::CollisionPlayerVsEnemies()
 
             if (normal.y > 0.8f)
             {
-              Jump(jumpSpeed * 0.5f);
+               //Jump(jumpSpeed * 0.5f);
             }
              else
             {
@@ -378,8 +377,6 @@ void Player::TransitionJumpState()
 
 void Player::UpdateJumpState(float elapsedTime)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    
     if (IsGround())
     {
         TransitionIdleState();
@@ -409,24 +406,11 @@ void Player::TransitionAttackState()
 
 void Player::UpdateAttackState(float elapsedTime)
 {
-
-    //任意のアニメーション再生区間でのみ衝突判定処理をする
-    float animationTime = model->GetCurrentAnimationSeconds();
-    attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
-        || (animationTime >= 1.65f && animationTime < 1.85f)
-        || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
-
-    InputMoveSword(elapsedTime);
-
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    Mouse& mouse = Input::Instance().GetMouse();
-    
-    if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
     switch (weapon)
     {
     case WeaponType::GreatSword:
-        {
-        //�C�ӂ̃A�j���[�V�����Đ���Ԃł̂ݏՓ˔��菈��������
+    {
+        //任意のアニメーション再生区間でのみ衝突判定処理をする
         float animationTime = model->GetCurrentAnimationSeconds();
         attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
             || (animationTime >= 1.65f && animationTime < 1.85f)
@@ -434,8 +418,8 @@ void Player::UpdateAttackState(float elapsedTime)
 
         InputMoveSword(elapsedTime);
 
-        GamePad& gamePad = Input::Instance().GetGamePad();
-        if (gamePad.GetButtonUp() & GamePad::BTN_B)
+        Mouse& mouse = Input::Instance().GetMouse();
+        if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
         {
             if (animationTime <= 1.0f)
             {
@@ -472,53 +456,52 @@ void Player::UpdateAttackState(float elapsedTime)
             }
             break;
         }
-        
-        }
-        break;
+
+    }
+    break;
 
     case WeaponType::Dagger:
+    {
+        float animationTime = model->GetCurrentAnimationSeconds();
+        attackCollisionFlag = (animationTime >= 0.5f && animationTime < 0.8f)
+            || (animationTime >= 1.0f && animationTime < 1.6f)
+            || (animationTime >= 2.3f && animationTime < 2.8f) ? true : false;
+
+        InputMoveSword(elapsedTime);
+
+        Mouse& mouse = Input::Instance().GetMouse();
+        if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
         {
-            float animationTime = model->GetCurrentAnimationSeconds();
-            attackCollisionFlag = (animationTime >= 0.5f && animationTime < 0.8f)
-                || (animationTime >= 1.0f && animationTime < 1.6f)
-                || (animationTime >= 2.3f && animationTime < 2.8f) ? true : false;
-
-            InputMoveSword(elapsedTime);
-
-            GamePad& gamePad = Input::Instance().GetGamePad();
-            if (gamePad.GetButtonUp() & GamePad::BTN_B)
+            if (animationTime <= 0.8f)
             {
-                if (animationTime <= 0.8f)
-                {
-                    attackStage = 1;
-                }
-                else
-                {
-                    attackStage = 2;
-                }
+                attackStage = 1;
             }
-
-            switch (attackStage)
+            else
             {
-            case 1:
-                if (animationTime > 1.0f)
-                {
-                    attackCollisionFlag = false;
-                    TransitionIdleState();
-                }
-                break;
-            case 2:
-                if (!model->IsPlayAnimation())
-                {
-                    TransitionIdleState();
-                }
-                break;
+                attackStage = 2;
             }
-
         }
-        break;
+
+        switch (attackStage)
+        {
+        case 1:
+            if (animationTime > 1.0f)
+            {
+                attackCollisionFlag = false;
+                TransitionIdleState();
+            }
+            break;
+        case 2:
+            if (!model->IsPlayAnimation())
+            {
+                TransitionIdleState();
+            }
+            break;
+        }
+
     }
-    
+    break;
+    }
 
 }
 
@@ -848,6 +831,8 @@ void Player::DrawDebugGUI()
             angle.x = DirectX::XMConvertToRadians(a.x);
             angle.y = DirectX::XMConvertToRadians(a.y);
             angle.z = DirectX::XMConvertToRadians(a.z);
+
+            ImGui::InputFloat3("Velocity", &velocity.x);
 
             ImGui::InputFloat3("Scale", &scale.x);
 

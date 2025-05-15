@@ -33,15 +33,6 @@ void SceneGame::Initialize()
 	//プレイヤー初期化
 	player = new Player;
 
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemyBomber* slime = new EnemyBomber;
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
-
 	WeaponManager& weaponManager = WeaponManager::Instance();
 
 	WeaponGreatSword* greatsword = new WeaponGreatSword;
@@ -51,21 +42,30 @@ void SceneGame::Initialize()
 	weaponManager.Register(dagger);
 
 	//エネミー初期化
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemySlime* slime = new EnemySlime;
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
-	EnemyManager& enemyspiderManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i) 
-	{
-		EnemySpider* spider = new EnemySpider;
-		spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
-		spider->SetTerritory(spider->GetPosition(), 10.0f);
-		enemyspiderManager.Register(spider);
-	}
+
+	//EnemyManager& enemyManager = EnemyManager::Instance();
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//	EnemyBomber* slime = new EnemyBomber;
+	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
+	//	enemyManager.Register(slime);
+	//}
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//	EnemySlime* slime = new EnemySlime;
+	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
+	//	enemyManager.Register(slime);
+	//}
+	//EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	//for (int i = 0; i < 1; ++i) 
+	//{
+	//	EnemySpider* spider = new EnemySpider;
+	//	spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+	//	spider->SetTerritory(spider->GetPosition(), 10.0f);
+	//	enemyspiderManager.Register(spider);
+	//}
 	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -293,7 +293,7 @@ void SceneGame::Render()
 
 	// 2DデバッグGUI描画
 	{
-		//player->DrawDebugGUI();
+		player->DrawDebugGUI();
 	}
 }
 
