@@ -6,6 +6,19 @@ void StageManager::Update(float elapsedTime)
     {
         stage->Update(elapsedTime);
     }
+
+    for (Stage* stage : removes)
+    {
+        //vectorを削除する場合はイテレーターで削除する
+        std::vector<Stage*>::iterator it = std::find(stages.begin(), stages.end(), stage);
+
+        if (it != stages.end())
+        {
+            stages.erase(it);
+        }
+        delete stage;
+    }
+    removes.clear();
 }
 
 void StageManager::Render(ID3D11DeviceContext* dc, Shader* shader)
@@ -32,6 +45,11 @@ void StageManager::Clear()
         }
     }
     stages.clear();
+}
+
+void StageManager::Remove(Stage* stage)
+{
+    removes.insert(stage);
 }
 
 bool StageManager::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

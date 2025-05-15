@@ -9,6 +9,42 @@
 
 class Player : public Character
 {
+public:
+    Player();
+    ~Player()override;
+
+    //インスタンス取得
+    static Player& Instance();
+
+    //更新処理
+    void Update(float elapsedTime);
+
+    //描画処理
+    void Render(ID3D11DeviceContext* dc, Shader* shader);
+
+    //GUI描画
+    void DrawDebugGUI();
+
+    //デバッグプリミティブ描画
+    void DrawDebugPrimitive();
+
+    //ジャンプ入力処理
+    bool InputJump();
+
+    void CollisionprojectilesVsEnemies();
+
+    //バリア更新処理
+    void UpdateBarrier();
+
+    void SetRimit(const int& rimit) { barrierRimit = rimit; }
+
+    const int& GetRimit() const { return barrierRimit; }
+
+    Model* GetModel() const { return model; }
+
+    const bool GetAttackFlag() const { return attackCollisionFlag; }
+    bool GetOnDamage() { return onDamage; }
+    
 private:
     DirectX::XMFLOAT3 GetMoveVec() const;
 
@@ -77,41 +113,6 @@ protected:
     //死亡したときに呼ばれる
     void OnDead()override;
 
-public:
-    Player();
-    ~Player()override;
-
-    //インスタンス取得
-    static Player& Instance();
-
-    //更新処理
-    void Update(float elapsedTime);
-
-    //描画処理
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
-
-    //GUI描画
-    void DrawDebugGUI();
-
-    //デバッグプリミティブ描画
-    void DrawDebugPrimitive();
-
-    //ジャンプ入力処理
-    bool InputJump();
-
-    void CollisionprojectilesVsEnemies();
-
-    //バリア更新処理
-    void UpdateBarrier();
-
-    void SetRimit(const int& rimit) { barrierRimit = rimit; }
-
-    const int& GetRimit() const { return barrierRimit; }
-
-    Model* GetModel() const { return model; }
-
-    const bool GetAttackFlag() const { return attackCollisionFlag; }
-    bool GetOnDamage() { return onDamage; }
 private:
     //アニメーション
     enum Animation
@@ -130,7 +131,7 @@ private:
         GreatSword_Attack,
         GreatSword_Damage,
         GreatSword_Death,
-        
+
     };
 
     enum class State
@@ -143,6 +144,65 @@ private:
         Death,
         Barrier,
     };
+
+public:
+
+    enum class WeaponType
+    {
+        GreatSword,
+        Dagger,
+    };
+
+    WeaponType weapon;
+   
+public:
+    Player();
+    ~Player()override;
+
+    //�C���X�^���X�擾
+    static Player& Instance();
+
+    //�X�V����
+    void Update(float elapsedTime);
+
+    //�`�揈��
+    void Render(ID3D11DeviceContext* dc, Shader* shader);
+
+    //GUI�`��
+    void DrawDebugGUI();
+
+    //�f�o�b�O�v���~�e�B�u�`��
+    void DrawDebugPrimitive();
+
+    //�W�����v���͏���
+    bool InputJump();
+
+    void CollisionprojectilesVsEnemies();
+
+    //�o���A�X�V����
+    void UpdateBarrier(float elapsedTime);
+
+    //�������
+    void ChangeWeapon();
+
+    Model* GetModel() const { return model; }
+
+    const bool GetAttackFlag() const { return attackCollisionFlag; }
+
+    WeaponType GetWeapon() const { return weapon; }
+
+    float GetTimer() const { return ShieldTimer; }
+
+    void SetTimer(const float timer) { ShieldTimer = timer; }
+
+    bool GetHit() const { return hit; }
+
+    void SetHit(bool hit) { this->hit = hit; }
+
+    int GetShieldCount() const { return ShieldCount; }
+
+    void SetShieldCount(int shieldCount) { this->ShieldCount = shieldCount; }
+
 
 private:
     ProjectileManager projectileManager;
@@ -175,12 +235,20 @@ private:
 
     State state = State::Idle;
 
+    //���o���A���W�J����Ă��邩�ǂ���
+    bool ShieldFlag = false;
+
+    float ShieldTimer = 0;
+
+    bool hit = false;
+
+    int attackStage = 0;
+
+    int ShieldCount = 0;
+
     //バリアで防げる残り回数
     int barrierRimit = 0;
 
     //今バリアが展開されているかどうか
     bool firstFlag = false;
-
-    int attackStage = 0;
-
 };

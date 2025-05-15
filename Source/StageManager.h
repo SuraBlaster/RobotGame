@@ -2,6 +2,8 @@
 
 #include <vector>
 #include "Stage.h"
+#include <set>
+#include <SceneSelect.h>
 
 class StageManager
 {
@@ -29,10 +31,29 @@ public:
     //ステージ全削除
     void Clear();
 
+    //指定のステージ消去
+    void Remove(Stage* stage);
+
     //レイキャスト
     bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
         HitResult& hit);
 
+    SceneSelect::Stage GetStage() { return stage; }
+
+    void SetStage(SceneSelect::Stage stage) { this->stage = stage; }
+
+    bool GetButtonFlag() { return ButtonFlag; }
+
+    void SetButtonFlag(bool buttonFlag) { ButtonFlag = buttonFlag; }
+
+
 private:
     std::vector<Stage*> stages;
+
+    std::set<Stage*> removes;
+
+    SceneSelect::Stage stage;
+
+    bool ButtonFlag;
+
 };

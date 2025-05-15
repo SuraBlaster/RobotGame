@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include "EnemyBomber.h"
 #include"EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
@@ -14,6 +15,7 @@
 #include <Input/Input.h>
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
+#include <WeaponDagger.h>
 
 void SceneGame::Initialize()
 {
@@ -30,11 +32,23 @@ void SceneGame::Initialize()
 
 	//プレイヤー初期化
 	player = new Player;
-  
+
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i)
+	{
+		EnemyBomber* slime = new EnemyBomber;
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}
+
 	WeaponManager& weaponManager = WeaponManager::Instance();
 
 	WeaponGreatSword* greatsword = new WeaponGreatSword;
 	weaponManager.Register(greatsword);
+
+	WeaponDagger* dagger = new WeaponDagger;
+	weaponManager.Register(dagger);
 	//エネミー初期化
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < 1; ++i)
@@ -77,6 +91,12 @@ void SceneGame::Initialize()
 
 	//ゲージスプライト
 	gauge = new Sprite();
+
+	shieldGauge = std::make_unique<ShieldGauge>();
+	shieldGauge->Initialize();
+
+	shieldIcon = std::make_unique<ShieldIcon>();
+	shieldIcon->Initialize();
 
 	UI = std::make_unique<UserInterface>();
 	UI->Initialize();
@@ -191,6 +211,10 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
+	//�G�t�F�N�g�X�V����
+	EffectManager::Instance().Update(elapsedTime);
+
+	shieldGauge->Update(elapsedTime);
 	if (!isCameraControll)
 		cameraController->ZeroClear();
 	pauseUpdate();
@@ -259,6 +283,10 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
+		shieldGauge->Render();
+
+		shieldIcon->Render();
+
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
 	}

@@ -2,28 +2,29 @@
 
 
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 StageMain::StageMain()
 {
-    model = new Model("Data/Model/ExampleStage/testmap.mdl");
+    model = new Model("Data/Model/ExampleStage/ExampleStage.mdl");
+    //model = new Model("Data/Model/ExampleStage/tile2.mdl");
 }
 
-//ƒfƒXƒgƒ‰ƒNƒ^
+//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 StageMain::~StageMain()
 {
-    //ƒXƒe[ƒWƒ‚ƒfƒ‹‚ð”jŠü
+    //ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã‚’ç ´æ£„
     delete model;
 }
 
-//XVˆ—
+//æ›´æ–°å‡¦ç†
 void StageMain::Update(float elapsedTime)
 {
-    //‚â‚é‚±‚Æ–¼‰–
+    //ã‚„ã‚‹ã“ã¨åå¡©
 }
 
 void StageMain::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-    //ƒVƒF[ƒ_[‚Éƒ‚ƒfƒ‹‚ð•`‰æ‚µ‚Ä‚à‚ç‚¤
+    //ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã«ãƒ¢ãƒ‡ãƒ«ã‚’æç”»ã—ã¦ã‚‚ã‚‰ã†
     shader->Draw(dc, model);
 }
 

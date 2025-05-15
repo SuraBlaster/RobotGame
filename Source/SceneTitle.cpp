@@ -4,10 +4,11 @@
 #include "SceneManager.h"
 #include "Input/Input.h"
 #include "SceneLoading.h"
+#include "SceneSelect.h"
 
 void SceneTitle::Initialize()
 {
-    //ƒXƒvƒ‰ƒCƒg‰Šú‰»
+    //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
     sprite = new Sprite("Data/Sprite/Title.png");
     startSpr = std::make_unique<Sprite>("Data/Sprite/UI0.png");
     gameCloseSpr = std::make_unique<Sprite>("Data/Sprite/UI4.png");
@@ -38,7 +39,7 @@ void SceneTitle::Finalize()
 void SceneTitle::Update(float elapsedTime)
 {
     //GamePad& gamepad = Input::Instance().GetGamePad();
-    ////‰½‚©ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç‘JˆÚ
+    ////ä½•ã‹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã‚‰é·ç§»
     //const GamePadButton anyButton =
     //    GamePad::BTN_A
     //    | GamePad::BTN_B
@@ -88,19 +89,19 @@ void SceneTitle::Render()
     ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
     ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
-    //‰æ–ÊƒNƒŠƒA&ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgİ’è
+    //ç”»é¢ã‚¯ãƒªã‚¢&ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆè¨­å®š
     FLOAT color[] = { 0.0f,0.0f,0.5f,1.0f };
     dc->ClearRenderTargetView(rtv, color);
     dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     dc->OMSetRenderTargets(1, &rtv, dsv);
 
-    //2DƒXƒvƒ‰ƒCƒg•`‰æ
+    //2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
         float textureWidth = static_cast<float>(sprite->GetTextureWidth());
         float textureHeight = static_cast<float>(sprite->GetTextureHeight());
-        //ƒ^ƒCƒgƒ‹ƒXƒvƒ‰ƒCƒg•`‰æ
+        //ã‚¿ã‚¤ãƒˆãƒ«ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
         sprite->Render(dc,
             0, 0, screenWidth, screenHeight,
             0, 0, textureWidth, textureHeight,

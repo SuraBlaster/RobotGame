@@ -1,5 +1,6 @@
 #pragma once
 #include "Weapon.h" 
+#include "Player.h"
 
 class WeaponGreatSword : public Weapon
 {
@@ -18,8 +19,10 @@ public:
 private:
     Model* model = nullptr;
 
+    Player::WeaponType weapon;
+
     float weaponHitRadius = 0.7f;
 
-    DirectX::XMFLOAT3					weaponHitOffset = { 0, 0, 130.0f };
+    DirectX::XMFLOAT3					weaponHitOffset = { 0, 0, 100.0f };
 
 };

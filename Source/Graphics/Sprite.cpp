@@ -342,6 +342,8 @@ void Sprite::Render(ID3D11DeviceContext *immediate_context,
 		immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		immediate_context->IASetInputLayout(inputLayout.Get());
 
+		immediate_context->OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+
 		immediate_context->RSSetState(rasterizerState.Get());
 
 		immediate_context->VSSetShader(vertexShader.Get(), nullptr, 0);

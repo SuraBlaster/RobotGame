@@ -1,14 +1,13 @@
 #include "WeaponGreatSword.h"
 #include <Graphics/Graphics.h>
 #include <Graphics/DebugRenderer.h>
-#include "Player.h"
 #include <EnemyManager.h>
 #include <Collision.h>
 WeaponGreatSword::WeaponGreatSword()
 {
     model = new Model("Data/Model/Sword/MagicSword.mdl");
 
-    scale.x = scale.y = scale.z = 0.7;
+    scale.x = scale.y = scale.z = 0.7f;
     angle.x = DirectX::XMConvertToRadians(0);
     angle.y = DirectX::XMConvertToRadians(-90);
     angle.z = DirectX::XMConvertToRadians(-10);
@@ -47,11 +46,22 @@ void WeaponGreatSword::Update(float elapsedTime)
     }
 
     model->UpdateTransform(transform);
-
-    if (player.GetAttackFlag())
+        
+    if (player.GetWeapon() == Player::WeaponType::GreatSword)
     {
-        CollisionWeaponVsEnemies();
+        if (player.GetAttackFlag())
+        {
+            CollisionWeaponVsEnemies();
+        }
+
+        scale.x = scale.y = scale.z = 0.7f;
     }
+    else
+    {
+        scale.x = scale.y = scale.z = 0.0f;
+    }
+
+    
     
 }
 
@@ -67,7 +77,7 @@ void WeaponGreatSword::Render(ID3D11DeviceContext* dc, Shader* shader)
     DirectX::XMStoreFloat3(&weaponHitPosition, hitPosition);
 
     Player& player = Player::Instance();
-    if (player.GetAttackFlag())
+    if (player.GetAttackFlag() && player.GetWeapon() == Player::WeaponType::GreatSword)
     {
         debugRenderer->DrawSphere(weaponHitPosition, weaponHitRadius, { 1,0,1,1 });
     }
@@ -77,7 +87,7 @@ void WeaponGreatSword::Render(ID3D11DeviceContext* dc, Shader* shader)
 }
 
 
-//プレイヤーとエネミーとの衝突判定
+//武器とエネミーとの衝突判定
 void WeaponGreatSword::CollisionWeaponVsEnemies()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();
@@ -123,9 +133,9 @@ void WeaponGreatSword::CollisionWeaponVsEnemies()
                     vx /= lengthXZ;
                     vz /= lengthXZ;
 
-                    impulse.x = vx * power;
-                    impulse.y = power * 0.4f;
-                    impulse.z = vz * power;
+                    impulse.x = vx * power * 5.0f;
+                    impulse.y = power * 0.1f;
+                    impulse.z = vz * power * 5.0f;
 
 
                     enemy->AddImpulse(impulse);
