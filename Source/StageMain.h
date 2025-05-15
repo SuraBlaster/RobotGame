@@ -18,6 +18,10 @@ public:
     //描画処理
     void Render(ID3D11DeviceContext* dc, Shader* shader)override;
 
+    //レイキャスト
+    bool RayCast(const DirectX::XMFLOAT3& start,
+        const DirectX::XMFLOAT3& end, HitResult& hit)override;
+
     void ChangeGravity();
 
     bool GetIsRotation() { return isRotationAnimation; }
