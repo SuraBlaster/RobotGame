@@ -1,6 +1,8 @@
 #include "StageMain.h"
 #include <algorithm>
 #include "Camera.h"
+#include "Input/Mouse.h"
+#include "Input/Input.h"
 
 static StageMain* instance = nullptr;
 
@@ -34,6 +36,12 @@ void StageMain::Update(float elapsedTime)
 {
     transform.updateMatrix();
     //if (selectedDirection != Down)
+    Mouse& mouse = Input::Instance().GetMouse();
+    if (mouse.GetWheel() > 0.0f)
+    {
+        StageMain::Instance().ChangeGravity();
+    }
+
     RotationStage(elapsedTime);
     //const DirectX::XMFLOAT4X4 transformIdentity = { 1,0,0,0 ,0,1,0,0 ,0,0,1,0 ,0,0,0,1 };
     model->UpdateTransform(transform.getMatrix());
