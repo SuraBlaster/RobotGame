@@ -89,7 +89,7 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
-			SetMap(2);
+			SceneSelect::Instance().SetMap(2);
 			timer = 2.0f;
 			StageManager::Instance().SetButtonFlag(true);
 		}
