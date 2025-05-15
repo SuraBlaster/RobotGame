@@ -21,7 +21,7 @@ public:
     //ƒgƒ‹ƒNÝ’è
     //void SetTorque(const DirectX::XMFLOAT3& torque) { this->torque = torque; }
 
-    void ChangeGravity() override;
+    void ChangeGravity();
 
     bool GetIsRotation() { return isRotationAnimation; }
 private:
