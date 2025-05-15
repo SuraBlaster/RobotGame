@@ -49,43 +49,6 @@ void StageMain::Render(ID3D11DeviceContext* dc, Shader* shader)
     shader->Draw(dc, model);
 }
 
-//bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
-//{
-//    return Collision::IntersectRayVsModel(start, end, model, hit);
-//}
-
-//void StageMain::UpdateTransform()
-//{
-//    //スケール行列を作成
-//    //DirectX::XMMATRIX S = DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z);
-//
-//    //回転行列を作成
-//    //DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-//    //DirectX::XMFLOAT3 angle = transform.getAngle();
-//    //DirectX::XMMATRIX X = DirectX::XMMatrixRotationX(angle.x);
-//    //DirectX::XMMATRIX Y = DirectX::XMMatrixRotationY(angle.y);
-//    //DirectX::XMMATRIX Z = DirectX::XMMatrixRotationZ(angle.z);
-//    //DirectX::XMMATRIX R = Y * X * Z;
-//    //位置行列を作成
-//    //DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(transform.position.x, transform.position.y, transform.position.z);
-//    //3つの行列を組み合わせ、ワールド行列を作成
-//    //DirectX::XMMATRIX W = S * R * T;
-//    //計算したワールド座標を取り出す
-//    //DirectX::XMStoreFloat4x4(&transform.x, W);
-//}
-
-//DirectX::XMVECTOR StageMain::GetGravityVector(GravityDirection dir)
-//{
-//    switch (dir) {
-//    case Down:      return DirectX::XMVectorSet(0, -1, 0, 0);
-//    case West:      return DirectX::XMVectorSet(-1, 0, 0, 0);
-//    case East:      return DirectX::XMVectorSet(1, 0, 0, 0);
-//    case North:     return DirectX::XMVectorSet(0, 0, 1, 0);
-//    case South:     return DirectX::XMVectorSet(0, 0, -1, 0);
-//    }
-//    return DirectX::XMVectorSet(0, -1, 0, 0);
-//}
-
 void StageMain::RotationStage(float elapsedTime)
 {
     DirectX::XMVECTOR up, front, right;
