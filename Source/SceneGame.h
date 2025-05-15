@@ -7,6 +7,8 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 #include "UI.h"
+#include "Map1.h"
+#include "Map2.h"
 
 // ゲームシーン
 class SceneGame : public Scene
@@ -28,6 +30,9 @@ public:
 	void Render()override;
 
 	int heremap;
+
+	Map1* map1 = new Map1();
+	Map2* map2 = new Map2();
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,

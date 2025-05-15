@@ -20,7 +20,14 @@ public:
     //レイキャスト
     bool RayCast(const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
+
+    void OpenDoor();
 private:
 
     Model* map1 = nullptr;
+
+    enum Animation
+    {
+        OPENDOOR
+    };
 };

@@ -13,8 +13,7 @@
 #include "StageMain.h"
 #include "StageMoveFloor.h"
 #include "SceneManager.h"
-#include "Map1.h"
-#include "Map2.h"
+
 #include <Input/Input.h>
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
@@ -26,22 +25,17 @@ void SceneGame::Initialize()
 	heremap = SceneSelect::Instance().GetMap();
 	StageManager& stageManager = StageManager::Instance();
 
-
-	if(heremap==0)
-	{
-	StageMain* stageMain = new StageMain();
-	stageManager.Register(stageMain);
-	}
 	if(heremap==1)
 	{
 	StageManager& map1Manager = StageManager::Instance();
-	Map1* map1 = new Map1();
+	
 	map1Manager.Register(map1);
+
 	}
 	if(heremap==2)
 	{
 	StageManager& map2Manager = StageManager::Instance();
-	Map2* map2 = new Map2();
+	
 	map2Manager.Register(map2);
 	}
 	
@@ -241,6 +235,17 @@ void SceneGame::Update(float elapsedTime)
 	if (!isCameraControll)
 		cameraController->ZeroClear();
 	pauseUpdate();
+
+
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	
+	if(gamePad.GetButtonUp() & GamePad::BTN_Y)
+	{
+		if(heremap==1)map1->OpenDoor();
+		if(heremap==2)map2->OpenDoor();
+		
+	}
+	
 }
 
 // 描画処理

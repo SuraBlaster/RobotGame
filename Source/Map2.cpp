@@ -40,3 +40,9 @@ bool Map2::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
 {
     return Collision::IntersectRayVsModel(start, end, map2, hit);
 }
+
+void Map2::OpenDoor()
+{
+    map2->PlayAnimation(OPENDOOR11, false);
+
+}
