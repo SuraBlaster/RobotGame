@@ -23,7 +23,7 @@ public:
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
-
+    
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -54,9 +54,6 @@ private:
 
     //追跡ステート更新処理
     void UpdatePursuitState(float elapsedTime);
-
-    //ダメージステート更新処理
-    void UpdateDamageState(float elapsedTime);
 
     //死亡ステートへ遷移
     void TransitionDeathState();

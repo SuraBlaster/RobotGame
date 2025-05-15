@@ -84,7 +84,6 @@ private:
     void UpdateDeathState(float elapsedTime);
     //弾丸発射
     void InputProjectile();
-
 private:
     //ステート
     enum class State

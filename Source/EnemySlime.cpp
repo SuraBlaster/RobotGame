@@ -462,8 +462,6 @@ void EnemySlime::UpdateDeathState(float elapsedTime)
     }
 }
 
-
-
 void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);

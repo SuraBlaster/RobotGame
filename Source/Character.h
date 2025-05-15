@@ -75,7 +75,7 @@ protected:
     virtual void OnDead(){}
 
 private:
-    //垂直速力更新処理
+    //垂直速力更新処理(ドローンで使うため純粋仮想関数にしました)
     void UpdateVerticalVelocity(float elapsedFrame);
 
     //垂直移動更新処理

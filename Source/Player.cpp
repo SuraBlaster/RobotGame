@@ -96,7 +96,7 @@ void Player::Update(float elapsedTime)
     }
 
     UpdateTransform();
-    
+
     //走力速度更新
     UpdateVelocity(elapsedTime);
 
@@ -115,7 +115,6 @@ void Player::Update(float elapsedTime)
     UpdateBarrier(elapsedTime);
 
     ChangeWeapon();
-    //UpdateBarrier();
 }
 
 
@@ -268,8 +267,6 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
             }
     }
 }
-
-
 
 void Player::TransitionIdleState()
 {

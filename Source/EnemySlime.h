@@ -80,7 +80,6 @@ private:
 
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
-
 private:
     //ステート
     enum class State
