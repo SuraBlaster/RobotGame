@@ -18,12 +18,6 @@ public:
     //描画処理
     void Render(ID3D11DeviceContext* dc, Shader* shader)override;
 
-    //レイキャスト
-    bool RayCast(const DirectX::XMFLOAT3& start,
-        const DirectX::XMFLOAT3& end, HitResult& hit)override;
-
-    void UpdateTransform();
-
     //トルク設定
     //void SetTorque(const DirectX::XMFLOAT3& torque) { this->torque = torque; }
 
@@ -39,8 +33,6 @@ private:
         North,
         South
     };
-
-    DirectX::XMVECTOR GetGravityVector(GravityDirection dir);
 
     void RotationStage(float elapsedTime);
     Transform transform;
