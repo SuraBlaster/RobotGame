@@ -10,6 +10,7 @@
 #include <ProjectileHoming.h>
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "StageMain.h"
 
 static Player* instance = nullptr;
 
@@ -97,6 +98,11 @@ void Player::Update(float elapsedTime)
 
     UpdateTransform();
     
+    if (StageMain::Instance().GetIsRotation())
+    {
+        
+    }
+
     //走力速度更新
     UpdateVelocity(elapsedTime);
 

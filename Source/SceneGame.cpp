@@ -194,7 +194,6 @@ void SceneGame::Update(float elapsedTime)
 		isCameraControll = true;
 		isOldCameraControll = true;
 		UI->Update(elapsedTime);
-
 	}
 	else
 	{
