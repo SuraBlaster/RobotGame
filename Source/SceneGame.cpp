@@ -16,12 +16,12 @@
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
 #include <WeaponDagger.h>
-#include "StageMain.h"
 
 void SceneGame::Initialize()
 {
 	//ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
+	StageMain* stageMain = new StageMain();
 	stageManager.Register(&StageMain::Instance());
 
 	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
