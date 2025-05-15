@@ -212,19 +212,14 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
 void Character::UpdateHorizontalVelocity(float elapsedFrame)
 {
-
-    //XZ
     float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-    //Y
-    float lenY = sqrtf(velocity.y * velocity.y + length *length);
 
-    //XZ
     if (length > 0.0f)
     {
         float friction = this->friction * elapsedFrame;
 
         //空中にいるときは摩擦力を減らす
-        //if (!&IsGround) friction *= airControl;
+        //if (!&IsGround) friction = airControl;
 
         if (length > friction)
         {
@@ -240,7 +235,8 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
             velocity.z = 0.0f;
         }
     }
-     //XZ平面の走力加速
+
+    //XZ平面の走力加速
     if (length <= maxMoveSpeed)
     {
         float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
@@ -251,7 +247,7 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
             float acceleration = this->acceleration * elapsedFrame;
 
             //空中にいるときは加速力を減らす
-            //if (!&IsGround) friction *= airControl;
+            //if (!&IsGround) friction = airControl;
 
             //移動ベクトルによる加速処理
             velocity.x += moveVecX * acceleration;
@@ -270,60 +266,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
             }
         }
     }
-    //Y
-      if (lenY > 0.0f)
-    {
-        float friction = this->friction * elapsedFrame;
-
-        //空中にいるときは摩擦力を減らす
-        //if (!&IsGround) friction *= airControl;
-
-        if (lenY > friction)
-        {
-            float vy = velocity.y / lenY;
-
-
-            velocity.x -= vy * friction;
-           
-        }
-        else
-        {
-            velocity.y = 0.0f;
-          
-        }
-    }
-
-      //Yの走力加速
-      if (lenY <= maxMoveSpeed)
-      {
-          float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-
-          if (moveVecLength > 0.0f)
-          {
-              //加速力
-              float acceleration = this->acceleration * elapsedFrame;
-
-              //空中にいるときは加速力を減らす
-              //if (!&IsGround) friction *= airControl;
-
-              //移動ベクトルによる加速処理
-            
-
-              //最大速度制限
-              float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-
-              float lenY = sqrtf(velocity.y * velocity.y + length * length);
-              if (lenY > maxMoveSpeed)
-              {
-                  float vy = velocity.y / lenY;
-                  
-
-                  velocity.y = vy * maxMoveSpeed;
-                 
-              }
-          }
-      }
-   
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
 }

@@ -2,16 +2,19 @@
 #include "SceneGame.h"
 #include "SceneTitle.h"
 #include "SceneLoading.h"
+#include "SceneSelect.h"
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
 #include "EnemyBomber.h"
-#include"EnemySpider.h"
+#include "EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
 #include "StageMain.h"
 #include "StageMoveFloor.h"
 #include "SceneManager.h"
+#include "Map1.h"
+#include "Map2.h"
 #include <Input/Input.h>
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
@@ -20,9 +23,27 @@
 void SceneGame::Initialize()
 {
 	//ステージ初期化
+	heremap = SceneSelect::Instance().GetMap();
 	StageManager& stageManager = StageManager::Instance();
+	if(heremap==0)
+	{
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
+	}
+	if(heremap==1)
+	{
+	StageManager& map1Manager = StageManager::Instance();
+	Map1* map1 = new Map1();
+	map1Manager.Register(map1);
+	}
+	if(heremap==2)
+	{
+	StageManager& map2Manager = StageManager::Instance();
+	Map2* map2 = new Map2();
+	map2Manager.Register(map2);
+	}
+	
+	
 
 	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
 	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
@@ -33,15 +54,6 @@ void SceneGame::Initialize()
 	//プレイヤー初期化
 	player = new Player;
 
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemyBomber* slime = new EnemyBomber;
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
-
 	WeaponManager& weaponManager = WeaponManager::Instance();
 
 	WeaponGreatSword* greatsword = new WeaponGreatSword;
@@ -51,21 +63,30 @@ void SceneGame::Initialize()
 	weaponManager.Register(dagger);
 
 	//エネミー初期化
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemySlime* slime = new EnemySlime;
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
-	EnemyManager& enemyspiderManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i) 
-	{
-		EnemySpider* spider = new EnemySpider;
-		spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
-		spider->SetTerritory(spider->GetPosition(), 10.0f);
-		enemyspiderManager.Register(spider);
-	}
+
+	//EnemyManager& enemyManager = EnemyManager::Instance();
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//	EnemyBomber* slime = new EnemyBomber;
+	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
+	//	enemyManager.Register(slime);
+	//}
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//	EnemySlime* slime = new EnemySlime;
+	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
+	//	enemyManager.Register(slime);
+	//}
+	//EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	//for (int i = 0; i < 1; ++i) 
+	//{
+	//	EnemySpider* spider = new EnemySpider;
+	//	spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+	//	spider->SetTerritory(spider->GetPosition(), 10.0f);
+	//	enemyspiderManager.Register(spider);
+	//}
 	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -293,7 +314,7 @@ void SceneGame::Render()
 
 	// 2DデバッグGUI描画
 	{
-		//player->DrawDebugGUI();
+		player->DrawDebugGUI();
 	}
 }
 

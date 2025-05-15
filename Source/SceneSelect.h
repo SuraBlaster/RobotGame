@@ -24,13 +24,19 @@ public:
 
 	// 描画処理
 	void Render()override;
+	
+	//インスタンス取得
+	static SceneSelect& Instance();
 
+	int map = 0;
+	int GetMap()  { return map; }
 	enum class Stage
 	{
 		Stage1,
 		Stage2,
 	};
 	Stage stage = Stage::Stage1;
+	
 private:
 	Sprite* sprite = nullptr;
 	float timer;

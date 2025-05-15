@@ -10,6 +10,16 @@
 #include "SelectStage2.h"
 #include <Camera.h>
 
+static SceneSelect* instance = nullptr;
+
+SceneSelect& SceneSelect::Instance()
+{
+	return *instance;
+}
+
+
+
+
 void SceneSelect::Initialize()
 {
 	StageManager& stageManager = StageManager::Instance();
@@ -70,12 +80,15 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
+			map = 1;
 			timer = 2.0f;
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
+			
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+
 		}
 		break;
 	case Stage::Stage2:
@@ -86,11 +99,13 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
+			map = 2;
 			timer = 2.0f;
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
+			
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 		}
 		break;
