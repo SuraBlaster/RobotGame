@@ -61,7 +61,6 @@ void Player::DrawDebugPrimitive()
     
 }
 
-
 Player::~Player()
 {
     delete hitEffect;
@@ -74,8 +73,6 @@ Player::~Player()
     }
     
 }
-
-
 
 //更新処理
 void Player::Update(float elapsedTime)
