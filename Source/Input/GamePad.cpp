@@ -147,10 +147,16 @@ void GamePad::Update()
 		if (GetAsyncKeyState('X') & 0x8000) newButtonState |= BTN_B;
 		if (GetAsyncKeyState('C') & 0x8000) newButtonState |= BTN_X;
 		if (GetAsyncKeyState('V') & 0x8000) newButtonState |= BTN_Y;
+		if (GetAsyncKeyState(' ') & 0x8000) newButtonState |= BTN_SPACE;
+		if (GetAsyncKeyState(VK_CONTROL) & 0x8000) newButtonState |= BTN_CONTROL;
+
+
+
 		if (GetAsyncKeyState(VK_UP) & 0x8000)	newButtonState |= BTN_UP;
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)	newButtonState |= BTN_RIGHT;
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000)	newButtonState |= BTN_DOWN;
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)	newButtonState |= BTN_LEFT;
+		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)	newButtonState |= BTN_BACK;
 
 		if (GetAsyncKeyState('1') & 0x8000) newButtonState |= BTN_1;
 		if (GetAsyncKeyState('2') & 0x8000) newButtonState |= BTN_2;

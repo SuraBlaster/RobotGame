@@ -127,6 +127,7 @@
     <ClInclude Include="Source\EnemyBomber.h" />
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\EnemySlime.h" />
+    <ClInclude Include="Source\EnemySpider.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\Graphics\DebugRenderer.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Source\WeaponGreatSword.h" />
     <ClInclude Include="Source\WeaponDagger.h" />
     <ClInclude Include="Source\WeaponManager.h" />
+    <ClInclude Include="Source\UI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\DirectXTex\WICTextureLoader.cpp" />
@@ -189,6 +191,7 @@
     <ClCompile Include="Source\EnemyBomber.cpp" />
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\EnemySlime.cpp" />
+    <ClCompile Include="Source\EnemySpider.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\Graphics\DebugRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
@@ -227,6 +230,7 @@
     <ClCompile Include="Source\WeaponGreatSword.cpp" />
     <ClCompile Include="Source\WeaponDagger.cpp" />
     <ClCompile Include="Source\WeaponManager.cpp" />
+    <ClCompile Include="Source\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />

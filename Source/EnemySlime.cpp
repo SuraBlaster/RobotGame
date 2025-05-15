@@ -4,19 +4,21 @@
 #include "Player.h"
 #include "Collision.h"
 #include <ShieldGauge.h>
+#include <EnemyManager.h>
+
 
 EnemySlime::EnemySlime()
 {
     model = new Model("Data/Model/Slime/Slime.mdl");
 
-    //ƒXƒP[ƒŠƒ“ƒO
+    //ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°
     scale.x = scale.y = scale.z = 0.01f;
 
     radius = 0.5f;
 
     height = 1.0f;
 
-    //œpœjƒXƒe[ƒW‚Ö‘JˆÚ
+    //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ã‚¸ã¸é·ç§»
     TransitionWanderState();
 }
 
@@ -24,11 +26,18 @@ EnemySlime::~EnemySlime()
 {
     delete model;
 }
+//void set_random_target();
+//void draw_rect(float x, float y, float size);
+//void update_enemy_position();
 
-//XVˆ—
+
+
+
+
+//æ›´æ–°å‡¦ç†
 void EnemySlime::Update(float elapsedTime)
 {
-    //ƒXƒe[ƒg‚²‚Æ‚ÌXVˆ—
+    //ã‚¹ãƒ†ãƒ¼ãƒˆã”ã¨ã®æ›´æ–°å‡¦ç†
     switch (state)
     {
     case State::Wander:
@@ -54,43 +63,51 @@ void EnemySlime::Update(float elapsedTime)
         break;
 
     }
-    //‘¬—Íˆ—XV
+
+    // æ•µã®ä½ç½®ã‚’æ›´æ–°
+    //update_enemy_position();
+
+    //é€ŸåŠ›å‡¦ç†æ›´æ–°
     UpdateVelocity(elapsedTime);
 
-    //–³“GŠÔXV
+    //ç„¡æ•µæ™‚é–“æ›´æ–°
     UpdateInvincibleTimer(elapsedTime);
 
-    //ƒIƒuƒWƒFƒNƒgs—ñ‚ğXV
+    //ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè¡Œåˆ—ã‚’æ›´æ–°
     UpdateTransform();
 
-    //ƒ‚ƒfƒ‹ƒAƒjƒ[ƒVƒ‡ƒ“XV
+    //ãƒ¢ãƒ‡ãƒ«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ›´æ–°
     model->UpdateAnimation(elapsedTime);
 
-    //ƒ‚ƒfƒ‹s—ñ‚ğXV
+    //ãƒ¢ãƒ‡ãƒ«è¡Œåˆ—ã‚’æ›´æ–°
     model->UpdateTransform(transform);
 
     delay -= elapsedTime;
+
 }
+    
+
+
 
 void EnemySlime::DrawDebugPrimitive()
 {
-    //Šî’êƒNƒ‰ƒX‚ÌƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒuŠÖ”
+    //åŸºåº•ã‚¯ãƒ©ã‚¹ã®ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–é–¢æ•°
     Enemy::DrawDebugPrimitive();
 
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
-    //“ê’£‚è”ÍˆÍ‚ğƒfƒoƒbƒO‰~’Œ•`‰æ
+    //ç¸„å¼µã‚Šç¯„å›²ã‚’ãƒ‡ãƒãƒƒã‚°å††æŸ±æç”»
     debugRenderer->DrawCylinder(territoryOrigin, territoryRange, 1.0f,
         DirectX::XMFLOAT4(0, 1, 0, 1));
 
-    //ƒ^[ƒQƒbƒgˆÊ’u‚ğƒfƒoƒbƒO‹…•`‰æ
+    //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã‚’ãƒ‡ãƒãƒƒã‚°çƒæç”»
     debugRenderer->DrawSphere(targetPosition, radius, DirectX::XMFLOAT4(1, 1, 0, 1));
 
-    //õ“G”ÍˆÍ‚ğƒfƒoƒbƒO‰~’Œ•`‰æ
-    debugRenderer->DrawCylinder(position, searchRange, 1.0f, DirectX::XMFLOAT4(0, 0, 1, 1));
+    //ç´¢æ•µç¯„å›²ã‚’ãƒ‡ãƒãƒƒã‚°å††æŸ±æç”»
+    debugRenderer->DrawSphere(position, searchRange, DirectX::XMFLOAT4(0, 0, 1, 1));
 
-    //UŒ‚”ÍˆÍ‚ğƒfƒoƒbƒO‰~’Œ•`‰æ
-    debugRenderer->DrawCylinder(position, attackRange, 1.0f, DirectX::XMFLOAT4(1, 0, 0, 1));
+    //æ”»æ’ƒç¯„å›²ã‚’ãƒ‡ãƒãƒƒã‚°å††æŸ±æç”»
+    debugRenderer->DrawSphere(position, attackRange, DirectX::XMFLOAT4(1, 0, 0, 1));
 }
 
 void EnemySlime::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
@@ -102,28 +119,31 @@ void EnemySlime::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
 void EnemySlime::SetRandomTargetPosition()
 {
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
-    targetPosition.y = 0;
+    targetPosition.y = Mathf::RandomRange(territoryOrigin.y, territoryOrigin.y + territoryRange);
     targetPosition.z = Mathf::RandomRange(territoryOrigin.z, territoryOrigin.z + territoryRange);
 
 }
 
 void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
 {
-    //ƒ^[ƒQƒbƒg•ûŒü‚Ö‚ÌisƒxƒNƒgƒ‹‚ğZo
+    //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæ–¹å‘ã¸ã®é€²è¡Œãƒ™ã‚¯ãƒˆãƒ«ã‚’ç®—å‡º
     float vx = targetPosition.x - position.x;
+    float vy = targetPosition.y - position.y;
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
+
+    
     vx /= dist;
     vz /= dist;
 
-    //ˆÚ“®ˆ—
-    Move(vx, vz, moveSpeed * speedRate);
+    //ç§»å‹•å‡¦ç†
+    Move(vx, vz,vy, moveSpeed * speedRate);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 
 bool EnemySlime::SearchPlayer()
 {
-    //ƒvƒŒƒCƒ„[‚Æ‚Ì‚’á·‚ğl—¶‚µ‚Ä3D‚Å‚Ì‹——£”»’è‚ğ‚·‚é
+    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®é«˜ä½å·®ã‚’è€ƒæ…®ã—ã¦3Dã§ã®è·é›¢åˆ¤å®šã‚’ã™ã‚‹
     const DirectX::XMFLOAT3& playerPosition = Player::Instance().GetPosition();
     float vx = playerPosition.x - position.x;
     float vy = playerPosition.y - position.y;
@@ -134,15 +154,15 @@ bool EnemySlime::SearchPlayer()
     {
         float distXZ = sqrtf(vx * vx + vz * vz);
 
-        //’PˆÊƒxƒNƒgƒ‹‰»
+        //å˜ä½ãƒ™ã‚¯ãƒˆãƒ«åŒ–
         vx /= distXZ;
         vz /= distXZ;
 
-        //‘O•ûƒxƒNƒgƒ‹
+        //å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«
         float frontX = sinf(angle.y);
         float frontZ = cosf(angle.y);
 
-        //2‚Â‚ÌƒxƒNƒgƒ‹‚Ì“àÏ’l‚Å‘OŒã”»’è
+        //2ã¤ã®ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©å€¤ã§å‰å¾Œåˆ¤å®š
         float dot = (frontX * vx) + (frontZ * vz);
         if (dot > 0.0f)
         {
@@ -155,19 +175,19 @@ bool EnemySlime::SearchPlayer()
 void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 {
 
-    //ƒm[ƒh‚ÌˆÊ’u‚Æ“–‚½‚è”»’è‚ğs‚¤
+    //ãƒãƒ¼ãƒ‰ã®ä½ç½®ã¨å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã†
     Model::Node* node = model->FindNode(nodeName);
 
     if (node != nullptr)
     {
-        //ƒm[ƒh‚Ìƒ[ƒ‹ƒhÀ•W
+        //ãƒãƒ¼ãƒ‰ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™
         DirectX::XMFLOAT3 nodePosition(
             node->worldTransform._41,
             node->worldTransform._42,
             node->worldTransform._43
         );
 
-        //“–‚½‚è”»’è•\¦
+        //å½“ãŸã‚Šåˆ¤å®šè¡¨ç¤º
         Graphics::Instance().GetDebugRenderer()->DrawSphere(
             nodePosition, nodeRadius, DirectX::XMFLOAT4(0, 0, 1, 1)
         );
@@ -202,10 +222,10 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
             }
             else if(delay <= 0.0f)
             {
-                //ƒ_ƒ[ƒW‚ğ—^‚¦‚é
+                //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
                 if (player.ApplyDamage(1))
                 {
-                    //“G‚ğ‚Á”ò‚Î‚·ƒxƒNƒgƒ‹‚ğZo
+                    //æ•µã‚’å¹ã£é£›ã°ã™ãƒ™ã‚¯ãƒˆãƒ«ã‚’ç®—å‡º
                     DirectX::XMFLOAT3 vec;
                     vec.x = outPosition.x - nodePosition.x;
                     vec.z = outPosition.z - nodePosition.z;
@@ -213,16 +233,16 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                     vec.x /= length;
                     vec.z /= length;
 
-                    //XZ•½–Ê‚É‚Á”ò‚Î‚·—Í‚ğŠ|‚¯‚é
+                    //XZå¹³é¢ã«å¹ã£é£›ã°ã™åŠ›ã‚’æ›ã‘ã‚‹
                     float power = 10.0f;
                     vec.x *= power;
                     vec.z *= power;
 
-                    //Y•ûŒü‚É‚à—Í‚ğŠ|‚¯‚é
-                    vec.y = 5.0f;
+                    //Yæ–¹å‘ã«ã‚‚åŠ›ã‚’æ›ã‘ã‚‹
+                    //vec.y = 5.0f;
 
-                    //‚Á”ò‚Î‚·
-                    player.AddImpulse(vec);
+                    //å¹ã£é£›ã°ã™
+                    //player.AddImpulse(vec);
                 }
             }
         }
@@ -233,34 +253,34 @@ void EnemySlime::TransitionWanderState()
 {
     state = State::Wander;
 
-    //–Ú•W’n“_İ’è
+    //ç›®æ¨™åœ°ç‚¹è¨­å®š
     SetRandomTargetPosition();
 
-    //•à‚«ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //æ­©ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_WalkFWD, true);
 }
 
 void EnemySlime::UpdateWanderState(float elapsedTime)
 {
-    //–Ú•W’n“_‚Ü‚ÅXZ•½–Ê‚Å‚Ì‹——£”»’è
+    //ç›®æ¨™åœ°ç‚¹ã¾ã§XZå¹³é¢ã§ã®è·é›¢åˆ¤å®š
     float vx = targetPosition.x - position.x;
     float vz = targetPosition.z - position.z;
     float distSq = vx * vx + vz * vz;
     if (distSq < radius * radius)
     {
-        //Ÿ‚Ì–Ú•W’n“_İ’è
+        //æ¬¡ã®ç›®æ¨™åœ°ç‚¹è¨­å®š
         //SetRandomTargetPosition();
 
-        //‘Ò‹@ƒXƒe[ƒg‘@ˆÛ
+        //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆç¹Šç¶­
         TransitionIdleState();
     }
-    //–Ú•W’n“_‚ÖˆÚ“®
+    //ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•
     MoveToTarget(elapsedTime, 0.5f);
 
-    //ƒvƒŒƒCƒ„[õ“G
+    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç´¢æ•µ
     if (SearchPlayer())
     {
-        //Œ©‚Â‚©‚Á‚½‚ç’ÇÕƒXƒe[ƒg‚É‘JˆÚ
+        //è¦‹ã¤ã‹ã£ãŸã‚‰è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
         TransitionPursuitState();
     }
 }
@@ -269,27 +289,27 @@ void EnemySlime::TransitionIdleState()
 {
     state = State::Idle;
 
-    //ƒ^ƒCƒ}[‚ğƒ‰ƒ“ƒ_ƒ€İ’è
+    //ã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒ©ãƒ³ãƒ€ãƒ è¨­å®š
     stateTimer = Mathf::RandomRange(3.0f, 5.0f);
 
-    //‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //å¾…æ©Ÿã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_IdleNormal, true);
 }
 
 void EnemySlime::UpdateIdleState(float elapsedTime)
 {
-    //ƒ^ƒCƒ}[ˆ—
+    //ã‚¿ã‚¤ãƒãƒ¼å‡¦ç†
     stateTimer -= elapsedTime;
     if (stateTimer < 0.0f)
     {
-        //œpœjƒXƒe[ƒg‚Ö‘JˆÚ
+        //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
         TransitionWanderState();
     }
 
-    //ƒvƒŒƒCƒ„[õ“G
+    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç´¢æ•µ
     if (SearchPlayer())
     {
-        //Œ©‚Â‚©‚Á‚½‚ç’ÇÕƒXƒe[ƒg‚É‘JˆÚ
+        //è¦‹ã¤ã‹ã£ãŸã‚‰è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
         TransitionPursuitState();
     }
 }
@@ -298,46 +318,55 @@ void EnemySlime::TransitionPursuitState()
 {
     state = State::Pursuit;
 
-    //”•bŠÔ’ÇÕ‚·‚éƒ^ƒCƒ}[‚ğƒ‰ƒ“ƒ_ƒ€İ’è
+    //æ•°ç§’é–“è¿½è·¡ã™ã‚‹ã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒ©ãƒ³ãƒ€ãƒ è¨­å®š
     stateTimer = Mathf::RandomRange(3.0f, 5.0f);
 
-    //•à‚«ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //æ­©ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_RunFWD, true);
 }
 
 void EnemySlime::UpdatePursuitState(float elapsedTime)
 {
-    //–Ú•WˆÊ’u‚ğƒvƒŒƒCƒ„[ˆÊ’u‚Éİ’è
+    //ç›®æ¨™ä½ç½®ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã«è¨­å®š
     targetPosition = Player::Instance().GetPosition();
 
-    //–Ú•W’n“_‚ÉˆÚ“®
+    //ç›®æ¨™åœ°ç‚¹ã«ç§»å‹•
     MoveToTarget(elapsedTime, 1.0f);
 
-    //ƒ^ƒCƒ}[ˆ—
+    //ã‚¿ã‚¤ãƒãƒ¼å‡¦ç†
     stateTimer -= elapsedTime;
     if (stateTimer < 0.0f)
     {
-        //‘Ò‹@ƒXƒe[ƒg‚É‘JˆÚ
+        //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
         TransitionIdleState();
+        atknow = false;
     }
 
-    //ƒvƒŒƒCƒ„[‚ª‹ß‚Ã‚­‚ÆUŒ‚ƒXƒe[ƒg‚É‘JˆÚ
+    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¿‘ã¥ãã¨æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     float vx = targetPosition.x - position.x;
     float vy = targetPosition.y - position.y;
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vy * vy + vz * vz);
-    if (dist < attackRange)
+
+    
+    if (dist <= attackRange)
     {
-        //UŒ‚ƒXƒe[ƒg‚É‘JˆÚ
+      
+        atknow = true;
+        //æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
         TransitionAttackState();
     }
+    else { atknow = false; }
 }
 
 void EnemySlime::TransitionAttackState()
 {
     state = State::Attack;
 
-    //UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    
+
+   
+    //æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Attack1, false);
 }
 
@@ -346,11 +375,11 @@ void EnemySlime::UpdateAttackState(float elapsedTime)
     float animationTime = model->GetCurrentAnimationSeconds();
     if (animationTime >= 0.1f && animationTime < 0.35f)
     {
-        //–Ú‹Êƒm[ƒh‚ÆƒvƒŒƒCƒ„[‚ÌÕ“Ëˆ—
+        //ç›®ç‰ãƒãƒ¼ãƒ‰ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¡çªå‡¦ç†
         CollisionNodeVsPlayer("EyeBall", 0.2f);
     }
 
-    //UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚çí“¬‘Ò‹@ƒXƒe[ƒg‚Ö‘JˆÚ
+    //æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ãŸã‚‰æˆ¦é—˜å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     if (!model->IsPlayAnimation())
     {
         TransitionIdleBattleState();
@@ -361,35 +390,37 @@ void EnemySlime::TransitionIdleBattleState()
 {
     state = State::IdleBattle;
 
-    //”•bŠÔ‘Ò‹@‚·‚éƒ^ƒCƒ}[‚ğƒ‰ƒ“ƒ_ƒ€İ’è
+    //æ•°ç§’é–“å¾…æ©Ÿã™ã‚‹ã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒ©ãƒ³ãƒ€ãƒ è¨­å®š
     stateTimer = Mathf::RandomRange(2.0f, 3.0f);
 
-    //í“¬‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //æˆ¦é—˜å¾…æ©Ÿã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_IdleBattle, true);
 }
 
 void EnemySlime::UpdateIdleBattleState(float elapsedTime)
 {
-    //–Ú•W’n“_‚ğƒvƒŒƒCƒ„[ˆÊ’u‚Éİ’è
+    //ç›®æ¨™åœ°ç‚¹ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã«è¨­å®š
     targetPosition = Player::Instance().GetPosition();
 
-    //ƒ^ƒCƒ}[ˆ—
+    //ã‚¿ã‚¤ãƒãƒ¼å‡¦ç†
     stateTimer -= elapsedTime;
     if (stateTimer < 0.0f)
     {
-        //ƒvƒŒƒCƒ„[‚ªUŒ‚”ÍˆÍ‚É‚¢‚½ê‡‚ÍUŒ‚ƒXƒe[ƒg‚É‘JˆÚ
+        //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ”»æ’ƒç¯„å›²ã«ã„ãŸå ´åˆã¯æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
         float vx = targetPosition.x - position.x;
         float vy = targetPosition.y - position.y;
         float vz = targetPosition.z - position.z;
         float dist = sqrtf(vx * vx + vy * vy + vz * vz);
         if (dist < attackRange)
         {
-            //UŒ‚ƒXƒe[ƒg‚É‘JˆÚ
+           
+            //æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
             TransitionAttackState();
         }
         else
         {
-            //œpœjƒXƒe[ƒg‚É‘JˆÚ
+            
+            //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
             TransitionIdleState();
         }
     }
@@ -401,13 +432,13 @@ void EnemySlime::TransitionDamageState()
 {
     state = State::Damage;
 
-    //ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_GetHit, false);
 }
 
 void EnemySlime::UpdateDamageState(float elapsedTime)
 {
-    //ƒ_ƒ[ƒWƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚çí“¬‘Ò‹@ƒXƒe[ƒg‚É‘JˆÚ
+    //ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ãŸã‚‰æˆ¦é—˜å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»
     if (!model->IsPlayAnimation())
     {
         TransitionIdleBattleState();
@@ -418,18 +449,20 @@ void EnemySlime::TransitionDeathState()
 {
     state = State::Death;
 
-    //€–SƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+    //æ­»äº¡ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
     model->PlayAnimation(Anim_Die, false);
 }
 
 void EnemySlime::UpdateDeathState(float elapsedTime)
 {
-    //€–SƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚ç©•ª‚ğ”jŠü
+    //æ­»äº¡ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã£ãŸã‚‰è‡ªåˆ†ã‚’ç ´æ£„
     if (!model->IsPlayAnimation())
     {
         Destroy();
     }
 }
+
+
 
 void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)
 {

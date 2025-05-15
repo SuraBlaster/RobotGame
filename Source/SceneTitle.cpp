@@ -8,10 +8,25 @@
 
 void SceneTitle::Initialize()
 {
-    //ƒXƒvƒ‰ƒCƒg‰Šú‰»
+    //ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
     sprite = new Sprite("Data/Sprite/Title.png");
-}
+    startSpr = std::make_unique<Sprite>("Data/Sprite/UI0.png");
+    gameCloseSpr = std::make_unique<Sprite>("Data/Sprite/UI4.png");
 
+    startSD = {
+        800,500, 250, 50,
+        0, 0,
+        static_cast<float>(startSpr->GetTextureWidth()),
+        static_cast<float>(startSpr->GetTextureHeight())
+    };
+
+    gameCloseSD = {
+    300, 500, 250, 50,
+    0, 0,
+    static_cast<float>(gameCloseSpr->GetTextureWidth()),
+    static_cast<float>(gameCloseSpr->GetTextureHeight())
+    };
+}
 void SceneTitle::Finalize()
 {
     if (sprite != nullptr)
@@ -23,21 +38,48 @@ void SceneTitle::Finalize()
 
 void SceneTitle::Update(float elapsedTime)
 {
-    GamePad& gamepad = Input::Instance().GetGamePad();
-
-    //‰½‚©ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç‘JˆÚ
-    const GamePadButton anyButton =
-        GamePad::BTN_A
-        | GamePad::BTN_B
-        | GamePad::BTN_X
-        | GamePad::BTN_Y
-        ;
-
-    if (gamepad.GetButtonDown() & anyButton)
+    //GamePad& gamepad = Input::Instance().GetGamePad();
+    ////ä½•ã‹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã‚‰é·ç§»
+    //const GamePadButton anyButton =
+    //    GamePad::BTN_A
+    //    | GamePad::BTN_B
+    //    | GamePad::BTN_X
+    //    | GamePad::BTN_Y
+    //    ;
+   /* if (gamepad.GetButtonDown() & anyButton)
     {
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneSelect));
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+    }*/
+
+    Mouse& mouse = Input::Instance().GetMouse();
+
+    if (mouse.mouseVsRect(startSD.dx, startSD.dy,
+        startSD.dw, startSD.dh))
+    {
+        startSD.r = startSD.g = startSD.b = 0.7f;
+        if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+        {
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
+    }
+    else
+    {
+        startSD.r = startSD.g = startSD.b = 1.0f;
     }
 
+    if (mouse.mouseVsRect(gameCloseSD.dx, gameCloseSD.dy,
+        gameCloseSD.dw, gameCloseSD.dh))
+    {
+        gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 0.7f;
+        if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
+        {
+            SceneManager::Instance().GameClose();
+        }
+    }
+    else
+    {
+        gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 1.0f;
+    }
 }
 
 void SceneTitle::Render()
@@ -47,24 +89,27 @@ void SceneTitle::Render()
     ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
     ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
-    //‰æ–ÊƒNƒŠƒA&ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgİ’è
+    //ç”»é¢ã‚¯ãƒªã‚¢&ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆè¨­å®š
     FLOAT color[] = { 0.0f,0.0f,0.5f,1.0f };
     dc->ClearRenderTargetView(rtv, color);
     dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     dc->OMSetRenderTargets(1, &rtv, dsv);
 
-    //2DƒXƒvƒ‰ƒCƒg•`‰æ
+    //2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
         float textureWidth = static_cast<float>(sprite->GetTextureWidth());
         float textureHeight = static_cast<float>(sprite->GetTextureHeight());
-        //ƒ^ƒCƒgƒ‹ƒXƒvƒ‰ƒCƒg•`‰æ
+        //ã‚¿ã‚¤ãƒˆãƒ«ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
         sprite->Render(dc,
             0, 0, screenWidth, screenHeight,
             0, 0, textureWidth, textureHeight,
             0,
             1, 1, 1, 1);
+
+        startSpr->Render(dc, startSD);
+        gameCloseSpr->Render(dc, gameCloseSD);
     }
 
 }
