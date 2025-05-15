@@ -186,14 +186,15 @@ void SceneGame::Update(float elapsedTime)
 		//エフェクト更新処理
 		EffectManager::Instance().Update(elapsedTime);
 
-	//����X�V����
-	WeaponManager::Instance().Update(elapsedTime);
+		//����X�V����
+		WeaponManager::Instance().Update(elapsedTime);
 
-	//�G�l�~�[�X�V����
-	EnemyManager::Instance().Update(elapsedTime);
+		//�G�l�~�[�X�V����
+		EnemyManager::Instance().Update(elapsedTime);
 		isCameraControll = true;
 		isOldCameraControll = true;
 		UI->Update(elapsedTime);
+
 	}
 	else
 	{
