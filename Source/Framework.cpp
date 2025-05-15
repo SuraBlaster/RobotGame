@@ -135,6 +135,12 @@ LRESULT CALLBACK Framework::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LP
 
 	switch (msg)
 	{
+	case WM_MOUSEWHEEL:
+	{
+		//TODO:mouseWheel
+		input.GetMouse().SetWheel((short)HIWORD(wParam));
+		break;
+	}
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
