@@ -49,8 +49,8 @@ void SceneGame::Initialize()
 
 	WeaponDagger* dagger = new WeaponDagger;
 	weaponManager.Register(dagger);
+
 	//エネミー初期化
-	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < 1; ++i)
 	{
 		EnemySlime* slime = new EnemySlime;

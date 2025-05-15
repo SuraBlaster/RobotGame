@@ -127,7 +127,7 @@ bool Player::InputMove(float elapsedTime)
     //進行ベクトル取得
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(moveVec.x, moveVec.z,moveVec.y, moveSpeed);
+    Move(moveVec.x, moveVec.z, moveSpeed);
 
     Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed);
 
@@ -139,7 +139,7 @@ bool Player::InputMoveSword(float elapsedTime)
     //�i�s�x�N�g���擾
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(moveVec.x, moveVec.z, moveVec.y, moveSpeed * 0.2f);
+    Move(moveVec.x, moveVec.z, moveSpeed * 0.2f);
 
     Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed * 0.2f);
 

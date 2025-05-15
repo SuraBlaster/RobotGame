@@ -137,7 +137,7 @@ void EnemySlime::MoveToTarget(float elapsedTime, float speedRate)
     vz /= dist;
 
     //移動処理
-    Move(vx, vz,vy, moveSpeed * speedRate);
+    Move(vx, vz, moveSpeed * speedRate);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 

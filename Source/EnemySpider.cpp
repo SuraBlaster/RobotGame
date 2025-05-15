@@ -158,7 +158,6 @@ void EnemySpider::MoveToTarget(float elapsedTime, float speedRate)
 {
     //ターゲット方向への進行ベクトルを算出
     float vx = targetPosition.x - position.x;
-    float vy = targetPosition.y - position.y;
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
 
@@ -167,7 +166,7 @@ void EnemySpider::MoveToTarget(float elapsedTime, float speedRate)
     vz /= dist;
 
     //移動処理
-    Move(vx, vz, vy, moveSpeed * speedRate);
+    Move(vx, vz, moveSpeed * speedRate);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 

@@ -52,7 +52,7 @@ void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 
 }
 
-void Character::Move(float vx, float vz,float vy, float speed)
+void Character::Move(float vx, float vz, float speed)
 {
     // 移動処理
    /* speed *= elapsedTime;
@@ -61,7 +61,6 @@ void Character::Move(float vx, float vz,float vy, float speed)
 
     moveVecX = vx;
     moveVecZ = vz;
-    moveVecY = vy;
 
     maxMoveSpeed = speed;
 
@@ -299,7 +298,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
       {
           float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
 
-          float moveVecLenY= sqrtf(moveVecY * moveVecY + moveVecLength * moveVecLength);
           if (moveVecLength > 0.0f)
           {
               //加速力
@@ -309,7 +307,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
               //if (!&IsGround) friction *= airControl;
 
               //移動ベクトルによる加速処理
-              velocity.y += moveVecY * acceleration;
             
 
               //最大速度制限
@@ -329,7 +326,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
    
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
-    moveVecY = 0.0f;
 }
 
 void Character::UpdateHorizontalMove(float elapsedTime)
