@@ -22,8 +22,7 @@ void SceneGame::Initialize()
 {
 	//ステージ初期化
 	StageManager& stageManager = StageManager::Instance();
-	StageMain* s = &StageMain::Instance();
-	stageManager.Register(s);
+	stageManager.Register(&StageMain::Instance());
 
 	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
 	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
