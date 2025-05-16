@@ -6,7 +6,8 @@
 #include "EnemyManager.h"
 #include "EnemySlime.h"
 #include "EnemyBomber.h"
-#include"EnemySpider.h"
+#include "EnemyDrone.h"
+#include "EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
 #include "StageMain.h"
@@ -43,14 +44,15 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 
-	//EnemyManager& enemyManager = EnemyManager::Instance();
-	//for (int i = 0; i < 1; ++i)
-	//{
-	//	EnemyBomber* slime = new EnemyBomber;
-	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
-	//	enemyManager.Register(slime);
-	//}
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i)
+	{
+		EnemyDrone* slime = new EnemyDrone;
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}
+
 	//for (int i = 0; i < 1; ++i)
 	//{
 	//	EnemySlime* slime = new EnemySlime;
@@ -294,6 +296,8 @@ void SceneGame::Render()
 	// 2DデバッグGUI描画
 	{
 		player->DrawDebugGUI();
+
+		EnemyManager::Instance().DrawDebugGUI();
 	}
 }
 

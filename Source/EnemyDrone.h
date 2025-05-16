@@ -2,11 +2,9 @@
 
 #include "Graphics/Model.h"
 #include "Enemy.h"
+#include "ProjectileManager.h"
 
-
-
-
-//スライム
+//ドローン
 class EnemyDrone : public Enemy
 {
 public:
@@ -22,8 +20,19 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive()override;
 
+    //弾を発射する処理
+    void LaunchProjectile();
+
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
+
+    //弾とプレイヤーの当たり判定
+    void CollisionProjectilesVsPlayer();
+
+    ProjectileManager* GetProjectile() override { return &projectileManager; }
+
+    //GUI
+    void DrawDebugGUI()override;
 
 private:
     //ターゲット位置をランダム設定
@@ -34,9 +43,6 @@ private:
 
     //プレイヤー索敵
     bool SearchPlayer();
-
-    //ノードとプレイヤーの衝突処理
-    void CollisionNodeVsPlayer(const char* nodeName, float boneRadius);
 
     //徘徊ステート
     void TransitionWanderState();
@@ -79,6 +85,8 @@ private:
 
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
+
+    void UpdateVerticalVelocity(float elapsedFrame);
 private:
     //ステート
     enum class State
@@ -95,21 +103,8 @@ private:
     //アニメーション
     enum Animation
     {
-        Anim_IdleNormal,
-        Anim_IdleBattle,
-        Anim_Attack1,
-        Anim_Attack2,
-        Anim_WalkFWD,
-        Anim_WalkBWD,
-        Anim_WalkLeft,
-        Anim_WalfRight,
-        Anim_RunFWD,
-        Anim_SenseSomtingST,
-        Anim_Taunt,
-        Anim_Victory,
-        Anim_GetHit,
-        Anim_Dizzy,
-        Anim_Die,
+        Anim_Idle,
+        Anim_Attack,
     };
 protected:
     //死亡したときに呼ばれる
@@ -122,14 +117,20 @@ private:
     State state = State::Wander;
     DirectX::XMFLOAT3 targetPosition = { 0,0,0 };
     DirectX::XMFLOAT3 territoryOrigin = { 0,0,0 };
+
+    DirectX::XMFLOAT3 dir;
+    DirectX::XMFLOAT3 pos;
+
+    bool deadFlag;
+
+    ProjectileManager projectileManager;
     float territoryRange = 10.0f;
-    float moveSpeed = 3.0f;
+    float moveSpeed = 1.0f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
     float stateTimer = 0.0f;
     float searchRange = 7.0f;
-    float attackRange = 1.0f;
+    float attackRange = 5.0f;
     float syuziRange = 1.5f;
-    bool atknow;
     float delay = 0.0f;
 };
 

@@ -106,6 +106,9 @@ private:
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
+    void UpdateVerticalVelocity(float elapsedFrame);
+
+    void UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos);
 
 protected:
     //ダメージを受けた時に呼ばれる
@@ -156,7 +159,7 @@ public:
 
     WeaponType weapon;
 
-    //�������
+    //武器変更
     void ChangeWeapon();
 
     WeaponType GetWeapon() const { return weapon; }
@@ -172,6 +175,14 @@ public:
     int GetShieldCount() const { return ShieldCount; }
 
     void SetShieldCount(int shieldCount) { this->ShieldCount = shieldCount; }
+
+    DirectX::XMFLOAT3 GetPreviousPlayerPos() const { return previousPlayerPos; }
+
+    void SetPreviousPlayerPos(DirectX::XMFLOAT3 PreviousPlayerPos) { previousPlayerPos = PreviousPlayerPos; }
+
+    DirectX::XMFLOAT3 GetCurrentPlayerPos() const { return currentPlayerPos; }
+
+    void SetCurrentPlayerPos(DirectX::XMFLOAT3 CurrentPlayerPos) { currentPlayerPos = CurrentPlayerPos; }
 
 
 private:
@@ -205,7 +216,6 @@ private:
 
     State state = State::Idle;
 
-    //���o���A���W�J����Ă��邩�ǂ���
     bool ShieldFlag = false;
 
     float ShieldTimer = 0;
@@ -221,4 +231,9 @@ private:
 
     //今バリアが展開されているかどうか
     bool firstFlag = false;
+
+    DirectX::XMFLOAT3 currentPlayerPos;
+    DirectX::XMFLOAT3 previousPlayerPos;
+
+    
 };

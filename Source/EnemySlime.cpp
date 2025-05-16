@@ -26,13 +26,6 @@ EnemySlime::~EnemySlime()
 {
     delete model;
 }
-//void set_random_target();
-//void draw_rect(float x, float y, float size);
-//void update_enemy_position();
-
-
-
-
 
 //更新処理
 void EnemySlime::Update(float elapsedTime)
@@ -85,9 +78,6 @@ void EnemySlime::Update(float elapsedTime)
     delay -= elapsedTime;
 
 }
-    
-
-
 
 void EnemySlime::DrawDebugPrimitive()
 {
@@ -363,9 +353,6 @@ void EnemySlime::TransitionAttackState()
 {
     state = State::Attack;
 
-    
-
-   
     //攻撃アニメーション再生
     model->PlayAnimation(Anim_Attack1, false);
 }
@@ -460,6 +447,12 @@ void EnemySlime::UpdateDeathState(float elapsedTime)
     {
         Destroy();
     }
+}
+
+void EnemySlime::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //重力処理
+    velocity.y += gravity * elapsedFrame;
 }
 
 void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)

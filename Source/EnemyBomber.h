@@ -22,7 +22,6 @@ public:
 
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
-
     
 private:
     //ターゲット位置をランダム設定
@@ -60,6 +59,9 @@ private:
 
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
+
+    void UpdateVerticalVelocity(float elapsedFrame)override;
+    
 
 private:
     //ステート

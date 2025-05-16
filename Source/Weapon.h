@@ -19,5 +19,9 @@ public:
 
     void Destroy();
 
-
+    void Weapon::UpdateVerticalVelocity(float elapsedFrame)
+    {
+        //d—Íˆ—
+        velocity.y += gravity * elapsedFrame;
+    }
 };

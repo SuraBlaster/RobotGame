@@ -579,3 +579,9 @@ void EnemySpider::InputProjectile()
    // }
 
 }
+
+void EnemySpider::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //d—Íˆ—
+    velocity.y += gravity * elapsedFrame;
+}

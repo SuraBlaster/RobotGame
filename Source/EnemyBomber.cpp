@@ -95,6 +95,8 @@ void EnemyBomber::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
     territoryRange = range;
 }
 
+
+
 void EnemyBomber::SetRandomTargetPosition()
 {
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
@@ -337,6 +339,12 @@ void EnemyBomber::UpdateDeathState(float elapsedTime)
     }
 }
 
+void EnemyBomber::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //d—Íˆ—
+    velocity.y += gravity * elapsedFrame; 
+}
+
 void EnemyBomber::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
@@ -346,5 +354,7 @@ void EnemyBomber::OnDead()
 {
     TransitionDeathState();
 }
+
+
 
 

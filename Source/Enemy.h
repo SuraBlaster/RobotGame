@@ -17,6 +17,8 @@ public:
 
     virtual void DrawDebugPrimitive();
 
+    virtual void DrawDebugGUI() {};
+
     void Destroy();
 
 };

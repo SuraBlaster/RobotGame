@@ -115,10 +115,10 @@ void Player::Update(float elapsedTime)
     UpdateBarrier(elapsedTime);
 
     ChangeWeapon();
+
+    UpdatePlayerPosition(position);
+    
 }
-
-
-
 
 bool Player::InputMove(float elapsedTime)
 {
@@ -268,11 +268,22 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
     }
 }
 
+void Player::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //重力処理
+    velocity.y += gravity * elapsedFrame;
+}
+
+void Player::UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos)
+{
+    Player::Instance().SetPreviousPlayerPos(currentPlayerPos);
+    Player::Instance().SetCurrentPlayerPos(newPos);
+}
+
 void Player::TransitionIdleState()
 {
     state = State::Idle;
 
-    //�ҋ@�A�j���[�V�����Đ�
     switch (weapon)
     {
     case WeaponType::GreatSword:
