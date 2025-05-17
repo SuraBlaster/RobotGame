@@ -10,6 +10,8 @@ Map2::Map2()
 
    // position = {1,1,0};
     scale.x = scale.y = scale.z = 0.005f;
+
+    nowDoor = 0;
 }
 
 //デストラクタ
@@ -43,6 +45,15 @@ bool Map2::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
 
 void Map2::OpenDoor()
 {
-    map2->PlayAnimation(OPENDOOR11, false);
+    switch(nowDoor)
+    {
+    case 0:
+        map2->PlayAnimation(OPENDOOR11, false);
+    }
+   
 
+}
+void Map2::NextDoor()
+{
+    nowDoor++;
 }

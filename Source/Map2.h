@@ -21,9 +21,13 @@ public:
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
 
     void OpenDoor();
+
+    void NextDoor();
 private:
     
     Model* map2 = nullptr;
+
+    int nowDoor;
 
     enum Animation
     {

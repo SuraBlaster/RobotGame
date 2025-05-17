@@ -242,7 +242,11 @@ void SceneGame::Update(float elapsedTime)
 	if(gamePad.GetButtonUp() & GamePad::BTN_Y)
 	{
 		if(heremap==1)map1->OpenDoor();
-		if(heremap==2)map2->OpenDoor();
+		if (heremap == 2) 
+		{
+			map2->OpenDoor(); 
+			map2->NextDoor();
+		}
 		
 	}
 	
