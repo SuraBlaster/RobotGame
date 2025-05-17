@@ -29,10 +29,20 @@ public:
 	// 描画処理
 	void Render()override;
 
+	//敵配置
+	void EnemySet();
+
+	//ラウンド管理（敵を一定数倒したら次のラウンドに移り、扉が開く（マップのアニメーションを再生））
+	void RaundManage();
+
 	int heremap;
 
+	int raund;
+	int raundcase;
 	Map1* map1 = new Map1();
 	Map2* map2 = new Map2();
+
+	float enemytimer;
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,

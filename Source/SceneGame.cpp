@@ -60,29 +60,29 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 
-	//EnemyManager& enemyManager = EnemyManager::Instance();
-	//for (int i = 0; i < 1; ++i)
-	//{
-	//	EnemyBomber* slime = new EnemyBomber;
-	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
-	//	enemyManager.Register(slime);
-	//}
-	//for (int i = 0; i < 1; ++i)
-	//{
-	//	EnemySlime* slime = new EnemySlime;
-	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
-	//	enemyManager.Register(slime);
-	//}
-	//EnemyManager& enemyspiderManager = EnemyManager::Instance();
-	//for (int i = 0; i < 1; ++i) 
-	//{
-	//	EnemySpider* spider = new EnemySpider;
-	//	spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
-	//	spider->SetTerritory(spider->GetPosition(), 10.0f);
-	//	enemyspiderManager.Register(spider);
-	//}
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i)
+	{
+		EnemyBomber* slime = new EnemyBomber;
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}
+	for (int i = 0; i < 1; ++i)
+	{
+		EnemySlime* slime = new EnemySlime;
+		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyManager.Register(slime);
+	}
+	EnemyManager& enemyspiderManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i) 
+	{
+		EnemySpider* spider = new EnemySpider;
+		spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+		spider->SetTerritory(spider->GetPosition(), 10.0f);
+		enemyManager.Register(spider);
+	}
 	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
@@ -150,6 +150,8 @@ void SceneGame::Initialize()
 			1, 1, 1, 1.0f
 		};
 	}
+	raund = 0;
+	raundcase = 0;
 }
 
 // 終了化
@@ -237,18 +239,9 @@ void SceneGame::Update(float elapsedTime)
 	pauseUpdate();
 
 
-	GamePad& gamePad = Input::Instance().GetGamePad();
+	//ラウンド管理
+	RaundManage();
 	
-	if(gamePad.GetButtonUp() & GamePad::BTN_Y)
-	{
-		if(heremap==1)map1->OpenDoor();
-		if (heremap == 2) 
-		{
-			map2->OpenDoor(); 
-			map2->NextDoor();
-		}
-		
-	}
 	
 }
 
@@ -457,7 +450,8 @@ void SceneGame::RenderEnemyGauge(
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	//if(gamePad.GetButtonUp()& GamePad::BTN_B)
-	//ここ敵の増殖
+	//ここの敵の増殖
+	//if (enemytimer>=3.99f)
 	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
 	{
 		DirectX::XMFLOAT3 screenPosition;
@@ -566,3 +560,83 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 	}
 }
 
+void SceneGame::EnemySet()
+{
+	
+	
+	DirectX::XMFLOAT3 start = { 0,0,0 };
+	DirectX::XMFLOAT3 end = { 0,0,0 };
+	HitResult hit;
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	
+	
+	if(heremap==1)
+	{
+		switch(raund)
+		{
+		case 0:
+			for (int i = 0; i < 1; ++i)
+			{
+				EnemySpider* bomber = new EnemySpider;
+				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
+				enemyManager.Register(bomber);
+			}
+
+		case 1:
+			for (int i = 0; i < 2; ++i)
+			{
+				EnemyBomber* bomber = new EnemyBomber;
+				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, -28, 5));
+				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
+				enemyManager.Register(bomber);
+			}
+
+		}
+	}
+	else if(heremap==2)
+	{
+		switch (raund)
+		{
+
+
+		}
+	}
+
+}
+
+void SceneGame::RaundManage()
+{
+	switch(raundcase)
+	{
+	case 0:
+		EnemySet();
+		raundcase++;
+	case 1:
+		enemytimer += 0.01f;
+		if (enemytimer >= 4.0f) { enemytimer = 0.0f; }
+		GamePad& gamePad = Input::Instance().GetGamePad();
+
+		if (gamePad.GetButtonUp() & GamePad::BTN_Y)
+		{
+			if (heremap == 1)
+			{
+				map1->OpenDoor();
+				EnemySet();
+				raund++;
+			}
+			if (heremap == 2)
+			{
+				map2->OpenDoor();
+				map2->NextDoor();
+				EnemySet();
+				raund++;
+			}
+
+		}
+	}
+
+	
+	
+
+}
