@@ -136,6 +136,7 @@ private:
     float attackRange = 1.0f;
     float syuziRange = 1.5f;
     bool atknow;
+    float shottimer;
 
     ProjectileManager projectileManager;
 

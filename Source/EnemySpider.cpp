@@ -86,7 +86,9 @@ void EnemySpider::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
-    projectileManager.Update(elapsedTime);
+    //projectileManager.Update(elapsedTime);
+    shottimer += 0.1f;
+    if (shottimer >= 4.0f) { shottimer = 0.0f; }
 }
 
 
@@ -300,7 +302,7 @@ void EnemySpider::UpdateIdleState(float elapsedTime)
         TransitionPursuitState();
     }
     //弾丸発射
-    InputProjectile();
+    //InputProjectile();
 }
 
 void EnemySpider::TransitionPursuitState()
@@ -349,7 +351,7 @@ void EnemySpider::UpdatePursuitState(float elapsedTime)
     }
     else { atknow = false; }
     //弾丸発射
-    InputProjectile();
+    //InputProjectile();
 }
 
 void EnemySpider::TransitionAttackState()
@@ -477,7 +479,8 @@ void EnemySpider::InputProjectile()
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     //向いてる方向に発射
-    if (gamePad.GetButtonDown() & GamePad::BTN_X)
+   // if (shottimer>=3.9f)
+     if (gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
         DirectX::XMFLOAT3 dir;
         dir.x = sinf(angle.y);
@@ -497,7 +500,7 @@ void EnemySpider::InputProjectile()
 
     }
     //ホーミング
-   // if (gamePad.GetButtonDown() & GamePad::BTN_Y)
+    if (gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
         DirectX::XMFLOAT3 dir;
         dir.x = sinf(angle.y);
