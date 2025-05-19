@@ -96,6 +96,7 @@ void Player::Update(float elapsedTime)
         break;
     case State::Barrier:
         UpdateBarrierState(elapsedTime);
+        break;
     case State::Clear:
         UpdateClearState(elapsedTime);
         break;
@@ -107,8 +108,6 @@ void Player::Update(float elapsedTime)
     UpdateVelocity(elapsedTime);
 
     UpdateInvincibleTimer(elapsedTime);
-
-   // projectileManager.Update(elapsedTime);
 
     CollisionPlayerVsEnemies();
 
@@ -588,7 +587,6 @@ void Player::TransitionBarrierState()
 {
     state = State::Barrier;
 
-    //��ǓW�J���ۂ��A�j���[�V�����Đ�
     switch (weapon)
     {
     case WeaponType::GreatSword:

@@ -47,14 +47,14 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 
-	/*EnemyManager& enemyManager = EnemyManager::Instance();
+	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < 1; ++i)
 	{
 		EnemyDrone* slime = new EnemyDrone;
 		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
-	}*/
+	}
 
 	//for (int i = 0; i < 1; ++i)
 	//{
