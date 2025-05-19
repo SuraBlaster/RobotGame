@@ -13,6 +13,12 @@ public:
     EnemySpider();
     ~EnemySpider() override;
 
+    static EnemySpider& Instance()
+    {
+        static EnemySpider instance;
+        return instance;
+    }
+
     //更新処理
     void Update(float elapsedTime)override;
 
@@ -27,7 +33,7 @@ public:
 
     void LimitPosition();
 
-
+    int GetDeadcount() { return deadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -137,6 +143,8 @@ private:
     float syuziRange = 1.5f;
     bool atknow;
     float shottimer;
+
+    int deadcount;
 
     ProjectileManager projectileManager;
 

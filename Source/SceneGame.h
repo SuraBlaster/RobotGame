@@ -43,6 +43,11 @@ public:
 	Map2* map2 = new Map2();
 
 	float enemytimer;
+
+	int killcount;
+	int killspider;
+	int killbomber;
+	int killslime;
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,

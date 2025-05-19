@@ -11,6 +11,12 @@ public:
     EnemyBomber();
     ~EnemyBomber() override;
 
+    static EnemyBomber& Instance()
+    {
+        static EnemyBomber instance;
+        return instance;
+    }
+
     //更新処理
     void Update(float elapsedTime)override;
 
@@ -23,7 +29,7 @@ public:
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
-
+    int GetDeadcount() { return deadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -110,6 +116,7 @@ private:
     float searchRange = 5.0f;
     float attackRange = 1.5f;
 
+    int deadcount;
     float delay = 0.0f;
     float ExplosionRadius = 3.0f;
 };

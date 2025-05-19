@@ -13,6 +13,12 @@ public:
     EnemySlime();
     ~EnemySlime() override;
 
+    static EnemySlime& Instance()
+    {
+        static EnemySlime instance;
+        return instance;
+    }
+
     //更新処理
     void Update(float elapsedTime)override;
 
@@ -81,6 +87,7 @@ private:
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
 
+    int GetDeadcount() { return deadcount; }
 private:
     //ステート
     enum class State
@@ -133,4 +140,5 @@ private:
     float syuziRange = 1.5f;
     bool atknow;
     float delay = 0.0f;
+    int deadcount;
 };

@@ -472,6 +472,7 @@ void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)
 void EnemySlime::OnDead()
 {
     TransitionDeathState();
+    deadcount++;
 }
 
 void EnemySlime::OnDamaged()

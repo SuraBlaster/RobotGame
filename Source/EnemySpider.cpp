@@ -22,6 +22,7 @@ EnemySpider::EnemySpider()
 
     height = 1.0f;
 
+    health = 1;
     //徘徊ステージへ遷移
     TransitionWanderState();
 }
@@ -86,9 +87,11 @@ void EnemySpider::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
-    //projectileManager.Update(elapsedTime);
-    shottimer += 0.1f;
-    if (shottimer >= 4.0f) { shottimer = 0.0f; }
+    
+    shottimer += 0.01f;
+    if (shottimer >= 4.0f) 
+    { shottimer = 0.0f; }
+    projectileManager.Update(elapsedTime);
 }
 
 
@@ -465,10 +468,12 @@ void EnemySpider::Render(ID3D11DeviceContext* dc, Shader* shader)
 void EnemySpider::OnDead()
 {
     TransitionDeathState();
+    deadcount++;
 }
 
 void EnemySpider::OnDamaged()
 {
+
     TransitionDamageState();
 }
 
@@ -479,8 +484,8 @@ void EnemySpider::InputProjectile()
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     //向いてる方向に発射
-   // if (shottimer>=3.9f)
-     if (gamePad.GetButtonDown() & GamePad::BTN_Y)
+    //if (shottimer>=3.9f)
+    if (gamePad.GetButtonDown() & GamePad::BTN_X)
     {
         DirectX::XMFLOAT3 dir;
         dir.x = sinf(angle.y);

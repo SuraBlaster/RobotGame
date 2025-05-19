@@ -16,9 +16,9 @@ EnemyBomber::EnemyBomber()
 
     height = 1.0f;
 
-
+    health = 1;
     explosionEffect = new Effect("Data/Effect/Explosion.efkefc");
-
+    deadcount = 0;
     //œpœjƒXƒe[ƒW‚Ö‘JˆÚ
     TransitionWanderState();
 }
@@ -345,6 +345,7 @@ void EnemyBomber::Render(ID3D11DeviceContext* dc, Shader* shader)
 void EnemyBomber::OnDead()
 {
     TransitionDeathState();
+    deadcount++;
 }
 
 

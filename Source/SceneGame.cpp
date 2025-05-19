@@ -152,6 +152,10 @@ void SceneGame::Initialize()
 	}
 	raund = 0;
 	raundcase = 0;
+	killbomber = 0;
+	killspider = 0;
+	killslime = 0;
+	killcount = 0;
 }
 
 // 終了化
@@ -241,8 +245,9 @@ void SceneGame::Update(float elapsedTime)
 
 	//ラウンド管理
 	RaundManage();
-	
-	
+	killspider = EnemySpider::Instance().GetDeadcount();
+	killbomber = EnemyBomber::Instance().GetDeadcount();
+	killcount = killbomber + killspider+killslime;
 }
 
 // 描画処理
@@ -577,6 +582,13 @@ void SceneGame::EnemySet()
 		case 0:
 			for (int i = 0; i < 1; ++i)
 			{
+				EnemyBomber* bomber = new EnemyBomber;
+				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
+				enemyManager.Register(bomber);
+			}
+			for (int i = 0; i < 1; ++i)
+			{
 				EnemySpider* bomber = new EnemySpider;
 				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
@@ -593,7 +605,7 @@ void SceneGame::EnemySet()
 			}
 			for (int i = 0; i < 1; ++i)
 			{
-				EnemyBomber* bomber = new EnemyBomber;
+				EnemySpider* bomber = new EnemySpider;
 				bomber->SetPosition(DirectX::XMFLOAT3(i * 10.0f, -28, -20));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
