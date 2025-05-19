@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Input/Mouse.h"
 #include "Input/Input.h"
+#include "Player.h"
 
 static StageMain* instance = nullptr;
 
@@ -64,85 +65,163 @@ bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3&
 
 void StageMain::RotationStage(float elapsedTime)
 {
-    DirectX::XMVECTOR up, front, right;
+    DirectX::XMVECTOR front, right;
 
-    up = DirectX::XMLoadFloat3(&transform.getUp());
     front = DirectX::XMLoadFloat3(&transform.getFront());
     right = DirectX::XMLoadFloat3(&transform.getRight());
     DirectX::XMVECTOR Rotation = DirectX::XMLoadFloat4(&transform.rotation);
     DirectX::XMFLOAT3 angle = transform.getAngle();
     constexpr float radian90 = DirectX::XMConvertToRadians(90);
+    constexpr float radian89 = DirectX::XMConvertToRadians(89);
     const float rotationSpeed = 40.0f;
+    //DirectX::XMVECTOR q = DirectX::XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
 
     switch (selectedDirection) {
     case Down:
     {
         nowAngle = angle;
+
         return;
     }
     case West:
     {
         float rotationVelocity = rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.z + rotationVelocity >= radian90)
-            rotationVelocity = radian90 - angle.z;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        ;
-        if (std::abs(nowAngle.z - angle.z) >= radian90)
+        if (nowAngle.z - (angle.z + rotationVelocity) < -radian90)
         {
+            rotationVelocity = -radian90 - angle.z;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, -radian90, 0);
             selectedDirection = Down;
             isRotationAnimation = false;
         }
+        else if (nowAngle.z - (angle.z + rotationVelocity < -radian89))
+        {
+            rotationVelocity = -radian90 - angle.z;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, -radian90, 0);
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.z + rotationVelocity > radian90)
+        {
+            rotationVelocity = radian90 - angle.z;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.z + rotationVelocity > radian89)
+        {
+            rotationVelocity = radian90 - angle.z;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
+        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
         break;
     }
     case East:
     {
-        float rotationVelocity = -rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.z - rotationVelocity <= radian90)
-            rotationVelocity = radian90 + angle.z;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        if (std::abs(nowAngle.z - angle.z) >= radian90)
+        float rotationVelocity = rotationSpeed * PIDIV180 * elapsedTime;
+        if (nowAngle.z - (angle.z + rotationVelocity) < -radian90)
         {
+            rotationVelocity = -radian90 - angle.z;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, radian90, 0);
             selectedDirection = Down;
             isRotationAnimation = false;
         }
+        else if (nowAngle.z - (angle.z + rotationVelocity < -radian89))
+        {
+            rotationVelocity = -radian90 - angle.z;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, radian90, 0);
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.z + rotationVelocity > radian90)
+        {
+            rotationVelocity = radian90 - angle.z;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.z + rotationVelocity > radian89)
+        {
+            rotationVelocity = radian90 - angle.z;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, -rotationVelocity);
+        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
         break;
     }
     case North:
     {
         float rotationVelocity = rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.x + rotationVelocity >= radian90)
-            rotationVelocity = radian90 - angle.x;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        if (std::abs(nowAngle.x - angle.x) >= radian90)
+        if (nowAngle.x - (angle.x + rotationVelocity) < -radian90)
         {
+            rotationVelocity = -radian90 - angle.x;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
             selectedDirection = Down;
             isRotationAnimation = false;
         }
+        else if(nowAngle.x - (angle.x + rotationVelocity < -radian89))
+        {
+            rotationVelocity = -radian90 - angle.x;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.x + rotationVelocity > radian90)
+        {
+            rotationVelocity = radian90 - angle.x;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if(angle.x + rotationVelocity > radian89)
+        {
+            rotationVelocity = radian90 - angle.x;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
+        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
+
         break;
     }
     case South:
     {
-        float rotationVelocity = -rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.x - rotationVelocity <= radian90)
-            rotationVelocity = radian90 + angle.x;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        if (std::abs(nowAngle.x - angle.x) >= radian90)
+        float rotationVelocity = rotationSpeed * PIDIV180 * elapsedTime;
+        if (nowAngle.z - (angle.x + rotationVelocity) < -radian90)
         {
+            rotationVelocity = -radian90 - angle.x;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
             selectedDirection = Down;
             isRotationAnimation = false;
         }
+        else if (nowAngle.z + (angle.x + rotationVelocity < -radian89))
+        {
+            rotationVelocity = -radian90 - angle.x;
+            Rotation = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.x + rotationVelocity > radian90)
+        {
+            rotationVelocity = radian90 - angle.x;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        else if (angle.x + rotationVelocity > radian89)
+        {
+            rotationVelocity = radian90 - angle.x;
+            selectedDirection = Down;
+            isRotationAnimation = false;
+        }
+        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, -rotationVelocity);
+        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
+
         break;
     }
     }
-
+    //transform.setAngle(angle);
     DirectX::XMStoreFloat4(&transform.rotation, Rotation);
 }
 
@@ -178,6 +257,9 @@ void StageMain::ChangeGravity()
     }
 
     if (selectedDirection != Down)
+    {
+    //    new_transform.position = Player::Instance().GetPosition();
         isRotationAnimation = true;
+    }
 }
 
