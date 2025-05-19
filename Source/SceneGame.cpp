@@ -658,11 +658,11 @@ void SceneGame::EnemySet()
 			for (int i = 0; i < 1; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				bomber->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*2.0f));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
 			}
-			/*for (int i = 0; i < 1; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				EnemySpider* spider = new EnemySpider;
 				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
@@ -675,51 +675,51 @@ void SceneGame::EnemySet()
 				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
-			}*/
+			}
 		case 1:
 			for (int i = 0; i < 2; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				bomber->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*2.0f));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
 			}
-			/*for (int i = 0; i < 2; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				spider->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*1.0f));
 				spider->SetTerritory(spider->GetPosition(), 10.0f);
 				enemyManager.Register(spider);
 			}
-			for (int i = 0; i < 2; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				slime->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*3.0f));
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
-			}*/
+			}
 		case 2:
 			for (int i = 0; i < 3; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				bomber->SetPosition(DirectX::XMFLOAT3(95.0f, 0, i*2.0f));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
 			}
-			/*for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				spider->SetPosition(DirectX::XMFLOAT3(95.0f, 0, i*1.0f));
 				spider->SetTerritory(spider->GetPosition(), 10.0f);
 				enemyManager.Register(spider);
 			}
-			for (int i = 0; i < 3; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				slime->SetPosition(DirectX::XMFLOAT3(95.0f, 0, i*3.0f));
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
-			}*/
+			}
 		}
 	}
 
@@ -743,18 +743,19 @@ void SceneGame::RaundManage()
 				{
 					map1->OpenDoor();
 					EnemySet();
-					raund++;
+					
 				}
 				if (heremap == 2)
 				{
 					map2->OpenDoor1();
 					EnemySet();
-					raund++;
+					
 				}
+				raund++;
 				Rcase++;
 			}
 		case 1:
-			if(killcount>=100)
+			if(killcount>=10)
 			{
 			if(heremap==1)
 			{
@@ -775,6 +776,7 @@ void SceneGame::RaundManage()
 			if (heremap == 2)
 			{
 				//マップ２クリア
+
 			}
 			}
 			

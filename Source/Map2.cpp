@@ -4,7 +4,7 @@
 Map2::Map2()
 {
     
-    map2 = new Model("Data/Model/ExampleStage/map2(1).mdl");
+    map2 = new Model("Data/Model/ExampleStage/map(2).mdl");
 
     //model = new Model("Data/Model/ExampleStage/tile2.mdl");
 
@@ -47,11 +47,11 @@ bool Map2::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
 void Map2::OpenDoor1()
 {
    
-        map2->PlayAnimation(OPENDOOR2, false);
+        map2->PlayAnimation(OPENDOOR5, false);
    
 }
 void Map2::OpenDoor2()
 {
-        map2->PlayAnimation(OPENDOOR0, false);
+        map2->PlayAnimation(OPENDOOR9, false);
 }
 
