@@ -584,10 +584,17 @@ void SceneGame::EnemySet()
 			}
 
 		case 1:
-			for (int i = 0; i < 2; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, -28, 5));
+				bomber->SetPosition(DirectX::XMFLOAT3(i * -10.0f, -28, 20));
+				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
+				enemyManager.Register(bomber);
+			}
+			for (int i = 0; i < 1; ++i)
+			{
+				EnemyBomber* bomber = new EnemyBomber;
+				bomber->SetPosition(DirectX::XMFLOAT3(i * 10.0f, -28, -20));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
 			}

@@ -7,7 +7,6 @@
 #include "ProjectileStraight.h"
 #include "Input/Input.h"
 #include "Input/GamePad.h"
-#include <EnemyManager.h>
 
 //メモ//
 //
@@ -87,11 +86,7 @@ void EnemySpider::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
-    //projectileManager.Update(elapsedTime);
-
-    delay -= elapsedTime;
-
-    LimitPosition();
+    projectileManager.Update(elapsedTime);
 }
 
 
@@ -124,28 +119,6 @@ void EnemySpider::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
     territoryRange = range;
 }
 
-void EnemySpider::LimitPosition()
-{
-    EnemyManager& enemyManager = EnemyManager::Instance();
-
-    //すべての敵と総当たりで衝突判定
-    int enemyCount = enemyManager.GetEnemyCount();
-
-    for (int i = 0; i < enemyCount; ++i)
-    {
-        Enemy* enemy = enemyManager.GetEnemy(i);
-
-        if (enemy->GetPosition().y > 10.0f ||
-            (enemy->GetPosition().x < -10.0f || enemy->GetPosition().x < 10.0f) ||
-            enemy->GetPosition().z < -10.0f || enemy->GetPosition().z < 10.0f)
-        {
-            position.y = 10.0f;
-
-        }
-
-    }
-}
-
 void EnemySpider::SetRandomTargetPosition()
 {
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
@@ -158,6 +131,7 @@ void EnemySpider::MoveToTarget(float elapsedTime, float speedRate)
 {
     //ターゲット方向への進行ベクトルを算出
     float vx = targetPosition.x - position.x;
+    float vy = targetPosition.y - position.y;
     float vz = targetPosition.z - position.z;
     float dist = sqrtf(vx * vx + vz * vz);
 
@@ -166,7 +140,7 @@ void EnemySpider::MoveToTarget(float elapsedTime, float speedRate)
     vz /= dist;
 
     //移動処理
-    Move(vx, vz, moveSpeed * speedRate);
+    Move(vx, vz, vy);
     Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 
@@ -222,7 +196,6 @@ void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
 
         Player& player = Player::Instance();
         DirectX::XMFLOAT3 outPosition;
-        int playerLimit = player.GetRimit();
         if (Collision::IntersectSphereVsCylinder(
             nodePosition,
             nodeRadius,
@@ -231,39 +204,28 @@ void EnemySpider::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
             player.GetHeight(),
             outPosition))
         {
-            if (playerLimit > 0 && delay <= 0.0f)
+            //ダメージを与える
+            if (player.ApplyDamage(1))
             {
-                playerLimit--;
-                delay = 0.1f;
-                player.SetRimit(playerLimit);
+                //敵を吹っ飛ばすベクトルを算出
+                DirectX::XMFLOAT3 vec;
+                vec.x = outPosition.x - nodePosition.x;
+                vec.z = outPosition.z - nodePosition.z;
+                float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
+                vec.x /= length;
+                vec.z /= length;
+
+                //XZ平面に吹っ飛ばす力を掛ける
+                float power = 1.0f;
+                vec.x *= power;
+                vec.z *= power;
+
+                //Y方向にも力を掛ける
+                vec.y = 1.0f;
+
+                //吹っ飛ばす
+               // player.AddImpulse(vec);
             }
-            else if (delay <= 0.0f)
-            {
-                //ダメージを与える
-                if (player.ApplyDamage(1))
-                {
-                    //敵を吹っ飛ばすベクトルを算出
-                    DirectX::XMFLOAT3 vec;
-                    vec.x = outPosition.x - nodePosition.x;
-                    vec.z = outPosition.z - nodePosition.z;
-                    float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
-                    vec.x /= length;
-                    vec.z /= length;
-
-                    //XZ平面に吹っ飛ばす力を掛ける
-                    float power = 1.0f;
-                    vec.x *= power;
-                    vec.z *= power;
-
-                    //Y方向にも力を掛ける
-                    vec.y = 1.0f;
-
-                    //吹っ飛ばす
-                   // player.AddImpulse(vec);
-                }
-            }
-            
-            
         }
     }
 }
@@ -553,26 +515,26 @@ void EnemySpider::InputProjectile()
         target.z = pos.z + dir.z * 1000.0f;
 
         float dist = FLT_MAX;
-       // EnemyManager& enemyManager = EnemyManager::Instance();
-       // int enemyCount = enemyManager.GetEnemyCount();
+        // EnemyManager& enemyManager = EnemyManager::Instance();
+        // int enemyCount = enemyManager.GetEnemyCount();
 
-       // for (int i = 0; i < enemyCount; ++i)
-       // {
-       //     Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
-       //     DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
-       //     DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
-       //     DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
-       //     DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
+        // for (int i = 0; i < enemyCount; ++i)
+        // {
+        //     Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
+        //     DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
+        //     DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
+        //     DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
+        //     DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
 
-       //     float d;
-       //     DirectX::XMStoreFloat(&d, D);
-       //     if (d < dist)
-       //     {
-       //         dist = d;
-       //         target = enemy->GetPosition();
-       //         target.y += enemy->GetHeight() * 0.5f;
-       //     }
-       // }
+        //     float d;
+        //     DirectX::XMStoreFloat(&d, D);
+        //     if (d < dist)
+        //     {
+        //         dist = d;
+        //         target = enemy->GetPosition();
+        //         target.y += enemy->GetHeight() * 0.5f;
+        //     }
+        // }
 
         ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
         projectile->Launch(dir, pos, target);
