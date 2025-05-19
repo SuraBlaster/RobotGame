@@ -31,7 +31,9 @@ public:
 
 	//敵配置
 	void EnemySet();
-
+	
+	//IMGUIの表示
+	void DrawDebugGUI();
 	//ラウンド管理（敵を一定数倒したら次のラウンドに移り、扉が開く（マップのアニメーションを再生））
 	void RaundManage();
 
@@ -48,6 +50,7 @@ public:
 	int killspider;
 	int killbomber;
 	int killslime;
+	int Rcase;
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,

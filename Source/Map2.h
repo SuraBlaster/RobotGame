@@ -20,9 +20,10 @@ public:
     bool RayCast(const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
 
-    void OpenDoor();
+    void OpenDoor1();
+    void OpenDoor2();
 
-    void NextDoor();
+    
 private:
     
     Model* map2 = nullptr;

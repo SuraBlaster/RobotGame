@@ -8,8 +8,9 @@ Map2::Map2()
 
     //model = new Model("Data/Model/ExampleStage/tile2.mdl");
 
-   // position = {1,1,0};
+   position = {80,1,0};
     scale.x = scale.y = scale.z = 0.005f;
+    
 
     nowDoor = 0;
 }
@@ -43,35 +44,14 @@ bool Map2::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
     return Collision::IntersectRayVsModel(start, end, map2, hit);
 }
 
-void Map2::OpenDoor()
+void Map2::OpenDoor1()
 {
-    switch(nowDoor)
-    {
-    case 0:
-        map2->PlayAnimation(OPENDOOR0, false);
-    case 1:
-        map2->PlayAnimation(OPENDOOR1, false);
-    case 2:
-        map2->PlayAnimation(OPENDOOR2, false);
-    case 3:
-        map2->PlayAnimation(OPENDOOR3, false);
-    case 4:
-        map2->PlayAnimation(OPENDOOR4, false);
-    case 5:
-        map2->PlayAnimation(OPENDOOR5, false);
-    case 6:
-        map2->PlayAnimation(OPENDOOR6, false);
-    case 7:
-        map2->PlayAnimation(OPENDOOR7, false);
-    case 8:
-        map2->PlayAnimation(OPENDOOR8, false);
-        
-
-    }
    
-
+        map2->PlayAnimation(OPENDOOR2, false);
+   
 }
-void Map2::NextDoor()
+void Map2::OpenDoor2()
 {
-    nowDoor++;
+        map2->PlayAnimation(OPENDOOR0, false);
 }
+

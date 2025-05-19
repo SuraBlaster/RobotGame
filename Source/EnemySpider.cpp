@@ -23,6 +23,9 @@ EnemySpider::EnemySpider()
     height = 1.0f;
 
     health = 1;
+    //sdd = 0;
+    //EnemySpider::Instance().SetDeadcount(0);
+    spiderdeadcount = 0;
     //œpœjƒXƒe[ƒW‚Ö‘JˆÚ
     TransitionWanderState();
 }
@@ -465,10 +468,20 @@ void EnemySpider::Render(ID3D11DeviceContext* dc, Shader* shader)
     shader->Draw(dc, model);
 }
 
+void EnemySpider::AddSpiderdeadcount()
+{
+    sdd = EnemySpider::Instance().GetDeadcount();
+    sdd++;
+    EnemySpider::Instance().SetDeadcount(sdd);
+}
+
+
 void EnemySpider::OnDead()
 {
+    /*int d = spiderdeadcount + 1;
+    EnemySpider::Instance().SetDeadcount(d);*/
+    AddSpiderdeadcount();
     TransitionDeathState();
-    deadcount++;
 }
 
 void EnemySpider::OnDamaged()

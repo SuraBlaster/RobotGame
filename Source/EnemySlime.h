@@ -28,10 +28,13 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive()override;
 
+
+
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
-
+    int GetDeadcount() { return deadcount; }
+    void SetDeadcount(int deadcount) { this->deadcount = deadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -87,7 +90,7 @@ private:
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
 
-    int GetDeadcount() { return deadcount; }
+    void Adddeadcount();
 private:
     //ステート
     enum class State
@@ -139,6 +142,10 @@ private:
     float attackRange = 1.0f;
     float syuziRange = 1.5f;
     bool atknow;
-    float delay = 0.0f;
+    float delay = 1.0f;
     int deadcount;
+    int slimecase;
+    
+    public:
+        int dd;
 };

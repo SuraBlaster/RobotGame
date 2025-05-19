@@ -33,7 +33,8 @@ public:
 
     void LimitPosition();
 
-    int GetDeadcount() { return deadcount; }
+    int GetDeadcount() { return spiderdeadcount; }
+    void SetDeadcount(int spiderdeadcount) { this->spiderdeadcount = spiderdeadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -91,6 +92,7 @@ private:
     //弾丸発射
     void InputProjectile();
 
+    void AddSpiderdeadcount();
 private:
     //ステート
     enum class State
@@ -144,9 +146,10 @@ private:
     bool atknow;
     float shottimer;
 
-    int deadcount;
+    int spiderdeadcount;
 
     ProjectileManager projectileManager;
 
     float delay = 0.0f;
+    int sdd;
 };

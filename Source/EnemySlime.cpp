@@ -18,12 +18,18 @@ EnemySlime::EnemySlime()
 
     height = 1.0f;
 
+
+    health = 1;
+   
+    dd = 0;
+    deadcount = 0;
     //徘徊ステージへ遷移
     TransitionWanderState();
 }
 
 EnemySlime::~EnemySlime()
 {
+    
     delete model;
 }
 //void set_random_target();
@@ -37,6 +43,7 @@ EnemySlime::~EnemySlime()
 //更新処理
 void EnemySlime::Update(float elapsedTime)
 {
+    
     //ステートごとの更新処理
     switch (state)
     {
@@ -448,7 +455,7 @@ void EnemySlime::UpdateDamageState(float elapsedTime)
 void EnemySlime::TransitionDeathState()
 {
     state = State::Death;
-
+   
     //死亡アニメーション再生
     model->PlayAnimation(Anim_Die, false);
 }
@@ -458,6 +465,7 @@ void EnemySlime::UpdateDeathState(float elapsedTime)
     //死亡アニメーションが終わったら自分を破棄
     if (!model->IsPlayAnimation())
     {
+        
         Destroy();
     }
 }
@@ -468,15 +476,25 @@ void EnemySlime::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
 }
+void EnemySlime::Adddeadcount()
+{
+    dd = EnemySlime::Instance().GetDeadcount();
+    dd++;
+    EnemySlime::Instance().SetDeadcount(dd);
+}
+
 
 void EnemySlime::OnDead()
 {
+    /*int d = deadcount + 1;
+    EnemySlime::Instance().SetDeadcount(d);*/
+    Adddeadcount();
     TransitionDeathState();
-    deadcount++;
 }
 
 void EnemySlime::OnDamaged()
 {
+   
     TransitionDamageState();
 }
 

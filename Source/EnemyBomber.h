@@ -29,7 +29,8 @@ public:
     //縄張り設定
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
-    int GetDeadcount() { return deadcount; }
+    int GetDeadcount() { return bomberdeadcount; }
+    void SetDeadcount(int bomberdeadcount) { this->bomberdeadcount = bomberdeadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -70,6 +71,7 @@ private:
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
 
+    void AddBomberdeadcount();
 private:
     //ステート
     enum class State
@@ -116,7 +118,8 @@ private:
     float searchRange = 5.0f;
     float attackRange = 1.5f;
 
-    int deadcount;
+    int bomberdeadcount;
     float delay = 0.0f;
     float ExplosionRadius = 3.0f;
+    int bdd;
 };

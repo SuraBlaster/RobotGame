@@ -36,6 +36,7 @@ Player::Player()
     //待機ステートへ遷移
     TransitionIdleState();
 
+    health = 100;
     ShieldCount = 3;
 }
 
