@@ -454,12 +454,14 @@ void EnemyDrone::CollisionProjectilesVsPlayer()
                     vx /= lengthXZ;
                     vz /= lengthXZ;
 
-                    impulse.x = vx * power * 0.5f;
-                    impulse.y = power * 0.5f;
+                    impulse.x = vx * power;
+                    impulse.y = power;
                     impulse.z = vz * power;
 
 
-                    player.AddImpulse(impulse);
+
+
+                    //player.AddImpulse(impulse);
                 }
 
 

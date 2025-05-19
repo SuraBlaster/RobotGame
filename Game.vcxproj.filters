@@ -74,6 +74,12 @@
     <ClCompile Include="Source\UI.cpp" />
     <ClCompile Include="Source\ProjectileEnemy.cpp" />
     <ClCompile Include="Source\ProjectileEnemyToPlayer.cpp" />
+    <ClCompile Include="Source\CameraEffect_Death.cpp" />
+    <ClCompile Include="Source\CameraEffect_Clear.cpp" />
+    <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\ItemManager.cpp" />
+    <ClCompile Include="Source\ItemCrystal.cpp" />
+    <ClCompile Include="Source\FadeOut.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\DirectXTex\WICTextureLoader.h" />
@@ -143,6 +149,12 @@
     <ClInclude Include="Source\UI.h" />
     <ClInclude Include="Source\ProjectileEnemy.h" />
     <ClInclude Include="Source\ProjectileEnemyToPlayer.h" />
+    <ClInclude Include="Source\CameraEffect_Death.h" />
+    <ClInclude Include="Source\CameraEffect_Clear.h" />
+    <ClInclude Include="Source\Item.h" />
+    <ClInclude Include="Source\ItemManager.h" />
+    <ClInclude Include="Source\ItemCrystal.h" />
+    <ClInclude Include="Source\FadeOut.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />

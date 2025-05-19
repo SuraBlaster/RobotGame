@@ -77,7 +77,7 @@ protected:
 
 private:
     //垂直速力更新処理(ドローンで使うため純粋仮想関数にしました)
-    virtual void UpdateVerticalVelocity(float elapsedFrame) = 0;
+    virtual void UpdateVerticalVelocity(float elapsedFrame) {};
 
     //垂直移動更新処理
     void UpdateVerticalMove(float elapsedTime);

@@ -6,7 +6,7 @@
 #include "ProjectileManager.h"
 #include "Effect.h"
 #include "SceneManager.h"
-
+#include "CameraEffect_Death.h"
 class Player : public Character
 {
 public:
@@ -103,6 +103,12 @@ private:
     //バリア展開ステート更新処理
     void UpdateBarrierState(float elapsedTime);
 
+    //クリアステートに遷移
+    void TransitionClearState();
+
+    //クリアステート更新処理
+    void UpdateClearState(float elapsedTime);
+
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
@@ -135,6 +141,7 @@ private:
         GreatSword_Attack,
         GreatSword_Damage,
         GreatSword_Death,
+        Clear,
 
     };
 
@@ -147,6 +154,7 @@ private:
         Damage,
         Death,
         Barrier,
+        Clear
     };
 
 public:
@@ -235,5 +243,5 @@ private:
     DirectX::XMFLOAT3 currentPlayerPos;
     DirectX::XMFLOAT3 previousPlayerPos;
 
-    
+    CameraEffect_Death cameraEffect_Death;
 };

@@ -296,7 +296,7 @@ void EnemyBomber::TransitionPursuitState()
 {
     state = State::Pursuit;
 
-    //数秒間追跡するタイマーをランダム設定
+    //爆発するまでの時間
     stateTimer = 10.0f;
 
     //歩きアニメーション再生

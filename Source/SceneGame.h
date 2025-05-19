@@ -7,11 +7,18 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 #include "UI.h"
+#include "FadeOut.h"
 
 // ゲームシーン
 class SceneGame : public Scene
 {
 public:
+	static SceneGame& Instance()
+	{
+		static SceneGame instance;
+		return instance;
+	}
+
 	SceneGame() {}
 	~SceneGame() override{}
 
@@ -26,6 +33,10 @@ public:
 
 	// 描画処理
 	void Render()override;
+
+	CameraController* GetCameraController() { return cameraController; }
+
+	void SetCameraController(CameraController* controller) { cameraController = controller; }
 
 private:
 	void RenderEnemyGauge(
@@ -60,6 +71,8 @@ private:
 	std::unique_ptr<Sprite> toTitleSpr = nullptr;
 	std::unique_ptr<Sprite> backSpr = nullptr;
 	std::unique_ptr<Sprite> sprite = nullptr;
+
+	std::unique_ptr<FadeOut> fadeOut = nullptr;
 
 	SpriteData spriteSD;
 	SpriteData toTitleSD;

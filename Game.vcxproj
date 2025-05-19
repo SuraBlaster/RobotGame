@@ -119,6 +119,8 @@
     <ClInclude Include="Source\Audio\AudioSource.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\CameraController.h" />
+    <ClInclude Include="Source\CameraEffect_Clear.h" />
+    <ClInclude Include="Source\CameraEffect_Death.h" />
     <ClInclude Include="Source\Character.h" />
     <ClInclude Include="Source\Collision.h" />
     <ClInclude Include="Source\Effect.h" />
@@ -129,6 +131,7 @@
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\EnemySlime.h" />
     <ClInclude Include="Source\EnemySpider.h" />
+    <ClInclude Include="Source\FadeOut.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\Graphics\DebugRenderer.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
@@ -144,6 +147,9 @@
     <ClInclude Include="Source\Input\GamePad.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Input\Mouse.h" />
+    <ClInclude Include="Source\Item.h" />
+    <ClInclude Include="Source\ItemCrystal.h" />
+    <ClInclude Include="Source\ItemManager.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\Mathf.h" />
     <ClInclude Include="Source\Misc.h" />
@@ -186,6 +192,8 @@
     <ClCompile Include="Source\Audio\AudioSource.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CameraController.cpp" />
+    <ClCompile Include="Source\CameraEffect_Clear.cpp" />
+    <ClCompile Include="Source\CameraEffect_Death.cpp" />
     <ClCompile Include="Source\Character.cpp" />
     <ClCompile Include="Source\Collision.cpp" />
     <ClCompile Include="Source\Effect.cpp" />
@@ -196,6 +204,7 @@
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\EnemySlime.cpp" />
     <ClCompile Include="Source\EnemySpider.cpp" />
+    <ClCompile Include="Source\FadeOut.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\Graphics\DebugRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
@@ -208,6 +217,9 @@
     <ClCompile Include="Source\Input\GamePad.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Input\Mouse.cpp" />
+    <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\ItemCrystal.cpp" />
+    <ClCompile Include="Source\ItemManager.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mathf.cpp" />

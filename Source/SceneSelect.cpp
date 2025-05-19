@@ -35,6 +35,8 @@ void SceneSelect::Initialize()
 		0.1f,
 		1000.0f
 	);
+
+	StageManager::Instance().SetButtonFlag(false);
 }
 
 void SceneSelect::Finalize()
