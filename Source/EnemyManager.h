@@ -43,7 +43,7 @@ public:
     //デバッグプリミティブ描画
     void DrawDebugPrimitive();
 
-    
+    void DrawDebugGUI();
 
 private:
     void CollisionEnemyVsEnemies();

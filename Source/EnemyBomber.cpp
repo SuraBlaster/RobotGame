@@ -16,9 +16,9 @@ EnemyBomber::EnemyBomber()
 
     height = 1.0f;
 
-
+    health = 1;
     explosionEffect = new Effect("Data/Effect/Explosion.efkefc");
-
+    bomberdeadcount = 0;
     //徘徊ステージへ遷移
     TransitionWanderState();
 }
@@ -94,6 +94,8 @@ void EnemyBomber::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
     territoryOrigin = origin;
     territoryRange = range;
 }
+
+
 
 void EnemyBomber::SetRandomTargetPosition()
 {
@@ -218,7 +220,7 @@ void EnemyBomber::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                     vec.y = 2.0f;
 
                     //吹っ飛ばす
-                    player.AddImpulse(vec);
+                    //player.AddImpulse(vec);
                 }
             }
         }
@@ -294,7 +296,7 @@ void EnemyBomber::TransitionPursuitState()
 {
     state = State::Pursuit;
 
-    //数秒間追跡するタイマーをランダム設定
+    //爆発するまでの時間
     stateTimer = 10.0f;
 
     //歩きアニメーション再生
@@ -323,13 +325,14 @@ void EnemyBomber::TransitionDeathState()
 
     //死亡アニメーション再生
     model->PlayAnimation(Anim_Die, false);
+    Destroy();
 }
 
 void EnemyBomber::UpdateDeathState(float elapsedTime)
 {
 
-    CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
-    explosionEffect->Play(position, 0.5f);
+    //CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
+    //explosionEffect->Play(position, 0.5f);
     //死亡アニメーションが終わったら自分を破棄しつつ爆発攻撃
     if (!model->IsPlayAnimation())
     {
@@ -337,14 +340,34 @@ void EnemyBomber::UpdateDeathState(float elapsedTime)
     }
 }
 
+void EnemyBomber::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //重力処理
+    velocity.y += gravity * elapsedFrame; 
+}
+
 void EnemyBomber::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
 }
 
+void EnemyBomber::AddBomberdeadcount()
+{
+    bdd = EnemyBomber::Instance().GetDeadcount();
+    bdd++;
+    EnemyBomber::Instance().SetDeadcount(bdd);
+}
+
+
+
 void EnemyBomber::OnDead()
 {
+    /*int d = bomberdeadcount + 1;
+    EnemyBomber::Instance().SetDeadcount(d);*/
+    AddBomberdeadcount();
     TransitionDeathState();
 }
+
+
 
 
