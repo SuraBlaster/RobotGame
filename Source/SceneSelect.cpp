@@ -12,6 +12,12 @@
 
 void SceneSelect::Initialize()
 {
+	Audio& audio = audio.Instance();
+	SelectBGM = audio.LoadAudioSource("Data/Audio/BGM/Select.wav");
+	KuruKuruBGM = audio.LoadAudioSource("Data/Audio/BGM/KuruKuru.wav");
+	SelectBGM->sourceVoice->SetVolume(50);
+	KuruKuruBGM->sourceVoice->SetVolume(50);
+	KuruKuru = false;
 	StageManager& stageManager = StageManager::Instance();
 	SelectStage1* selectStage1 = new SelectStage1();
 	selectStage1->SetPosition({ -40,10,10 });
@@ -52,9 +58,17 @@ void SceneSelect::Finalize()
 
 void SceneSelect::Update(float elapsedTime)
 {
+	if (KuruKuru == false) 
+	{
+		SelectBGM->Play(true);
+	}
+	else if (KuruKuru == true)
+	{
+		SelectBGM->Stop();
+	}
     GamePad& gamepad = Input::Instance().GetGamePad();
 
-	//‰½‚©ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚ç‘JˆÚ
+	//ä½•ã‹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã‚‰é·ç§»
 	const GamePadButton anyButton =
 		GamePad::BTN_A
 		| GamePad::BTN_B
@@ -72,8 +86,14 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
+
+			timer = 5.0f;
+			KuruKuru = true;
+			KuruKuruBGM->Play(false);
+
 			SceneSelect::Instance().SetMap(1);
 			timer = 2.0f;
+
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
@@ -81,6 +101,10 @@ void SceneSelect::Update(float elapsedTime)
 			
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 
+		}
+		if (timer > 5.0f)
+		{
+			KuruKuruBGM->Stop();
 		}
 		break;
 	case Stage::Stage2:
@@ -91,14 +115,24 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
+
+			timer = 5.0f;
+			KuruKuru = true;
+			KuruKuruBGM->Play(false);
+
 			SceneSelect::Instance().SetMap(2);
 			timer = 2.0f;
+
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
 			
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		}
+		if (timer > 5.0f)
+		{
+			KuruKuruBGM->Stop();
 		}
 		break;
 	}
@@ -118,47 +152,47 @@ void SceneSelect::Render()
 	ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
-	// ‰æ–ÊƒNƒŠƒA•ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgİ’è
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0`1.0)
+	// ç”»é¢ã‚¯ãƒªã‚¢ï¼†ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆè¨­å®š
+	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0ï½1.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	RenderContext rc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ƒ‰ƒCƒg•ûŒüi‰º•ûŒüj
+	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ãƒ©ã‚¤ãƒˆæ–¹å‘ï¼ˆä¸‹æ–¹å‘ï¼‰
 
-	//ƒJƒƒ‰‰Šúİ’è
+	//ã‚«ãƒ¡ãƒ©åˆæœŸè¨­å®š
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
 
-	// 3Dƒ‚ƒfƒ‹•`‰æ
+	// 3Dãƒ¢ãƒ‡ãƒ«æç”»
 	{
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 
-		//ƒXƒe[ƒW•`‰æ
+		//ã‚¹ãƒ†ãƒ¼ã‚¸æç”»
 		StageManager::Instance().Render(dc, shader);
 
 		shader->End(dc);
 	}
 
-	// 3DƒfƒoƒbƒO•`‰æ
+	// 3Dãƒ‡ãƒãƒƒã‚°æç”»
 	{
-		// ƒ‰ƒCƒ“ƒŒƒ“ƒ_ƒ‰•`‰æÀs
+		// ãƒ©ã‚¤ãƒ³ãƒ¬ãƒ³ãƒ€ãƒ©æç”»å®Ÿè¡Œ
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
 
-		// ƒfƒoƒbƒOƒŒƒ“ƒ_ƒ‰•`‰æÀs
+		// ãƒ‡ãƒãƒƒã‚°ãƒ¬ãƒ³ãƒ€ãƒ©æç”»å®Ÿè¡Œ
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 
-	// 2DƒXƒvƒ‰ƒCƒg•`‰æ
+	// 2Dã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 	{
 		
 	}
 
-	// 2DƒfƒoƒbƒOGUI•`‰æ
+	// 2Dãƒ‡ãƒãƒƒã‚°GUIæç”»
 	{
 		
 	}

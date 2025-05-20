@@ -24,9 +24,33 @@ Player& Player::Instance()
 //コンストラクタ
 Player::Player()
 {
-    model = new Model("Data/Model/Player/Player2.mdl");
-
+    //SEの初期化
+    Audio& audio = audio.Instance();
+    AttackSE=audio.LoadAudioSource("Data/Audio/SE/Player/PlayerAttackSE.wav");
+    Finish_AttackSE= audio.LoadAudioSource("Data/Audio/SE/Player/PlayerFinishAttackSE.wav");
+    KnifeSE = audio.LoadAudioSource("Data/Audio/SE/Player/Knife.wav");
+    Knife_FinishSE = audio.LoadAudioSource("Data/Audio/SE/Player/Knife_Finish.wav");
+    Knife_Finish2SE = audio.LoadAudioSource("Data/Audio/SE/Player/Knife_Finish2.wav");
+    ChangeSE = audio.LoadAudioSource("Data/Audio/SE/Player/ChangeSE.wav");
+    ChieldSE = audio.LoadAudioSource("Data/Audio/SE/Player/ChieldSE.wav");
+    Damage_ChieldSE =audio.LoadAudioSource("Data/Audio/SE/Player/Damage_ShieldSE.wav");
+    Breaking_ChieldSE = audio.LoadAudioSource("Data/Audio/SE/Player/Breaking_ShieldSE.wav");
+    Damage_PlayerSE = audio.LoadAudioSource("Data/Audio/SE/Player/Damage_PlayerSE.wav");
+    Player_DeathSE = audio.LoadAudioSource("Data/Audio/SE/Player/Player_DeathSE.wav");
+    //SEの音量設定
+    AttackSE->sourceVoice->SetVolume(75);
+    Finish_AttackSE->sourceVoice->SetVolume(95);
+    KnifeSE->sourceVoice->SetVolume(50);
+    Knife_FinishSE->sourceVoice->SetVolume(50);
+    Knife_Finish2SE->sourceVoice->SetVolume(50);
+    ChangeSE->sourceVoice->SetVolume(50);
+    ChieldSE->sourceVoice->SetVolume(50);
+    Damage_ChieldSE->sourceVoice->SetVolume(50);
+    Breaking_ChieldSE->sourceVoice->SetVolume(50);
+    Damage_PlayerSE->sourceVoice->SetVolume(50);
+    Player_DeathSE->sourceVoice->SetVolume(50);
     //�X�P�[�����O
+    model = new Model("Data/Model/Player/Player2.mdl");
     scale.x = scale.y = scale.z = 0.01f;
 
     //インスタンスポインタ取得
@@ -333,6 +357,7 @@ void Player::UpdateIdleState(float elapsedTime)
     {
         if (gamepad.GetButtonDown() & GamePad::BTN_1)
         {
+            ChieldSE->Play(false);
             TransitionBarrierState();
         }
     }
@@ -444,14 +469,17 @@ void Player::UpdateAttackState(float elapsedTime)
         {
             if (animationTime <= 1.0f)
             {
+                AttackSE->Play(false);
                 attackStage = 1;
             }
             else if (animationTime <= 1.85)
             {
+                AttackSE->Play(false);
                 attackStage = 2;
             }
             else
             {
+                Finish_AttackSE->Play(false);
                 attackStage = 3;
             }
         }
@@ -459,18 +487,30 @@ void Player::UpdateAttackState(float elapsedTime)
         switch (attackStage)
         {
         case 1:
+            if (animationTime > 1.0f)
+            {
+                AttackSE->Stop();
+            }
             if (animationTime > 1.25f)
             {
                 TransitionIdleState();
             }
             break;
         case 2:
+            if (animationTime > 1.85f)
+            {
+                AttackSE->Stop();
+            }
             if (animationTime > 2.15f)
             {
                 TransitionIdleState();
             }
             break;
         case 3:
+            if (animationTime > 2.8f)
+            {
+                Finish_AttackSE->Stop();
+            }
             if (!model->IsPlayAnimation())
             {
                 TransitionIdleState();
@@ -495,10 +535,12 @@ void Player::UpdateAttackState(float elapsedTime)
         {
             if (animationTime <= 0.8f)
             {
+                KnifeSE->Play(false);
                 attackStage = 1;
             }
             else
             {
+                Knife_FinishSE->Play(false);
                 attackStage = 2;
             }
         }
@@ -506,13 +548,29 @@ void Player::UpdateAttackState(float elapsedTime)
         switch (attackStage)
         {
         case 1:
-            if (animationTime > 1.0f)
+            if (animationTime > 0.8)
+            {
+                KnifeSE->Stop();
+            }
+          if (animationTime > 1.0f)
             {
                 attackCollisionFlag = false;
                 TransitionIdleState();
             }
             break;
         case 2:
+            if (animationTime > 1.6f)
+            {
+                Knife_FinishSE->Stop();
+            }
+            if (animationTime > 2.3f)
+            {
+                Knife_Finish2SE->Play(false);
+            }
+            if (animationTime > 2.8f)
+            {
+                Knife_Finish2SE->Stop();
+            }
             if (!model->IsPlayAnimation())
             {
                 TransitionIdleState();
@@ -545,6 +603,7 @@ void Player::TransitionDamageState()
 void Player::UpdateDamageState(float elapsedTime)
 {
     onDamage = false;
+    Damage_PlayerSE->Play(false);
     if (health <= 0)
     {
         TransitionDamageState();
@@ -553,6 +612,7 @@ void Player::UpdateDamageState(float elapsedTime)
     if (!model->IsPlayAnimation())
     {
         TransitionIdleState();
+        Damage_PlayerSE->Stop();
     }
 }
 
@@ -578,6 +638,7 @@ void Player::TransitionDeathState()
 
 void Player::UpdateDeathState(float elapsedTime)
 {
+    Player_DeathSE->Play(false);
     if (!model->IsPlayAnimation())
     {
         //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
@@ -722,11 +783,13 @@ void Player::ChangeWeapon()
     GamePad& gamePad = Input::Instance().GetGamePad();
     if (gamePad.GetButtonDown() & GamePad::BTN_2)
     {
+        ChangeSE->Play(false);
         weapon = WeaponType::GreatSword;
         TransitionIdleState();
     }
     else if (gamePad.GetButtonDown() & GamePad::BTN_3)
     {
+        ChangeSE->Play(false);
         weapon = WeaponType::Dagger;
         TransitionIdleState();
     }

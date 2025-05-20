@@ -8,10 +8,15 @@
 #include "ShieldIcon.h"
 #include "UI.h"
 
+
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
+
 #include "FadeOut.h"
 
 #include "Map1.h"
 #include "Map2.h"
+
 
 
 // ゲームシーン
@@ -110,4 +115,6 @@ private:
 	SpriteData backSD;
 
 	std::unique_ptr<UserInterface> UI = nullptr;
+	//BGM再生
+	std::unique_ptr<AudioSource> MainBGM;
 };

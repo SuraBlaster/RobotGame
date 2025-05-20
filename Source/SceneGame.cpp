@@ -27,6 +27,12 @@
 
 void SceneGame::Initialize()
 {
+	//BGM初期化
+	Audio& audio = audio.Instance();
+	//BGM設定
+	MainBGM = audio.LoadAudioSource("Data/Audio/BGM/Main.wav");
+	//BGM音量設定(100以下)
+	MainBGM->sourceVoice->SetVolume(50);
 	//ステージ初期化
 	heremap = SceneSelect::Instance().GetMap();
 	StageManager& stageManager = StageManager::Instance();
@@ -245,6 +251,8 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	//BGM再生
+	MainBGM->Play(true);
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
 	if (!isPause)
@@ -264,14 +272,15 @@ void SceneGame::Update(float elapsedTime)
 		//エフェクト更新処理
 		EffectManager::Instance().Update(elapsedTime);
 
-	//����X�V����
-	WeaponManager::Instance().Update(elapsedTime);
+		//����X�V����
+		WeaponManager::Instance().Update(elapsedTime);
 
-	//�G�l�~�[�X�V����
-	EnemyManager::Instance().Update(elapsedTime);
+		//�G�l�~�[�X�V����
+		EnemyManager::Instance().Update(elapsedTime);
 		isCameraControll = true;
 		isOldCameraControll = true;
 		UI->Update(elapsedTime);
+
 	}
 	else
 	{
