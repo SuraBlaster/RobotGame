@@ -785,6 +785,14 @@ void SceneGame::EnemySet()
 
 }
 
+void SceneGame::CrystalSet()
+{
+	ItemManager* itemManager = new ItemManager;
+	ItemCrystal* itemCrystal = new ItemCrystal;
+
+
+}
+
 void SceneGame::RaundManage()
 {
 	switch(raundcase)
