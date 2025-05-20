@@ -3,7 +3,7 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Model.h"
 #include "Character.h"
-#include "ProjectileManager.h"
+
 #include "Effect.h"
 #include "SceneManager.h"
 
@@ -31,10 +31,10 @@ public:
     //ジャンプ入力処理
     bool InputJump();
 
-    void CollisionprojectilesVsEnemies();
+   
 
     //バリア更新処理
-    void UpdateBarrier();
+    void UpdateBarrier(float elapsedTime);
 
     void SetRimit(const int& rimit) { barrierRimit = rimit; }
 
@@ -154,40 +154,9 @@ public:
     };
 
     WeaponType weapon;
-   
-public:
-    Player();
-    ~Player()override;
-
-    //�C���X�^���X�擾
-    static Player& Instance();
-
-    //�X�V����
-    void Update(float elapsedTime);
-
-    //�`�揈��
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
-
-    //GUI�`��
-    void DrawDebugGUI();
-
-    //�f�o�b�O�v���~�e�B�u�`��
-    void DrawDebugPrimitive();
-
-    //�W�����v���͏���
-    bool InputJump();
-
-    void CollisionprojectilesVsEnemies();
-
-    //�o���A�X�V����
-    void UpdateBarrier(float elapsedTime);
 
     //�������
     void ChangeWeapon();
-
-    Model* GetModel() const { return model; }
-
-    const bool GetAttackFlag() const { return attackCollisionFlag; }
 
     WeaponType GetWeapon() const { return weapon; }
 
@@ -205,7 +174,7 @@ public:
 
 
 private:
-    ProjectileManager projectileManager;
+    
 
     Model* model = nullptr;
 

@@ -114,28 +114,28 @@ void CameraController::Update(float elapsedTime)
     eye.z = target.z + front.z * -range;
 
     //カメラレイキャスト
-    //if (!Debug::instance().getIsDebugMode())
-    //{
-    //    DirectX::XMFLOAT3 start = target;
-    //    DirectX::XMFLOAT3 end = { eye.x + front.x,eye.y + front.y,eye.z - front.z };
-    //    HitResult hit;
-    //    if (Stage::Instance().rayCast(start, end, hit))
-    //    {
-    //        range -= DirectX::XMVectorGetX(DirectX::XMVector3Length(
-    //            DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.position), DirectX::XMLoadFloat3(&end))));
-    //        if (range < 0.001f)
-    //        {
-    //            range = 0.001f;
-    //        }
-    //        eye.x = target.x + front.x * range;
-    //        eye.y = target.y + front.y * range;
-    //        eye.z = target.z + front.z * -range;
-    //    }
-    //    else
-    //    {
-    //        _range = _beforRange;
-    //    }
-    //}
+   /* if (!Debug::instance().getIsDebugMode())
+    {
+        DirectX::XMFLOAT3 start = target;
+        DirectX::XMFLOAT3 end = { eye.x + front.x,eye.y + front.y,eye.z - front.z };
+        HitResult hit;
+        if (Stage::Instance().rayCast(start, end, hit))
+        {
+            range -= DirectX::XMVectorGetX(DirectX::XMVector3Length(
+                DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.position), DirectX::XMLoadFloat3(&end))));
+            if (range < 0.001f)
+            {
+                range = 0.001f;
+            }
+            eye.x = target.x + front.x * range;
+            eye.y = target.y + front.y * range;
+            eye.z = target.z + front.z * -range;
+        }
+        else
+        {
+            _range = _beforRange;
+        }
+    }*/
     Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
 }
 

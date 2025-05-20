@@ -13,6 +13,12 @@ public:
     EnemySpider();
     ~EnemySpider() override;
 
+    static EnemySpider& Instance()
+    {
+        static EnemySpider instance;
+        return instance;
+    }
+
     //更新処理
     void Update(float elapsedTime)override;
 
@@ -27,7 +33,8 @@ public:
 
     void LimitPosition();
 
-
+    int GetDeadcount() { return spiderdeadcount; }
+    void SetDeadcount(int spiderdeadcount) { this->spiderdeadcount = spiderdeadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -85,6 +92,7 @@ private:
     //弾丸発射
     void InputProjectile();
 
+    void AddSpiderdeadcount();
 private:
     //ステート
     enum class State
@@ -136,8 +144,12 @@ private:
     float attackRange = 1.0f;
     float syuziRange = 1.5f;
     bool atknow;
+    float shottimer;
+
+    int spiderdeadcount;
 
     ProjectileManager projectileManager;
 
     float delay = 0.0f;
+    int sdd;
 };

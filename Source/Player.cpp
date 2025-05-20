@@ -6,8 +6,8 @@
 #include "EnemyManager.h"
 #include "EffectManager.h"
 #include "Collision.h"
-#include "ProjectileStraight.h"
-#include <ProjectileHoming.h>
+
+
 #include "SceneLoading.h"
 #include "SceneTitle.h"
 
@@ -36,6 +36,7 @@ Player::Player()
     //待機ステートへ遷移
     TransitionIdleState();
 
+    health = 100;
     ShieldCount = 3;
 }
 
@@ -52,7 +53,6 @@ void Player::DrawDebugPrimitive()
 
     
 }
-
 
 Player::~Player()
 {
@@ -107,7 +107,7 @@ void Player::Update(float elapsedTime)
 
     CollisionPlayerVsEnemies();
 
-    CollisionprojectilesVsEnemies();
+    
 
     model->UpdateAnimation(elapsedTime);
 
@@ -127,7 +127,7 @@ bool Player::InputMove(float elapsedTime)
     //進行ベクトル取得
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(moveVec.x, moveVec.z,moveVec.y, moveSpeed);
+    Move(moveVec.x, moveVec.z, moveSpeed);
 
     Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed);
 
@@ -139,7 +139,7 @@ bool Player::InputMoveSword(float elapsedTime)
     //�i�s�x�N�g���擾
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(moveVec.x, moveVec.z, moveVec.y, moveSpeed * 0.2f);
+    Move(moveVec.x, moveVec.z, moveSpeed * 0.2f);
 
     Turn(elapsedTime, moveVec.x ,moveVec.z, turnSpeed * 0.2f);
 
@@ -149,10 +149,10 @@ bool Player::InputMoveSword(float elapsedTime)
 bool Player::InputAttack()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
+    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     //マウス
     Mouse& mouse = Input::Instance().GetMouse();
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
-    //if (gamePad.GetButtonDown() & GamePad::BTN_B)
     {
         return true;
     }
@@ -192,7 +192,7 @@ void Player::CollisionPlayerVsEnemies()
 
             if (normal.y > 0.8f)
             {
-              Jump(jumpSpeed * 0.5f);
+               //Jump(jumpSpeed * 0.5f);
             }
              else
             {
@@ -378,8 +378,6 @@ void Player::TransitionJumpState()
 
 void Player::UpdateJumpState(float elapsedTime)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    
     if (IsGround())
     {
         TransitionIdleState();
@@ -409,24 +407,11 @@ void Player::TransitionAttackState()
 
 void Player::UpdateAttackState(float elapsedTime)
 {
-
-    //任意のアニメーション再生区間でのみ衝突判定処理をする
-    float animationTime = model->GetCurrentAnimationSeconds();
-    attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
-        || (animationTime >= 1.65f && animationTime < 1.85f)
-        || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
-
-    InputMoveSword(elapsedTime);
-
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    Mouse& mouse = Input::Instance().GetMouse();
-    
-    if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
     switch (weapon)
     {
     case WeaponType::GreatSword:
-        {
-        //�C�ӂ̃A�j���[�V�����Đ���Ԃł̂ݏՓ˔��菈��������
+    {
+        //任意のアニメーション再生区間でのみ衝突判定処理をする
         float animationTime = model->GetCurrentAnimationSeconds();
         attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
             || (animationTime >= 1.65f && animationTime < 1.85f)
@@ -434,8 +419,8 @@ void Player::UpdateAttackState(float elapsedTime)
 
         InputMoveSword(elapsedTime);
 
-        GamePad& gamePad = Input::Instance().GetGamePad();
-        if (gamePad.GetButtonUp() & GamePad::BTN_B)
+        Mouse& mouse = Input::Instance().GetMouse();
+        if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
         {
             if (animationTime <= 1.0f)
             {
@@ -472,53 +457,52 @@ void Player::UpdateAttackState(float elapsedTime)
             }
             break;
         }
-        
-        }
-        break;
+
+    }
+    break;
 
     case WeaponType::Dagger:
+    {
+        float animationTime = model->GetCurrentAnimationSeconds();
+        attackCollisionFlag = (animationTime >= 0.5f && animationTime < 0.8f)
+            || (animationTime >= 1.0f && animationTime < 1.6f)
+            || (animationTime >= 2.3f && animationTime < 2.8f) ? true : false;
+
+        InputMoveSword(elapsedTime);
+
+        Mouse& mouse = Input::Instance().GetMouse();
+        if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
         {
-            float animationTime = model->GetCurrentAnimationSeconds();
-            attackCollisionFlag = (animationTime >= 0.5f && animationTime < 0.8f)
-                || (animationTime >= 1.0f && animationTime < 1.6f)
-                || (animationTime >= 2.3f && animationTime < 2.8f) ? true : false;
-
-            InputMoveSword(elapsedTime);
-
-            GamePad& gamePad = Input::Instance().GetGamePad();
-            if (gamePad.GetButtonUp() & GamePad::BTN_B)
+            if (animationTime <= 0.8f)
             {
-                if (animationTime <= 0.8f)
-                {
-                    attackStage = 1;
-                }
-                else
-                {
-                    attackStage = 2;
-                }
+                attackStage = 1;
             }
-
-            switch (attackStage)
+            else
             {
-            case 1:
-                if (animationTime > 1.0f)
-                {
-                    attackCollisionFlag = false;
-                    TransitionIdleState();
-                }
-                break;
-            case 2:
-                if (!model->IsPlayAnimation())
-                {
-                    TransitionIdleState();
-                }
-                break;
+                attackStage = 2;
             }
-
         }
-        break;
+
+        switch (attackStage)
+        {
+        case 1:
+            if (animationTime > 1.0f)
+            {
+                attackCollisionFlag = false;
+                TransitionIdleState();
+            }
+            break;
+        case 2:
+            if (!model->IsPlayAnimation())
+            {
+                TransitionIdleState();
+            }
+            break;
+        }
+
     }
-    
+    break;
+    }
 
 }
 
@@ -707,67 +691,6 @@ void Player::OnDead()
     TransitionDeathState();
 }
 
-void Player::CollisionprojectilesVsEnemies()
-{
-    EnemyManager& enemyManager = EnemyManager::Instance();
-
-    //総当たり処理
-    int projectileCount = projectileManager.GetProjectileCount();
-    int enemyCount = enemyManager.GetEnemyCount();
-    for (int i = 0; i < projectileCount; ++i)
-    {
-        Projectile* projectile = projectileManager.GetProjectile(i);
-
-        for (int j = 0; j < enemyCount; ++j)
-        {
-            Enemy* enemy = enemyManager.GetEnemy(j);
-
-            //衝突処理
-            DirectX::XMFLOAT3 outPosition;
-            if (Collision::IntersectSphereVsCylinder(
-                projectile->GetPosition(),
-                projectile->GetRadius(),
-                enemy->GetPosition(),
-                enemy->GetRadius(),
-                enemy->GetHeight(),
-                outPosition
-            ))
-            {
-                if (enemy->ApplyDamage(1))
-                {
-                    {
-                        DirectX::XMFLOAT3 impulse{};
-
-                        const float power = 10.0f;
-                        const DirectX::XMFLOAT3& e = enemy->GetPosition();
-                        const DirectX::XMFLOAT3& p = projectile->GetPosition();
-                        float vx = e.x - p.x;
-                        float vz = e.z - p.z;
-                        float lengthXZ = sqrtf(vx * vx + vz * vz);
-                        vx /= lengthXZ;
-                        vz /= lengthXZ;
-
-                        impulse.x = vx * power;
-                        impulse.y = power * 0.5f;
-                        impulse.z = vz * power;
-                        
-
-                        enemy->AddImpulse(impulse);
-                    }
-
-
-                    projectile->Destroy();
-                }
-
-                {
-                    DirectX::XMFLOAT3 e = enemy->GetPosition();
-                    e.y += enemy->GetHeight() * 0.5f;
-                    hitEffect->Play(e);
-                }
-           }
-        }
-    }
-}
 
 //void Player::UpdateBarrier()
 void Player::UpdateBarrier(float elapsedTime)
@@ -825,7 +748,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
     shader->Draw(dc, model);
 
 
-    projectileManager.Render(dc, shader);
+   
 }
 
 void Player::DrawDebugGUI()
@@ -848,6 +771,8 @@ void Player::DrawDebugGUI()
             angle.x = DirectX::XMConvertToRadians(a.x);
             angle.y = DirectX::XMConvertToRadians(a.y);
             angle.z = DirectX::XMConvertToRadians(a.z);
+
+            ImGui::InputFloat3("Velocity", &velocity.x);
 
             ImGui::InputFloat3("Scale", &scale.x);
 

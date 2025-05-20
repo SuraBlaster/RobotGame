@@ -7,6 +7,8 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 #include "UI.h"
+#include "Map1.h"
+#include "Map2.h"
 
 // ゲームシーン
 class SceneGame : public Scene
@@ -27,6 +29,28 @@ public:
 	// 描画処理
 	void Render()override;
 
+	//敵配置
+	void EnemySet();
+	
+	//IMGUIの表示
+	void DrawDebugGUI();
+	//ラウンド管理（敵を一定数倒したら次のラウンドに移り、扉が開く（マップのアニメーションを再生））
+	void RaundManage();
+
+	int heremap;
+
+	int raund;
+	int raundcase;
+	Map1* map1 = new Map1();
+	Map2* map2 = new Map2();
+
+	float enemytimer;
+
+	int killcount;
+	int killspider;
+	int killbomber;
+	int killslime;
+	int Rcase;
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,
