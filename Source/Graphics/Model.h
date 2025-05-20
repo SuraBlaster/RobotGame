@@ -49,6 +49,9 @@ public:
 
 	//現在のアニメーション再生時間取得
 	float GetCurrentAnimationSeconds() const { return currentAnimationSeconds; }
+
+	//現在のアニメーション再生時間設定
+	void SetCurrentAnimationSeconds(float SetSeconds) { this->currentAnimationSeconds = SetSeconds; }
 private:
 	std::shared_ptr<ModelResource>	resource;
 	std::vector<Node>				nodes;

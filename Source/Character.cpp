@@ -141,11 +141,7 @@ void Character::UpdateInvincibleTimer(float elapsedTime)
     }
 }
 
-void Character::UpdateVerticalVelocity(float elapsedFrame)
-{
-    //d—Íˆ—
-    velocity.y += gravity * elapsedFrame;
-}
+
 
 void Character::UpdateVerticalMove(float elapsedTime)
 {

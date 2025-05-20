@@ -1,6 +1,8 @@
 #pragma once
 
 #include<DirectXMath.h>
+#include <CameraEffect_Death.h>
+#include <CameraEffect_Clear.h>
 
 class CameraController
 {
@@ -14,12 +16,20 @@ public:
 
     void ZeroClear() { isZeroClear = true; }
 
+    void CameraController::StartDeath();
+
+    void StartClear();
+
     float rollSpeed = DirectX::XMConvertToRadians(10);
     float normalRollSpeed = DirectX::XMConvertToRadians(120);
     bool i = true;
 private:
     DirectX::XMFLOAT3 target = { 0,0,0 };
     DirectX::XMFLOAT3 angle = { DirectX::XMConvertToRadians(-10),0,0 };
+
+    CameraEffect_Death cameraEffect_Death;
+    CameraEffect_Clear cameraEffect_Clear;
+
 
     float range = 12.0f;
     float beforRange = range;

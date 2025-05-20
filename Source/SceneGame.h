@@ -7,13 +7,23 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 #include "UI.h"
+
+#include "FadeOut.h"
+
 #include "Map1.h"
 #include "Map2.h"
+
 
 // ゲームシーン
 class SceneGame : public Scene
 {
 public:
+	static SceneGame& Instance()
+	{
+		static SceneGame instance;
+		return instance;
+	}
+
 	SceneGame() {}
 	~SceneGame() override{}
 
@@ -29,9 +39,16 @@ public:
 	// 描画処理
 	void Render()override;
 
+
+	CameraController* GetCameraController() { return cameraController; }
+
+	void SetCameraController(CameraController* controller) { cameraController = controller; }
+
+
 	//敵配置
 	void EnemySet();
-	
+	//ゴールクリスタル接地
+	void CrystalSet();
 	//IMGUIの表示
 	void DrawDebugGUI();
 	//ラウンド管理（敵を一定数倒したら次のラウンドに移り、扉が開く（マップのアニメーションを再生））
@@ -51,6 +68,7 @@ public:
 	int killbomber;
 	int killslime;
 	int Rcase;
+
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,
@@ -84,6 +102,8 @@ private:
 	std::unique_ptr<Sprite> toTitleSpr = nullptr;
 	std::unique_ptr<Sprite> backSpr = nullptr;
 	std::unique_ptr<Sprite> sprite = nullptr;
+
+	std::unique_ptr<FadeOut> fadeOut = nullptr;
 
 	SpriteData spriteSD;
 	SpriteData toTitleSD;
