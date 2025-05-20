@@ -5,33 +5,6 @@
 #include "Graphics/Shader.h"
 #include "Player.h"
 
-class Compass
-{
-public:
-	Compass() {}
-	~Compass() {}
-
-	void Initialize();
-
-	void Update();
-	
-	Model* GetModel() { return model.get(); }
-
-private:
-
-	std::unique_ptr<Model> model = nullptr;
-
-	DirectX::XMFLOAT3 position = { 0, 0, 0 };
-	DirectX::XMFLOAT3 angle = { 0, 0, 0 };
-	DirectX::XMFLOAT3 scale = { 1, 1, 1 };
-	DirectX::XMFLOAT4X4 transform{
-		1,0,0,0,
-		0,1,0,0,
-		0,0,1,0,
-		0,0,0,1
-	};
-};
-
 class UserInterface
 {
 public:
@@ -48,19 +21,17 @@ public:
 	void Update(float elapsedTime);
 
 	// ï`âÊèàóù
-	void Render(ID3D11DeviceContext* dc, Shader* shader);
+	void Render(ID3D11DeviceContext* dc);
 
 private:
-	bool isUIAnimation = false;
-	int UITimer = 20;
 
-	std::unique_ptr<Sprite> playerHealthUISpr = nullptr;
-	std::unique_ptr<Sprite> playerHealthUIBackSpr = nullptr;
-	std::unique_ptr<Sprite> HealthUIBackSpr = nullptr;
-
-	SpriteData playerHealthUISD;
-	SpriteData playerHealthUIBackSD;
-	SpriteData HealthUIBackSD;
+	std::unique_ptr<Sprite> healthUISpr = nullptr;
+	std::unique_ptr<Sprite> healthUIBackSpr = nullptr;
+	SpriteData healthUISD{};
+	SpriteData healthUIBackSD{};
+	bool prevHealthHit = false;
+	bool isHealthAnimating = false;
+	int healthUITimer = 0;
 
 	//std::unique_ptr<Compass> compass;
 };

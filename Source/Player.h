@@ -180,9 +180,17 @@ public:
 
     void SetHit(bool hit) { this->hit = hit; }
 
+    bool GetHpHit() const { return Hphit; }
+
+    void SetHpHit(bool Hphit) { this->Hphit = Hphit; }
+
     int GetShieldCount() const { return ShieldCount; }
 
     void SetShieldCount(int shieldCount) { this->ShieldCount = shieldCount; }
+
+    bool GetHiddenFlag() const { return HiddenFlag; }
+
+    void SetHiddenFlag(bool hiddenFlag) { this->HiddenFlag = hiddenFlag; }
 
     DirectX::XMFLOAT3 GetPreviousPlayerPos() const { return previousPlayerPos; }
 
@@ -191,6 +199,7 @@ public:
     DirectX::XMFLOAT3 GetCurrentPlayerPos() const { return currentPlayerPos; }
 
     void SetCurrentPlayerPos(DirectX::XMFLOAT3 CurrentPlayerPos) { currentPlayerPos = CurrentPlayerPos; }
+
 
 
 private:
@@ -229,6 +238,10 @@ private:
     float ShieldTimer = 0;
 
     bool hit = false;
+
+    bool Hphit = false;
+
+    bool HiddenFlag = false;
 
     int attackStage = 0;
 

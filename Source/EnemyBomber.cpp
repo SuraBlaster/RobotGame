@@ -203,7 +203,7 @@ void EnemyBomber::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                 //ダメージを与える
                 if (player.ApplyDamage(1))
                 {
-                    //プレイヤーを吹っ飛ばすベクトルを算出
+                    //敵を吹っ飛ばすベクトルを算出
                     DirectX::XMFLOAT3 vec;
                     vec.x = outPosition.x - nodePosition.x;
                     vec.z = outPosition.z - nodePosition.z;
@@ -212,18 +212,20 @@ void EnemyBomber::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                     vec.z /= length;
 
                     //XZ平面に吹っ飛ばす力を掛ける
-                    float power = 2.0f;
+                    float power = 10.0f;
                     vec.x *= power;
                     vec.z *= power;
 
                     //Y方向にも力を掛ける
-                    vec.y = 2.0f;
+                    //vec.y = 5.0f;
 
                     //吹っ飛ばす
-                    player.AddImpulse(vec);
+                    //player.AddImpulse(vec);
                 }
             }
         }
+
+        //player.SetHit(false);
     }
 }
 

@@ -27,6 +27,11 @@ private:
     std::unique_ptr<Sprite> gameCloseSpr = nullptr;
 
     Sprite* sprite = nullptr;
+    Sprite* goodBye = nullptr;
     SpriteData startSD;
     SpriteData gameCloseSD;
+
+    bool exitFlag;
+    float timer;
+    float transparency;
 };

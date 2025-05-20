@@ -6,7 +6,8 @@
 
 void SceneLoading::Initialize()
 {
-    sprite = new Sprite("Data/Sprite/LoadingIcon.png");
+    load = new Sprite("Data/Sprite/Loading.png");
+    dot = new Sprite("Data/Sprite/Dot.png");
 
     thread = new std::thread(LoadingThread, this);
 }
@@ -29,19 +30,27 @@ void SceneLoading::Finalize()
         thread = nullptr;
     }
 
-
-
-    if (sprite != nullptr)
+    if (load != nullptr)
     {
-        delete sprite;
-        sprite = nullptr;
+        delete load;
+        load = nullptr;
+    }
+
+    if (dot != nullptr)
+    {
+        delete dot;
+        dot = nullptr;
     }
 }
 
 void SceneLoading::Update(float elapsedTime)
 {
-    constexpr float speed = 180;
-    angle += speed * elapsedTime;
+    timeAccumulator += elapsedTime;
+
+    if (timeAccumulator >= updateInterval) {
+        timeAccumulator = 0.0f;
+        dotCount = (dotCount % 3) + 1;
+    }
 
     if (nextScene != nullptr && nextScene->isReady())
     {
@@ -58,7 +67,7 @@ void SceneLoading::Render()
     ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
     // 画面クリア＆レンダーターゲット設定
-    FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+    FLOAT color[] = { 0.0f, 0.0f, 0.0f, 1.0f };	// RGBA(0.0～1.0)
     dc->ClearRenderTargetView(rtv, color);
     dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     dc->OMSetRenderTargets(1, &rtv, dsv);
@@ -67,17 +76,30 @@ void SceneLoading::Render()
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-        float textureWidth = static_cast<float>(sprite->GetTextureWidth());
-        float textureHeight = static_cast<float>(sprite->GetTextureHeight());
-        float positionX = screenWidth - textureWidth;
-        float positionY = screenHeight - textureHeight;
-        
+        float textureWidth = static_cast<float>(load->GetTextureWidth());
+        float textureHeight = static_cast<float>(load->GetTextureHeight());
+        //float positionX = screenWidth - textureWidth;
+        //float positionY = screenHeight - textureHeight;
 
-        sprite->Render(dc,
-            positionX, positionY, textureWidth, textureHeight,
+
+        load->Render(dc,
+            5, 30, 630.0f, 170.0f,
             0, 0, textureWidth, textureHeight,
-            angle,
+            0,
             1, 1, 1, 1);
+
+        textureWidth = static_cast<float>(dot->GetTextureWidth());
+        textureHeight = static_cast<float>(dot->GetTextureHeight());
+
+        for(int i = 0; i < dotCount; i++)
+        {
+            dot->Render(dc,
+                430.0f + (i * 40), -90.0f, 252.0f, 370.0f,
+                0, 0, textureWidth, textureHeight,
+                0,
+                1, 1, 1, 1);
+        }
+        
     }
 }
 

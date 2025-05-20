@@ -43,7 +43,7 @@ void CameraEffect_Death::Update(float deltaTime)
     Camera::Instance().SetLookAt(eye, centerPos, { 0, 1, 0 });
 
     if (t >= 1.0f) {
-        Camera::Instance().SetFadeFlag(true);
+        Camera::Instance().SetOverFlag(true);
     }
 }
 

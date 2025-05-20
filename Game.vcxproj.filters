@@ -79,7 +79,8 @@
     <ClCompile Include="Source\Item.cpp" />
     <ClCompile Include="Source\ItemManager.cpp" />
     <ClCompile Include="Source\ItemCrystal.cpp" />
-    <ClCompile Include="Source\FadeOut.cpp" />
+    <ClCompile Include="Source\ClearUI.cpp" />
+    <ClCompile Include="Source\GameOverUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\DirectXTex\WICTextureLoader.h" />
@@ -154,7 +155,8 @@
     <ClInclude Include="Source\Item.h" />
     <ClInclude Include="Source\ItemManager.h" />
     <ClInclude Include="Source\ItemCrystal.h" />
-    <ClInclude Include="Source\FadeOut.h" />
+    <ClInclude Include="Source\ClearUI.h" />
+    <ClInclude Include="Source\GameOverUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />

@@ -32,6 +32,7 @@ public:
 	};
 	Stage stage = Stage::Stage1;
 private:
-	Sprite* sprite = nullptr;
+	Sprite* coreRoom = nullptr;
+	Sprite* corridor = nullptr;
 	float timer;
 };

@@ -12,6 +12,9 @@
 
 void SceneSelect::Initialize()
 {
+	coreRoom = new Sprite("Data/Sprite/CoreRoom.png");
+	corridor = new Sprite("Data/Sprite/Corridor.png");
+
 	StageManager& stageManager = StageManager::Instance();
 	SelectStage1* selectStage1 = new SelectStage1();
 	selectStage1->SetPosition({ -40,10,10 });
@@ -20,7 +23,6 @@ void SceneSelect::Initialize()
 	SelectStage2* selectStage2 = new SelectStage2();
 	selectStage2->SetPosition({ 40,10,10 });
 	stageManager.Register(selectStage2);
-
 
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -41,11 +43,17 @@ void SceneSelect::Initialize()
 
 void SceneSelect::Finalize()
 {
-    if (sprite != nullptr)
+    if (coreRoom != nullptr)
     {
-        delete sprite;
-        sprite = nullptr;
+        delete coreRoom;
+        coreRoom = nullptr;
     }
+
+	if (corridor != nullptr)
+	{
+		delete corridor;
+		corridor = nullptr;
+	}
 
 	StageManager::Instance().Clear();
 }
@@ -150,7 +158,26 @@ void SceneSelect::Render()
 
 	// 2Dスプライト描画
 	{
-		
+		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
+		float textureWidth = static_cast<float>(coreRoom->GetTextureWidth());
+		float textureHeight = static_cast<float>(coreRoom->GetTextureHeight());
+
+		coreRoom->Render(dc,
+			100, 450, 400.0f, 170.0f,
+			0, 0, textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1);
+
+		textureWidth = static_cast<float>(corridor->GetTextureWidth());
+		textureHeight = static_cast<float>(corridor->GetTextureHeight());
+
+		corridor->Render(dc,
+			780, 450, 400.0f, 170.0f,
+			0, 0, textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1);
+
 	}
 
 	// 2DデバッグGUI描画

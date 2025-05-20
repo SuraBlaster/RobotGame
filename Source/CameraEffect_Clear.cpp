@@ -18,7 +18,7 @@ void CameraEffect_Clear::Update(float deltaTime)
 
     timer += deltaTime;
     if (timer >= totalDuration) {
-        Camera::Instance().SetFadeFlag(true);
+        Camera::Instance().SetClearFlag(true);
     }
 
     float currentRange = startRange;

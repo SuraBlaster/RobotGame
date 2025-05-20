@@ -24,6 +24,8 @@ void ShieldIcon::Render()
     float textureWidth = static_cast<float>(sprite->GetTextureWidth());
     float textureHeight = static_cast<float>(sprite->GetTextureHeight());
 
+    
+
     for (int i = 0; i < ShieldCount; i++)
     {
         sprite->Render(dc,

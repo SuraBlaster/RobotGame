@@ -47,14 +47,14 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 
-	EnemyManager& enemyManager = EnemyManager::Instance();
+	/*EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < 1; ++i)
 	{
 		EnemyDrone* slime = new EnemyDrone;
 		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyManager.Register(slime);
-	}
+	}*/
 
 	//for (int i = 0; i < 1; ++i)
 	//{
@@ -104,8 +104,11 @@ void SceneGame::Initialize()
 	//ゲージスプライト
 	gauge = new Sprite();
 
-	fadeOut = std::make_unique<FadeOut>();
-	fadeOut->Initialize();
+	gameOverUI = std::make_unique<GameOverUI>();
+	gameOverUI->Initialize();
+
+	clearUI = std::make_unique<ClearUI>();
+	clearUI->Initialize();
 
 	shieldGauge = std::make_unique<ShieldGauge>();
 	shieldGauge->Initialize();
@@ -206,14 +209,14 @@ void SceneGame::Update(float elapsedTime)
 		//エフェクト更新処理
 		EffectManager::Instance().Update(elapsedTime);
 
-	//����X�V����
-	WeaponManager::Instance().Update(elapsedTime);
+		//
+		WeaponManager::Instance().Update(elapsedTime);
 
-	//�G�l�~�[�X�V����
-	EnemyManager::Instance().Update(elapsedTime);
-		isCameraControll = true;
-		isOldCameraControll = true;
-		UI->Update(elapsedTime);
+		//
+		EnemyManager::Instance().Update(elapsedTime);
+			isCameraControll = true;
+			isOldCameraControll = true;
+			UI->Update(elapsedTime);
 	}
 	else
 	{
@@ -222,6 +225,13 @@ void SceneGame::Update(float elapsedTime)
 			isCameraControll = false;
 			isOldCameraControll = false;
 		}
+	}
+
+	if (Camera::Instance().GetClearFlag() ||
+		Camera::Instance().GetOverFlag())
+	{
+		isCameraControll = false;
+		isOldCameraControll = false;
 	}
 
 	Mouse& mouse = Input::Instance().GetMouse();
@@ -233,7 +243,8 @@ void SceneGame::Update(float elapsedTime)
 
 	EffectManager::Instance().Update(elapsedTime);
 
-	fadeOut->Update(elapsedTime);
+	gameOverUI->Update(elapsedTime);
+	clearUI->Update(elapsedTime);
 	shieldGauge->Update(elapsedTime);
 	if (!isCameraControll)
 		cameraController->ZeroClear();
@@ -278,11 +289,14 @@ void SceneGame::Render()
 
 		WeaponManager::Instance().Render(dc, shader);
 
-		EnemyManager::Instance().Render(dc, shader);
-
+		if (!Player::Instance().GetHiddenFlag())
+		{
+			EnemyManager::Instance().Render(dc, shader);
+		}
+		
 		ItemManager::Instance().Render(dc,shader);
 
-		UI->Render(dc, shader);
+		
 
 		shader->End(dc);
 	}
@@ -307,11 +321,18 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		fadeOut->Render();
+		gameOverUI->Render();
 
-		shieldGauge->Render();
+		clearUI->Render();
 
-		shieldIcon->Render();
+		if (!Player::Instance().GetHiddenFlag())
+		{
+			UI->Render(dc);
+
+			shieldGauge->Render(dc);
+
+			shieldIcon->Render();
+		}
 
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
@@ -507,9 +528,9 @@ void SceneGame::RenderEnemyGauge(
 		}
 		if (StageManager::Instance().RayCast(start, end, hit))
 		{
-			EnemySpider* enemyS = new EnemySpider;
+			/*EnemySpider* enemyS = new EnemySpider;
 			enemyS->SetPosition(hit.position);
-			EnemyManager::Instance().Register(enemyS);
+			EnemyManager::Instance().Register(enemyS);*/
 		}
 	}
 }

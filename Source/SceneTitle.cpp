@@ -10,22 +10,26 @@ void SceneTitle::Initialize()
 {
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
-    startSpr = std::make_unique<Sprite>("Data/Sprite/UI0.png");
-    gameCloseSpr = std::make_unique<Sprite>("Data/Sprite/UI4.png");
+    goodBye = new Sprite("Data/Sprite/GoodBye.png");
+    startSpr = std::make_unique<Sprite>("Data/Sprite/Start.png");
+    gameCloseSpr = std::make_unique<Sprite>("Data/Sprite/Exit.png");
 
     startSD = {
-        800,500, 250, 50,
+        50,500, 200, 100,
         0, 0,
         static_cast<float>(startSpr->GetTextureWidth()),
         static_cast<float>(startSpr->GetTextureHeight())
     };
 
     gameCloseSD = {
-    300, 500, 250, 50,
-    0, 0,
-    static_cast<float>(gameCloseSpr->GetTextureWidth()),
-    static_cast<float>(gameCloseSpr->GetTextureHeight())
+        50, 600, 150, 100,
+        0, 0,
+        static_cast<float>(gameCloseSpr->GetTextureWidth()),
+        static_cast<float>(gameCloseSpr->GetTextureHeight())
     };
+
+    timer = 0.0f;
+    exitFlag = false;
 }
 void SceneTitle::Finalize()
 {
@@ -33,6 +37,12 @@ void SceneTitle::Finalize()
     {
         delete sprite;
         sprite = nullptr;
+    }
+
+    if (goodBye != nullptr)
+    {
+        delete goodBye;
+        goodBye = nullptr;
     }
 }
 
@@ -73,13 +83,25 @@ void SceneTitle::Update(float elapsedTime)
         gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 0.7f;
         if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
         {
-            SceneManager::Instance().GameClose();
+            exitFlag = true;
+            timer = 1.0f;
+            transparency = 1.0f;
         }
     }
     else
     {
         gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 1.0f;
     }
+
+    if (timer >= 0.0f)
+    {
+        timer-= elapsedTime;
+    }
+    else if(exitFlag && timer < 0.0f)
+    {
+        SceneManager::Instance().GameClose();
+    }
+
 }
 
 void SceneTitle::Render()
@@ -108,8 +130,16 @@ void SceneTitle::Render()
             0,
             1, 1, 1, 1);
 
-        startSpr->Render(dc, startSD);
-        gameCloseSpr->Render(dc, gameCloseSD);
-    }
+        goodBye->Render(dc,
+            0, 0, screenWidth, screenHeight,
+            0, 0, textureWidth, textureHeight,
+            0,
+            1, 1, 1, transparency);
 
+        if (exitFlag == false)
+        {
+            startSpr->Render(dc, startSD);
+            gameCloseSpr->Render(dc, gameCloseSD);
+        }
+    }
 }

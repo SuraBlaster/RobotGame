@@ -7,7 +7,8 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 #include "UI.h"
-#include "FadeOut.h"
+#include "ClearUI.h"
+#include "GameOverUI.h"
 
 // ゲームシーン
 class SceneGame : public Scene
@@ -72,11 +73,12 @@ private:
 	std::unique_ptr<Sprite> backSpr = nullptr;
 	std::unique_ptr<Sprite> sprite = nullptr;
 
-	std::unique_ptr<FadeOut> fadeOut = nullptr;
-
 	SpriteData spriteSD;
 	SpriteData toTitleSD;
 	SpriteData backSD;
 
 	std::unique_ptr<UserInterface> UI = nullptr;
+	std::unique_ptr<ClearUI>clearUI;
+	std::unique_ptr<GameOverUI>gameOverUI;
+
 };

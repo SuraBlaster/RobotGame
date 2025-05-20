@@ -20,8 +20,12 @@ public:
 
     static void LoadingThread(SceneLoading* scene);
 private:
-    Sprite* sprite = nullptr;
-    float angle = 0.0f;
+    Sprite* load = nullptr;
+    Sprite* dot = nullptr;
     Scene* nextScene = nullptr;
     std::thread* thread = nullptr;
+
+    int dotCount = 1;
+    float timeAccumulator = 0.0f;
+    const float updateInterval = 0.5f;
 };

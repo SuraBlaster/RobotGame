@@ -77,6 +77,7 @@ void EnemySlime::Update(float elapsedTime)
 
     delay -= elapsedTime;
 
+
 }
 
 void EnemySlime::DrawDebugPrimitive()
@@ -198,20 +199,23 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
         {
             if (playerTimer > 0 && delay <= 0.0f)
             {
-                if (delay <= 0)
+                if (delay <= 0.0f)
                 {
                     player.SetHit(true);
                 }
 
                 delay = 0.1f;
  
-                playerTimer -= 6.0f;
+                playerTimer -= 1.0f;
                 player.SetTimer(playerTimer);
 
                 
             }
             else if(delay <= 0.0f)
             {
+
+                player.SetHpHit(true);
+
                 //ダメージを与える
                 if (player.ApplyDamage(1))
                 {
@@ -236,7 +240,10 @@ void EnemySlime::CollisionNodeVsPlayer(const char* nodeName, float nodeRadius)
                 }
             }
         }
+
+        
     }
+
 }
 
 void EnemySlime::TransitionWanderState()

@@ -35,9 +35,11 @@ public:
 
     const DirectX::XMFLOAT3& GetRight()const { return right; }
 
-    bool GetFadeFlag() { return FadeFlag; }
-    void SetFadeFlag(bool fadeFlag) { FadeFlag = fadeFlag; }
+    bool GetClearFlag() { return ClearFlag; }
+    void SetClearFlag(bool clearFlag) { ClearFlag = clearFlag; }
 
+    bool GetOverFlag() { return OverFlag; }
+    void SetOverFlag(bool overFlag) { OverFlag = overFlag; }
 private:
     DirectX::XMFLOAT4X4 view;
     DirectX::XMFLOAT4X4 projection;
@@ -49,5 +51,6 @@ private:
     DirectX::XMFLOAT3 front;
     DirectX::XMFLOAT3 right;
 
-    bool FadeFlag = false;
+    bool ClearFlag = false;
+    bool OverFlag = false;
 };

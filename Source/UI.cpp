@@ -1,69 +1,30 @@
-#include "UI.h"
+Ôªø#include "UI.h"
 #include "Player.h"
 #include "Camera.h"
-
-
-void Compass::Initialize()
-{
-	model = std::make_unique<Model>("Data/Model/UI.mdl");
-	scale = { 0.0001f,0.0003f,0.0001f };
-}
-
-void Compass::Update()
-{
-	position.x = Camera::Instance().GetFront().x * 0.5f + Camera::Instance().GetEye().x;
-	position.y = Camera::Instance().GetFront().y * 0.5f + Camera::Instance().GetEye().y;
-	position.z = Camera::Instance().GetFront().z * 0.5f + Camera::Instance().GetEye().z;
-	
-	//angle.x = Camera::Instance().GetFront().x;
-	//angle.y = Camera::Instance().GetFront().y;
-	//angle.z = Camera::Instance().GetFront().z;
-	
-	
-	//ÉXÉPÅ[ÉãçsóÒÇçÏê¨
-	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-	//âÒì]çsóÒÇçÏê¨
-	//DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-	DirectX::XMMATRIX X = DirectX::XMMatrixRotationX(angle.x);
-	DirectX::XMMATRIX Y = DirectX::XMMatrixRotationY(angle.y);
-	DirectX::XMMATRIX Z = DirectX::XMMatrixRotationZ(angle.z);
-	DirectX::XMMATRIX R = Y * X * Z;
-	//à íuçsóÒÇçÏê¨
-	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-	//3Ç¬ÇÃçsóÒÇëgÇ›çáÇÌÇπÅAÉèÅ[ÉãÉhçsóÒÇçÏê¨
-	DirectX::XMMATRIX W = S * R * T;
-	//åvéZÇµÇΩÉèÅ[ÉãÉhç¿ïWÇéÊÇËèoÇ∑
-	DirectX::XMStoreFloat4x4(&transform, W);
-	model->UpdateTransform(transform);
-}
+#include <algorithm>
 
 void UserInterface::Initialize()
 {
-	playerHealthUISpr = std::make_unique<Sprite>();
-	playerHealthUISD = {
+	healthUIBackSpr = std::make_unique<Sprite>("Data/Sprite/HpEmpty.png");
+	healthUIBackSD = {
 		25, 20, 500, 30,
-		0, 0, 0, 0,
-		0,
-		1, 0, 0, 1.0f
-	};
-
-	HealthUIBackSpr = std::make_unique<Sprite>("Data/Sprite/UIBack.png");
-	HealthUIBackSD = {
-		0, 20, 560, 40,
 		0, 0,
-		static_cast<float>(HealthUIBackSpr->GetTextureWidth()),
-		static_cast<float>(HealthUIBackSpr->GetTextureHeight()),
+		static_cast<float>(healthUIBackSpr->GetTextureWidth()),
+		static_cast<float>(healthUIBackSpr->GetTextureHeight()),
 		0,
 		1, 1, 1, 1.0f
 	};
 
-	playerHealthUIBackSpr = std::make_unique<Sprite>();
-	playerHealthUIBackSD = {
-		0, 20, 100.0f, 30,
-		0, 0, 0, 0,
+	healthUISpr = std::make_unique<Sprite>("Data/Sprite/HpGauge.png");
+	healthUISD = {
+		25, 20, 500, 30,
+		0, 0,
+		static_cast<float>(healthUISpr->GetTextureWidth()),
+		static_cast<float>(healthUISpr->GetTextureHeight()),
 		0,
-		0.5f, 0.5f, 0.5f, 1.0f
+		1, 1, 1, 1.0f
 	};
+
 
 	//compass = std::make_unique<Compass>();
 	//compass->Initialize();
@@ -76,64 +37,101 @@ void UserInterface::Finalize()
 void UserInterface::Update(float elapsedTime)
 {
 	//compass->Update();
-}
+	// ÊúÄÂ§ßHP„Å®ÁèæÂú®HP
+	float maxHP = static_cast<float>(Player::Instance().GetMaxHealth());
+	float currentHP = static_cast<float>(Player::Instance().GetHealth());
 
-void UserInterface::Render(ID3D11DeviceContext* dc, Shader* shader)
-{
-	//shader->Draw(dc, compass.get()->GetModel());
-	if (Player::Instance().GetHealth() >= 0)
+	// HPÊØîÁéáÔºà0„Äú1Ôºâ
+	float hpRate = std::clamp(currentHP / maxHP, 0.0f, 1.0f);
+
+	// „ÉÜ„ÇØ„Çπ„ÉÅ„É£„Çµ„Ç§„Ç∫
+	float texW = static_cast<float>(healthUISpr->GetTextureWidth());
+	float texH = static_cast<float>(healthUISpr->GetTextureHeight());
+
+	// ===== ‚úÖ „Éï„É≠„É≥„Éà„Éê„ÉºÔºàÂç≥ÊôÇÂèçÊò†Ôºâ =====
+	healthUISD.dw = 500.0f * hpRate;
+	healthUISD.dh = 30.0f;
+	healthUISD.sw = texW * hpRate;
+	healthUISD.sh = texH;
+	healthUISD.sx = 0.0f;
+	healthUISD.sy = 0.0f;
+
+	// ===== ‚úÖ ÊîªÊíÉ„ÇíÂèó„Åë„Åü„ÅãÁ¢∫Ë™ç =====
+	bool nowHit = Player::Instance().GetHpHit();
+
+	if (!prevHealthHit && nowHit)
 	{
-		if (Player::Instance().GetOnDamage())
+		isHealthAnimating = true;
+		healthUITimer = 15;
+
+		healthUIBackSD.dw = healthUISD.dw + 40.0f;
+		healthUIBackSD.dw = std::clamp(healthUIBackSD.dw, 0.0f, 500.0f);
+
+		float backRate = healthUIBackSD.dw / 500.0f;
+		healthUIBackSD.sw = texW * backRate;
+		healthUIBackSD.sh = texH;
+		healthUIBackSD.sx = 0.0f;
+		healthUIBackSD.sy = 0.0f;
+	}
+
+	// ‚úÖ ‰∏ÄÂÆöÊôÇÈñìÁµåÈÅéÂæå„Å´„Éï„É©„Ç∞„Çí„Ç™„Éï„Å´
+	if (healthUITimer == 0)
+	{
+		Player::Instance().SetHpHit(false);
+	}
+
+	prevHealthHit = nowHit;
+
+	// === ‚úÖ ÈÅÖÂª∂„Éê„Éº„ÅÆËøΩÂæìÂá¶ÁêÜ ===
+	float targetDW = 500.0f * hpRate;
+	if (healthUIBackSD.dw > targetDW)
+	{
+		healthUIBackSD.dw -= 2.0f;
+		if (healthUIBackSD.dw < targetDW)
 		{
-			playerHealthUISD.dw = Player::Instance().GetHealth() * 100;
-			playerHealthUIBackSD.dw = 100.0f;
-			isUIAnimation = true;
-			UITimer = 20;
+			healthUIBackSD.dw = targetDW;
+			isHealthAnimating = false;
 		}
 
-		auto getRand = []()->float
-		{
+		float backRate = healthUIBackSD.dw / 500.0f;
+		healthUIBackSD.sw = texW * backRate;
+		healthUIBackSD.sh = texH;
+		healthUIBackSD.sx = 0.0f;
+		healthUIBackSD.sy = 0.0f;
+	}
+
+	// === ‚úÖ Áä∂ÊÖã‰øùÂ≠ò ===
+	prevHealthHit = nowHit;
+}
+
+void UserInterface::Render(ID3D11DeviceContext* dc)
+{
+	//shader->Draw(dc, compass.get()->GetModel());
+	float shakeX = 0.0f;
+	float shakeY = 0.0f;
+
+	if (isHealthAnimating && healthUITimer > 0)
+	{
+		auto getRand = []() -> float {
 			const int max = RAND_MAX / 2;
 			return static_cast<float>(rand() - max) / max;
 		};
-
-		float UIShakeRange = 5.0f;
-
-		if (isUIAnimation && UITimer > 0)
-		{
-			float shakeX = getRand() * UIShakeRange;
-			float shakeY = getRand() * UIShakeRange;
-			playerHealthUISD.dx += shakeX;
-			playerHealthUISD.dy += shakeY;
-			HealthUIBackSD.dx += shakeX;
-			HealthUIBackSD.dy += shakeY;
-
-			playerHealthUIBackSD.dx = playerHealthUISD.dw + playerHealthUISD.dx;
-			playerHealthUIBackSD.dy = playerHealthUISD.dy;
-
-			UITimer--;
-		}
-		else
-		{
-			playerHealthUISD.dx = 25;
-			playerHealthUISD.dy = 20;
-
-			HealthUIBackSD.dx = 0;
-			HealthUIBackSD.dy = 20;
-
-			playerHealthUIBackSD.dx = playerHealthUISD.dw + playerHealthUISD.dx;
-			playerHealthUIBackSD.dy = playerHealthUISD.dy;
-
-			playerHealthUIBackSD.dw -= 2;
-		}
-
-		if (isUIAnimation)
-			playerHealthUIBackSpr->Render(dc, playerHealthUIBackSD);
-
-		if (playerHealthUIBackSD.dw <= 0)
-			isUIAnimation = false;
-
-		playerHealthUISpr->Render(dc, playerHealthUISD);
-		HealthUIBackSpr->Render(dc, HealthUIBackSD);
+		float shakeRange = 4.0f;
+		shakeX = getRand() * shakeRange;
+		shakeY = getRand() * shakeRange;
+		healthUITimer--;
 	}
+
+	// ===== ‚úÖ ÊèèÁîªÂ∫ßÊ®ôË®≠ÂÆö =====
+	healthUISD.dx = 25.0f + shakeX;
+	healthUISD.dy = 20.0f + shakeY;
+
+	healthUIBackSD.dx = 25.0f + shakeX;
+	healthUIBackSD.dy = 20.0f + shakeY;
+	healthUIBackSD.dh = 30.0f;
+
+	// ===== ‚úÖ ÊèèÁîªÈ†Ü =====
+	healthUIBackSpr->Render(dc, healthUIBackSD);
+	healthUISpr->Render(dc, healthUISD);
+
 }

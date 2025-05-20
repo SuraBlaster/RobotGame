@@ -18,7 +18,7 @@ EnemyDrone::EnemyDrone()
     height = 1.0f;
 
     //徘徊ステージへ遷移
-    TransitionWanderState();
+    TransitionIdleState();
 }
 
 EnemyDrone::~EnemyDrone()
@@ -171,7 +171,7 @@ void EnemyDrone::TransitionWanderState()
     //SetRandomTargetPosition();
 
     //歩きアニメーション再生
-    model->PlayAnimation(Anim_Attack, false);
+    model->PlayAnimation(Anim_Attack, true);
 }
 
 void EnemyDrone::UpdateWanderState(float elapsedTime)
@@ -458,9 +458,6 @@ void EnemyDrone::CollisionProjectilesVsPlayer()
                     impulse.y = power;
                     impulse.z = vz * power;
 
-
-
-
                     //player.AddImpulse(impulse);
                 }
 
@@ -474,7 +471,7 @@ void EnemyDrone::CollisionProjectilesVsPlayer()
             }
         }
 
-
+        //player.SetHit(false);
     }
 }
 

@@ -318,10 +318,6 @@ void Player::UpdateIdleState(float elapsedTime)
         TransitionJumpState();
     }
 
-    //�e�ۓ��͏���
-    //InputProjectile();
-
-
     //攻撃入力処理
     if (InputAttack())
     {
@@ -347,7 +343,7 @@ void Player::TransitionMoveState()
 {
     state = State::Move;
 
-    //����A�j���[�V�����Đ�
+    //
     switch (weapon)
     {
     case WeaponType::GreatSword:
@@ -378,14 +374,16 @@ void Player::UpdateMoveState(float elapsedTime)
     //�e�ۓ��͏���
     //InputProjectile();
 
-
     //攻撃入力処理
     if (InputAttack())
     {
         TransitionAttackState();
     }
 
-    
+    if (ItemManager::Instance().GetGoalFlag())
+    {
+        TransitionClearState();
+    }
 }
 
 void Player::TransitionJumpState()
@@ -569,6 +567,8 @@ void Player::TransitionDeathState()
         break;
     }
 
+    Player::Instance().SetHiddenFlag(true);
+
     CameraController* cameraController = SceneGame::Instance().GetCameraController();
     if (cameraController) {
         cameraController->StartDeath();
@@ -577,10 +577,6 @@ void Player::TransitionDeathState()
 
 void Player::UpdateDeathState(float elapsedTime)
 {
-    if (!model->IsPlayAnimation())
-    {
-        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
-    }
 }
 
 void Player::TransitionBarrierState()
@@ -619,6 +615,8 @@ void Player::UpdateBarrierState(float elapsedTime)
 void Player::TransitionClearState()
 {
     state = State::Clear;
+
+    Player::Instance().SetHiddenFlag(true);
 
     CameraController* cameraController = SceneGame::Instance().GetCameraController();
     if (cameraController) {
