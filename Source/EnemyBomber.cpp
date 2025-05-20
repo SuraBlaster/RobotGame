@@ -331,8 +331,10 @@ void EnemyBomber::TransitionDeathState()
 void EnemyBomber::UpdateDeathState(float elapsedTime)
 {
 
-    //CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
-    //explosionEffect->Play(position, 0.5f);
+    CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
+    explosionEffect->Play(position, 0.5f);
+
+    AddBomberdeadcount();
     //Ž€–SƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚çŽ©•ª‚ð”jŠü‚µ‚Â‚Â”š”­UŒ‚
     if (!model->IsPlayAnimation())
     {
