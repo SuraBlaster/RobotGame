@@ -6,8 +6,8 @@
 #include "EnemyManager.h"
 #include "EffectManager.h"
 #include "Collision.h"
-#include "ProjectileStraight.h"
-#include <ProjectileHoming.h>
+
+
 #include "SceneLoading.h"
 #include "SceneTitle.h"
 #include "SceneGame.h"
@@ -39,6 +39,7 @@ Player::Player()
     //待機ステートへ遷移
     TransitionIdleState();
 
+    health = 100;
     ShieldCount = 3;
 }
 
@@ -111,7 +112,7 @@ void Player::Update(float elapsedTime)
 
     CollisionPlayerVsEnemies();
 
-    CollisionprojectilesVsEnemies();
+    
 
     model->UpdateAnimation(elapsedTime);
 
@@ -680,67 +681,6 @@ void Player::OnDead()
     TransitionDeathState();
 }
 
-void Player::CollisionprojectilesVsEnemies()
-{
-    EnemyManager& enemyManager = EnemyManager::Instance();
-
-    //総当たり処理
-    int projectileCount = projectileManager.GetProjectileCount();
-    int enemyCount = enemyManager.GetEnemyCount();
-    for (int i = 0; i < projectileCount; ++i)
-    {
-        Projectile* projectile = projectileManager.GetProjectile(i);
-
-        for (int j = 0; j < enemyCount; ++j)
-        {
-            Enemy* enemy = enemyManager.GetEnemy(j);
-
-            //衝突処理
-            DirectX::XMFLOAT3 outPosition;
-            if (Collision::IntersectSphereVsCylinder(
-                projectile->GetPosition(),
-                projectile->GetRadius(),
-                enemy->GetPosition(),
-                enemy->GetRadius(),
-                enemy->GetHeight(),
-                outPosition
-            ))
-            {
-                if (enemy->ApplyDamage(1))
-                {
-                    {
-                        DirectX::XMFLOAT3 impulse{};
-
-                        const float power = 10.0f;
-                        const DirectX::XMFLOAT3& e = enemy->GetPosition();
-                        const DirectX::XMFLOAT3& p = projectile->GetPosition();
-                        float vx = e.x - p.x;
-                        float vz = e.z - p.z;
-                        float lengthXZ = sqrtf(vx * vx + vz * vz);
-                        vx /= lengthXZ;
-                        vz /= lengthXZ;
-
-                        impulse.x = vx * power;
-                        impulse.y = power * 0.5f;
-                        impulse.z = vz * power;
-                        
-
-                        enemy->AddImpulse(impulse);
-                    }
-
-
-                    projectile->Destroy();
-                }
-
-                {
-                    DirectX::XMFLOAT3 e = enemy->GetPosition();
-                    e.y += enemy->GetHeight() * 0.5f;
-                    hitEffect->Play(e);
-                }
-           }
-        }
-    }
-}
 
 //void Player::UpdateBarrier()
 void Player::UpdateBarrier(float elapsedTime)
@@ -798,7 +738,7 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
     shader->Draw(dc, model);
 
 
-    projectileManager.Render(dc, shader);
+   
 }
 
 void Player::DrawDebugGUI()
