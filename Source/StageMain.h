@@ -21,4 +21,6 @@ public:
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
 private:
     Model* model = nullptr;
+    Model* map1 = nullptr;
+    Model* map2 = nullptr;
 };

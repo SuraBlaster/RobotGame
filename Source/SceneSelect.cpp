@@ -80,12 +80,15 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
+			SceneSelect::Instance().SetMap(1);
 			timer = 2.0f;
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
+			
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+
 		}
 		break;
 	case Stage::Stage2:
@@ -96,11 +99,13 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
+			SceneSelect::Instance().SetMap(2);
 			timer = 2.0f;
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
+			
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 		}
 		break;

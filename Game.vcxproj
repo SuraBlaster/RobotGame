@@ -154,6 +154,8 @@
     <ClInclude Include="Source\ItemCrystal.h" />
     <ClInclude Include="Source\ItemManager.h" />
     <ClInclude Include="Source\Logger.h" />
+    <ClInclude Include="Source\Map1.h" />
+    <ClInclude Include="Source\Map2.h" />
     <ClInclude Include="Source\Mathf.h" />
     <ClInclude Include="Source\Misc.h" />
     <ClInclude Include="Source\Player.h" />
@@ -226,6 +228,8 @@
     <ClCompile Include="Source\ItemManager.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Map1.cpp" />
+    <ClCompile Include="Source\Map2.cpp" />
     <ClCompile Include="Source\Mathf.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />

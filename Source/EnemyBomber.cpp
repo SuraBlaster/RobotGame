@@ -16,9 +16,9 @@ EnemyBomber::EnemyBomber()
 
     height = 1.0f;
 
-
+    health = 1;
     explosionEffect = new Effect("Data/Effect/Explosion.efkefc");
-
+    bomberdeadcount = 0;
     //œpœjƒXƒe[ƒW‚Ö‘JˆÚ
     TransitionWanderState();
 }
@@ -332,8 +332,8 @@ void EnemyBomber::TransitionDeathState()
 void EnemyBomber::UpdateDeathState(float elapsedTime)
 {
 
-    CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
-    explosionEffect->Play(position, 0.5f);
+    //CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
+    //explosionEffect->Play(position, 0.5f);
     //Ž€–SƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚çŽ©•ª‚ð”jŠü‚µ‚Â‚Â”š”­UŒ‚
     if (!model->IsPlayAnimation())
     {
@@ -352,8 +352,20 @@ void EnemyBomber::Render(ID3D11DeviceContext* dc, Shader* shader)
     shader->Draw(dc, model);
 }
 
+void EnemyBomber::AddBomberdeadcount()
+{
+    bdd = EnemyBomber::Instance().GetDeadcount();
+    bdd++;
+    EnemyBomber::Instance().SetDeadcount(bdd);
+}
+
+
+
 void EnemyBomber::OnDead()
 {
+    /*int d = bomberdeadcount + 1;
+    EnemyBomber::Instance().SetDeadcount(d);*/
+    AddBomberdeadcount();
     TransitionDeathState();
 }
 

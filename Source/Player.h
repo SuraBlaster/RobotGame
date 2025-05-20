@@ -3,7 +3,7 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Model.h"
 #include "Character.h"
-#include "ProjectileManager.h"
+
 #include "Effect.h"
 #include "SceneManager.h"
 #include "CameraEffect_Death.h"
@@ -31,7 +31,7 @@ public:
     //ジャンプ入力処理
     bool InputJump();
 
-    void CollisionprojectilesVsEnemies();
+   
 
     //バリア更新処理
     void UpdateBarrier(float elapsedTime);
@@ -203,7 +203,7 @@ public:
 
 
 private:
-    ProjectileManager projectileManager;
+    
 
     Model* model = nullptr;
 

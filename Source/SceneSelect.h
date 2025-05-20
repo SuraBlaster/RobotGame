@@ -10,6 +10,13 @@
 class SceneSelect : public Scene
 {
 public:
+	//—Bˆê‚ÌƒCƒ“ƒXƒ^ƒ“ƒXŽæ“¾
+	static SceneSelect& Instance()
+	{
+		static SceneSelect instance;
+		return instance;
+	}
+
 	SceneSelect() {}
 	~SceneSelect() override {}
 
@@ -24,6 +31,11 @@ public:
 
 	// •`‰æˆ—
 	void Render()override;
+	
+	
+	int GetMap()  { return map; }
+	void SetMap(int map) { this->map = map; }
+	int map;
 
 	enum class Stage
 	{
@@ -31,8 +43,10 @@ public:
 		Stage2,
 	};
 	Stage stage = Stage::Stage1;
+	
 private:
 	Sprite* coreRoom = nullptr;
 	Sprite* corridor = nullptr;
 	float timer;
+	
 };

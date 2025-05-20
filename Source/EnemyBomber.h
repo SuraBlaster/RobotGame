@@ -4,67 +4,81 @@
 #include "Enemy.h"
 #include "Effect.h"
 
-//ƒXƒ‰ƒCƒ€
+//ã‚¹ãƒ©ã‚¤ãƒ 
 class EnemyBomber : public Enemy
 {
 public:
     EnemyBomber();
     ~EnemyBomber() override;
 
-    //XVˆ—
+    static EnemyBomber& Instance()
+    {
+        static EnemyBomber instance;
+        return instance;
+    }
+
+    //æ›´æ–°å‡¦ç†
     void Update(float elapsedTime)override;
 
-    //•`‰æˆ—
+    //æç”»å‡¦ç†
     void Render(ID3D11DeviceContext* dc, Shader* shader)override;
 
-    //ƒfƒoƒbƒOƒvƒŠƒ~ƒeƒBƒu•`‰æ
+    //ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–æç”»
     void DrawDebugPrimitive()override;
 
-    //“ê’£‚èİ’è
+    //ç¸„å¼µã‚Šè¨­å®š
     void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
-    
+
+
+    int GetDeadcount() { return bomberdeadcount; }
+    void SetDeadcount(int bomberdeadcount) { this->bomberdeadcount = bomberdeadcount; }
+
 private:
-    //ƒ^[ƒQƒbƒgˆÊ’u‚ğƒ‰ƒ“ƒ_ƒ€İ’è
+    //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã‚’ãƒ©ãƒ³ãƒ€ãƒ è¨­å®š
     void SetRandomTargetPosition();
 
-    //–Ú•W’n“_‚ÖˆÚ“®
+    //ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•
     void MoveToTarget(float elapsedTime, float speedrate);
 
-    //ƒvƒŒƒCƒ„[õ“G
+    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ç´¢æ•µ
     bool SearchPlayer();
 
-    //ƒm[ƒh‚ÆƒvƒŒƒCƒ„[‚ÌÕ“Ëˆ—
+    //ãƒãƒ¼ãƒ‰ã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¡çªå‡¦ç†
     void CollisionNodeVsPlayer(const char* nodeName, float boneRadius);
 
-    //œpœjƒXƒe[ƒg‚Ö‘JˆÚ
+    //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionWanderState();
 
-    //œpœjƒXƒe[ƒgXVˆ—
+    //å¾˜å¾Šã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateWanderState(float elapsedTime);
 
-    //‘Ò‹@ƒXƒe[ƒg‚Ö‘JˆÚ
+    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionIdleState();
 
-    //‘Ò‹@ƒXƒe[ƒgXVˆ—
+    //å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateIdleState(float elapsedTime);
 
-    //’ÇÕƒXƒe[ƒg‚Ö‘JˆÚ
+    //è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionPursuitState();
 
-    //’ÇÕƒXƒe[ƒgXVˆ—
+    //è¿½è·¡ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdatePursuitState(float elapsedTime);
 
-    //€–SƒXƒe[ƒg‚Ö‘JˆÚ
+    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆã¸é·ç§»
     void TransitionDeathState();
 
-    //€–SƒXƒe[ƒgXVˆ—
+    //æ­»äº¡ã‚¹ãƒ†ãƒ¼ãƒˆæ›´æ–°å‡¦ç†
     void UpdateDeathState(float elapsedTime);
+
 
     void UpdateVerticalVelocity(float elapsedFrame)override;
     
 
+
+    void AddBomberdeadcount();
+
 private:
-    //ƒXƒe[ƒg
+    //ã‚¹ãƒ†ãƒ¼ãƒˆ
     enum class State
     {
         Wander,
@@ -74,7 +88,7 @@ private:
         Death,
     };
 
-    //ƒAƒjƒ[ƒVƒ‡ƒ“
+    //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
     enum Animation
     {
         Anim_IdleNormal,
@@ -94,7 +108,7 @@ private:
         Anim_Die,
     };
 protected:
-    //€–S‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+    //æ­»äº¡ã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
     void OnDead() override;
 private:
     Model* model = nullptr;
@@ -109,6 +123,8 @@ private:
     float searchRange = 5.0f;
     float attackRange = 1.5f;
 
+    int bomberdeadcount;
     float delay = 0.0f;
     float ExplosionRadius = 3.0f;
+    int bdd;
 };
