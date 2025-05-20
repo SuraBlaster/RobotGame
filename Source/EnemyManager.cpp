@@ -67,6 +67,14 @@ void EnemyManager::DrawDebugPrimitive()
     
 }
 
+void EnemyManager::DrawDebugGUI()
+{
+    for (Enemy* enemy : enemies)
+    {
+        enemy->DrawDebugGUI();
+    }
+}
+
 void EnemyManager::CollisionEnemyVsEnemies()
 {
     size_t enemyCount = enemies.size();

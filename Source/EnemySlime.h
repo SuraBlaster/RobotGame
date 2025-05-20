@@ -3,9 +3,6 @@
 #include "Graphics/Model.h"
 #include "Enemy.h"
 
-
-
-
 //スライム
 class EnemySlime : public Enemy
 {
@@ -40,7 +37,7 @@ private:
     void SetRandomTargetPosition();
 
     //目標地点へ移動
-    void MoveToTarget(float elapsedTime, float speedrate);
+    void MoveToTarget(float elapsedTime, float speedRate);
 
     //プレイヤー索敵
     bool SearchPlayer();
@@ -90,7 +87,11 @@ private:
     //死亡ステート更新処理
     void UpdateDeathState(float elapsedTime);
 
+
+    void UpdateVerticalVelocity(float elapsedFrame)override;
+
     void Adddeadcount();
+
 private:
     //ステート
     enum class State

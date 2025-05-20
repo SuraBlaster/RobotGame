@@ -95,6 +95,8 @@ void EnemyBomber::SetTerritory(const DirectX::XMFLOAT3& origin, float range)
     territoryRange = range;
 }
 
+
+
 void EnemyBomber::SetRandomTargetPosition()
 {
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
@@ -294,7 +296,7 @@ void EnemyBomber::TransitionPursuitState()
 {
     state = State::Pursuit;
 
-    //数秒間追跡するタイマーをランダム設定
+    //爆発するまでの時間
     stateTimer = 10.0f;
 
     //歩きアニメーション再生
@@ -337,6 +339,12 @@ void EnemyBomber::UpdateDeathState(float elapsedTime)
     }
 }
 
+void EnemyBomber::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //重力処理
+    velocity.y += gravity * elapsedFrame; 
+}
+
 void EnemyBomber::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
@@ -358,5 +366,7 @@ void EnemyBomber::OnDead()
     AddBomberdeadcount();
     TransitionDeathState();
 }
+
+
 
 

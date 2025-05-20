@@ -10,6 +10,9 @@
 
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "SceneGame.h"
+#include <CameraController.h>
+#include <ItemManager.h>
 
 static Player* instance = nullptr;
 
@@ -94,16 +97,18 @@ void Player::Update(float elapsedTime)
         break;
     case State::Barrier:
         UpdateBarrierState(elapsedTime);
+        break;
+    case State::Clear:
+        UpdateClearState(elapsedTime);
+        break;
     }
 
     UpdateTransform();
-    
+
     //走力速度更新
     UpdateVelocity(elapsedTime);
 
     UpdateInvincibleTimer(elapsedTime);
-
-   // projectileManager.Update(elapsedTime);
 
     CollisionPlayerVsEnemies();
 
@@ -116,11 +121,10 @@ void Player::Update(float elapsedTime)
     UpdateBarrier(elapsedTime);
 
     ChangeWeapon();
-    //UpdateBarrier();
+
+    UpdatePlayerPosition(position);
+    
 }
-
-
-
 
 bool Player::InputMove(float elapsedTime)
 {
@@ -270,13 +274,22 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
     }
 }
 
+void Player::UpdateVerticalVelocity(float elapsedFrame)
+{
+    //重力処理
+    velocity.y += gravity * elapsedFrame;
+}
 
+void Player::UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos)
+{
+    Player::Instance().SetPreviousPlayerPos(currentPlayerPos);
+    Player::Instance().SetCurrentPlayerPos(newPos);
+}
 
 void Player::TransitionIdleState()
 {
     state = State::Idle;
 
-    //�ҋ@�A�j���[�V�����Đ�
     switch (weapon)
     {
     case WeaponType::GreatSword:
@@ -323,6 +336,11 @@ void Player::UpdateIdleState(float elapsedTime)
             TransitionBarrierState();
         }
     }
+
+    if (ItemManager::Instance().GetGoalFlag())
+    {
+        TransitionClearState();
+    }
     
 }
 
@@ -367,6 +385,8 @@ void Player::UpdateMoveState(float elapsedTime)
     {
         TransitionAttackState();
     }
+
+    
 }
 
 void Player::TransitionJumpState()
@@ -540,7 +560,6 @@ void Player::TransitionDeathState()
 {
     state = State::Death;
 
-    //���S�A�j���[�V�����Đ�
     switch (weapon)
     {
     case WeaponType::GreatSword:
@@ -550,13 +569,18 @@ void Player::TransitionDeathState()
         model->PlayAnimation(Dagger_Death, false);
         break;
     }
+
+    CameraController* cameraController = SceneGame::Instance().GetCameraController();
+    if (cameraController) {
+        cameraController->StartDeath();
+    }
 }
 
 void Player::UpdateDeathState(float elapsedTime)
 {
     if (!model->IsPlayAnimation())
     {
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
 }
 
@@ -564,7 +588,6 @@ void Player::TransitionBarrierState()
 {
     state = State::Barrier;
 
-    //��ǓW�J���ۂ��A�j���[�V�����Đ�
     switch (weapon)
     {
     case WeaponType::GreatSword:
@@ -594,77 +617,44 @@ void Player::UpdateBarrierState(float elapsedTime)
     }
 }
 
+void Player::TransitionClearState()
+{
+    state = State::Clear;
 
+    CameraController* cameraController = SceneGame::Instance().GetCameraController();
+    if (cameraController) {
+        cameraController->StartClear();
+    }
 
-//void Player::InputProjectile()
-//{
-//    GamePad& gamePad = Input::Instance().GetGamePad();
-//
-//    if (gamePad.GetButtonDown() & GamePad::BTN_X)
-//    {
-//        DirectX::XMFLOAT3 dir;
-//        dir.x = sinf(angle.y);
-//        dir.y = 0.0f;
-//        dir.z = cosf(angle.y);
-//
-//        DirectX::XMStoreFloat3(&dir, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir)));
-//        
-//        DirectX::XMFLOAT3 pos;
-//        pos.x = Player::GetPosition().x;
-//        pos.y = Player::GetPosition().y + Player::GetHeight() / 2;
-//        pos.z = Player::GetPosition().z;
-//
-//        ProjectileStraight* projectile = new ProjectileStraight(&projectileManager);
-//        projectile->Launch(dir, pos);
-//        //projectileManager.Register(projectile);
-//
-//    }
-//
-//    if (gamePad.GetButtonDown() & GamePad::BTN_Y)
-//    {
-//        DirectX::XMFLOAT3 dir;
-//        dir.x = sinf(angle.y);
-//        dir.y = 0.0f;
-//        dir.z = cosf(angle.y);
-//
-//        DirectX::XMFLOAT3 pos;
-//        pos.x = position.x;
-//        pos.y = position.y + height / 2;
-//        pos.z = position.z;
-//
-//        DirectX::XMFLOAT3 target;
-//        target.x = pos.x + dir.x * 1000.0f;
-//        target.y = pos.y + dir.y * 1000.0f;
-//        target.z = pos.z + dir.z * 1000.0f;
-//
-//        float dist = FLT_MAX;
-//        EnemyManager& enemyManager = EnemyManager::Instance();
-//        int enemyCount = enemyManager.GetEnemyCount();
-//
-//        for (int i = 0; i < enemyCount; ++i)
-//        {
-//            Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
-//            DirectX::XMVECTOR P = DirectX::XMLoadFloat3(&position);
-//            DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&enemy->GetPosition());
-//            DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, P);
-//            DirectX::XMVECTOR D = DirectX::XMVector3LengthSq(V);
-//
-//            float d;
-//            DirectX::XMStoreFloat(&d, D);
-//            if (d < dist)
-//            {
-//                dist = d;
-//                target = enemy->GetPosition();
-//                target.y += enemy->GetHeight() * 0.5f;
-//            }
-//        }
-//
-//        ProjectileHoming* projectile = new ProjectileHoming(&projectileManager);
-//        projectile->Launch(dir, pos, target);
-//    }
-//    
-//}
+    model->PlayAnimation(Clear, false);
+}
 
+void Player::UpdateClearState(float elapsedTime)
+{
+    DirectX::XMFLOAT3 cameraPos = Camera::Instance().GetEye();
+    DirectX::XMFLOAT3 position = Player::Instance().GetPosition(); // ←必要に応じて修正
+
+    // Zを前、Xを右とした時の方向ベクトル
+    float dx = cameraPos.x - position.x;
+    float dz = cameraPos.z - position.z;
+
+    // Yaw角を求める（ラジアン）
+    float targetYaw = atan2f(dx, dz);
+
+    // 現在の角度を取得
+    DirectX::XMFLOAT3 currentAngle = Player::Instance().GetAngle();
+
+    // 新しい角度（Y軸だけ更新）
+    DirectX::XMFLOAT3 newAngle = { currentAngle.x, targetYaw, currentAngle.z };
+
+    // プレイヤーの角度を設定
+    Player::Instance().SetAngle(newAngle);
+
+    if (model->GetCurrentAnimationSeconds() >= 0.6f)
+    {
+        model->SetCurrentAnimationSeconds(0.6f);
+    }
+}
 
 //ジャンプ入力
 bool Player::InputJump()
