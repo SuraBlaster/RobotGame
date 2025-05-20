@@ -8,6 +8,8 @@
 #include "ShieldIcon.h"
 #include "UI.h"
 
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
 // ゲームシーン
 class SceneGame : public Scene
 {
@@ -66,4 +68,6 @@ private:
 	SpriteData backSD;
 
 	std::unique_ptr<UserInterface> UI = nullptr;
+	//BGM再生
+	std::unique_ptr<AudioSource> MainBGM;
 };

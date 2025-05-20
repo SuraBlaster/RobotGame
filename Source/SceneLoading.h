@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include <thread>
 
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
 class SceneLoading : public Scene
 {
 public:
@@ -24,4 +26,6 @@ private:
     float angle = 0.0f;
     Scene* nextScene = nullptr;
     std::thread* thread = nullptr;
+    //BGM
+    std::unique_ptr<AudioSource> LoadingBGM;
 };

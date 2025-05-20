@@ -12,6 +12,12 @@
 
 void SceneSelect::Initialize()
 {
+	Audio& audio = audio.Instance();
+	SelectBGM = audio.LoadAudioSource("Data/Audio/BGM/Select.wav");
+	KuruKuruBGM = audio.LoadAudioSource("Data/Audio/BGM/KuruKuru.wav");
+	SelectBGM->sourceVoice->SetVolume(50);
+	KuruKuruBGM->sourceVoice->SetVolume(50);
+	KuruKuru = false;
 	StageManager& stageManager = StageManager::Instance();
 	SelectStage1* selectStage1 = new SelectStage1();
 	selectStage1->SetPosition({ -40,10,10 });
@@ -50,6 +56,14 @@ void SceneSelect::Finalize()
 
 void SceneSelect::Update(float elapsedTime)
 {
+	if (KuruKuru == false) 
+	{
+		SelectBGM->Play(true);
+	}
+	else if (KuruKuru == true)
+	{
+		SelectBGM->Stop();
+	}
     GamePad& gamepad = Input::Instance().GetGamePad();
 
 	//‰½‚©ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚ç‘JˆÚ
@@ -70,12 +84,18 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
-			timer = 2.0f;
+			timer = 5.0f;
+			KuruKuru = true;
+			KuruKuruBGM->Play(false);
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		}
+		if (timer > 5.0f)
+		{
+			KuruKuruBGM->Stop();
 		}
 		break;
 	case Stage::Stage2:
@@ -86,12 +106,18 @@ void SceneSelect::Update(float elapsedTime)
 		}
 		if (gamepad.GetButtonDown() & anyButton)
 		{
-			timer = 2.0f;
+			timer = 5.0f;
+			KuruKuru = true;
+			KuruKuruBGM->Play(false);
 			StageManager::Instance().SetButtonFlag(true);
 		}
 		if (timer < 0.0f)
 		{
 			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		}
+		if (timer > 5.0f)
+		{
+			KuruKuruBGM->Stop();
 		}
 		break;
 	}

@@ -7,6 +7,8 @@
 #include "Effect.h"
 #include "SceneManager.h"
 
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
 class Player : public Character
 {
 public:
@@ -220,4 +222,17 @@ private:
 
     //今バリアが展開されているかどうか
     bool firstFlag = false;
+
+    //SE 
+    std::unique_ptr<AudioSource> AttackSE;
+    std::unique_ptr<AudioSource> Finish_AttackSE;
+    std::unique_ptr<AudioSource> KnifeSE;
+    std::unique_ptr<AudioSource> Knife_FinishSE;
+    std::unique_ptr<AudioSource> Knife_Finish2SE;
+    std::unique_ptr<AudioSource> ChangeSE;
+    std::unique_ptr<AudioSource> ChieldSE;
+    std::unique_ptr<AudioSource> Damage_ChieldSE;
+    std::unique_ptr<AudioSource> Breaking_ChieldSE;
+    std::unique_ptr<AudioSource>Damage_PlayerSE;
+    std::unique_ptr<AudioSource> Player_DeathSE;
 };

@@ -6,6 +6,8 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
 // ゲームシーン
 class SceneSelect : public Scene
 {
@@ -33,5 +35,11 @@ public:
 	Stage stage = Stage::Stage1;
 private:
 	Sprite* sprite = nullptr;
+
+	//BGM
+	std::unique_ptr<AudioSource> SelectBGM;
+	std::unique_ptr<AudioSource> KuruKuruBGM;
 	float timer;
+	//選択したときに曲を止める用
+	bool KuruKuru = false;
 };
