@@ -3,12 +3,15 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Model.h"
 #include "Character.h"
-#include "ProjectileManager.h"
+
 #include "Effect.h"
 #include "SceneManager.h"
 
 #include"Audio/Audio.h"
 #include"Audio/AudioSource.h"
+
+#include "CameraEffect_Death.h"
+
 class Player : public Character
 {
 public:
@@ -33,7 +36,7 @@ public:
     //ジャンプ入力処理
     bool InputJump();
 
-    void CollisionprojectilesVsEnemies();
+   
 
     //バリア更新処理
     void UpdateBarrier(float elapsedTime);
@@ -105,8 +108,18 @@ private:
     //バリア展開ステート更新処理
     void UpdateBarrierState(float elapsedTime);
 
+    //クリアステートに遷移
+    void TransitionClearState();
+
+    //クリアステート更新処理
+    void UpdateClearState(float elapsedTime);
+
     //ノードとエネミーの衝突処理
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
+
+    void UpdateVerticalVelocity(float elapsedFrame);
+
+    void UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos);
 
 protected:
     //ダメージを受けた時に呼ばれる
@@ -133,6 +146,7 @@ private:
         GreatSword_Attack,
         GreatSword_Damage,
         GreatSword_Death,
+        Clear,
 
     };
 
@@ -145,6 +159,7 @@ private:
         Damage,
         Death,
         Barrier,
+        Clear
     };
 
 public:
@@ -157,7 +172,7 @@ public:
 
     WeaponType weapon;
 
-    //�������
+    //武器変更
     void ChangeWeapon();
 
     WeaponType GetWeapon() const { return weapon; }
@@ -174,9 +189,17 @@ public:
 
     void SetShieldCount(int shieldCount) { this->ShieldCount = shieldCount; }
 
+    DirectX::XMFLOAT3 GetPreviousPlayerPos() const { return previousPlayerPos; }
+
+    void SetPreviousPlayerPos(DirectX::XMFLOAT3 PreviousPlayerPos) { previousPlayerPos = PreviousPlayerPos; }
+
+    DirectX::XMFLOAT3 GetCurrentPlayerPos() const { return currentPlayerPos; }
+
+    void SetCurrentPlayerPos(DirectX::XMFLOAT3 CurrentPlayerPos) { currentPlayerPos = CurrentPlayerPos; }
+
 
 private:
-    ProjectileManager projectileManager;
+    
 
     Model* model = nullptr;
 
@@ -206,7 +229,6 @@ private:
 
     State state = State::Idle;
 
-    //���o���A���W�J����Ă��邩�ǂ���
     bool ShieldFlag = false;
 
     float ShieldTimer = 0;
@@ -223,6 +245,7 @@ private:
     //今バリアが展開されているかどうか
     bool firstFlag = false;
 
+
     //SE 
     std::unique_ptr<AudioSource> AttackSE;
     std::unique_ptr<AudioSource> Finish_AttackSE;
@@ -235,4 +258,10 @@ private:
     std::unique_ptr<AudioSource> Breaking_ChieldSE;
     std::unique_ptr<AudioSource>Damage_PlayerSE;
     std::unique_ptr<AudioSource> Player_DeathSE;
+
+    DirectX::XMFLOAT3 currentPlayerPos;
+    DirectX::XMFLOAT3 previousPlayerPos;
+
+    CameraEffect_Death cameraEffect_Death;
+
 };

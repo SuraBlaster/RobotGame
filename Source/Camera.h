@@ -35,6 +35,8 @@ public:
 
     const DirectX::XMFLOAT3& GetRight()const { return right; }
 
+    bool GetFadeFlag() { return FadeFlag; }
+    void SetFadeFlag(bool fadeFlag) { FadeFlag = fadeFlag; }
 
 private:
     DirectX::XMFLOAT4X4 view;
@@ -47,4 +49,5 @@ private:
     DirectX::XMFLOAT3 front;
     DirectX::XMFLOAT3 right;
 
+    bool FadeFlag = false;
 };

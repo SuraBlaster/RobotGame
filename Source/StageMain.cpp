@@ -9,6 +9,7 @@ static StageMain* instance = nullptr;
 //コンストラクタ
 StageMain::StageMain()
 {
+
     instance = this;
     model = new Model("Data/Model/ExampleStage/testmap.mdl");
     transform.scale.x *= 1.5f;
@@ -17,6 +18,16 @@ StageMain::StageMain()
     /*transform.scale.x *= 0.01f;
     transform.scale.y *= 0.01f;
     transform.scale.z *= 0.01f;*/
+
+    model = new Model("Data/Model/ExampleStage/ExampleStage.mdl");
+
+    //model = new Model("Data/Model/ExampleStage/tile2.mdl");
+
+
+    scale.x = scale.y = scale.z = 1.0f;
+  
+
+
 }
 
 //デストラクタ
@@ -34,6 +45,7 @@ StageMain& StageMain::Instance()
 //更新処理
 void StageMain::Update(float elapsedTime)
 {
+
     transform.updateMatrix();
     //if (selectedDirection != Down)
     Mouse& mouse = Input::Instance().GetMouse();
@@ -45,6 +57,18 @@ void StageMain::Update(float elapsedTime)
     RotationStage(elapsedTime);
     //const DirectX::XMFLOAT4X4 transformIdentity = { 1,0,0,0 ,0,1,0,0 ,0,0,1,0 ,0,0,0,1 };
     model->UpdateTransform(transform.getMatrix());
+
+
+    //やること名塩
+    UpdateTransform();
+
+   
+
+    model->UpdateAnimation(elapsedTime);
+
+
+    model->UpdateTransform(transform);
+
 }
 
 void StageMain::Render(ID3D11DeviceContext* dc, Shader* shader)
