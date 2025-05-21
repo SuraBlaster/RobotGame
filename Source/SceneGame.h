@@ -9,13 +9,8 @@
 #include "UI.h"
 #include "ClearUI.h"
 #include "GameOverUI.h"
-
-
 #include"Audio/Audio.h"
 #include"Audio/AudioSource.h"
-
-#include "FadeOut.h"
-
 #include "Map1.h"
 #include "Map2.h"
 

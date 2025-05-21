@@ -54,18 +54,7 @@ void SceneTitle::Finalize()
 
 void SceneTitle::Update(float elapsedTime)
 {
-    //GamePad& gamepad = Input::Instance().GetGamePad();
-    ////何かボタンを押したら遷移
-    //const GamePadButton anyButton =
-    //    GamePad::BTN_A
-    //    | GamePad::BTN_B
-    //    | GamePad::BTN_X
-    //    | GamePad::BTN_Y
-    //    ;
-   /* if (gamepad.GetButtonDown() & anyButton)
-    {
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-    }*/
+   
     TitleBGM->Play(true);
     Mouse& mouse = Input::Instance().GetMouse();
 

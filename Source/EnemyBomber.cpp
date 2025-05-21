@@ -331,9 +331,8 @@ void EnemyBomber::TransitionDeathState()
 
     //死亡アニメーション再生
     model->PlayAnimation(Anim_Attack, false);
+
     AddBomberdeadcount();
-    model->PlayAnimation(Anim_Die, false);
-    Destroy();
 }
 
 void EnemyBomber::UpdateDeathState(float elapsedTime)
@@ -345,11 +344,6 @@ void EnemyBomber::UpdateDeathState(float elapsedTime)
         explosionEffect->Play(position, 0.5f);
     }
 
-    //CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
-    if (!model->IsPlayAnimation())
-    {
-        Destroy();
-    }
 }
 
 void EnemyBomber::UpdateVerticalVelocity(float elapsedFrame)

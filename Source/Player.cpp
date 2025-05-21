@@ -450,106 +450,6 @@ void Player::TransitionAttackState()
 
 void Player::UpdateAttackState(float elapsedTime)
 {
-    //switch (weapon)
-    //{
-    //case WeaponType::GreatSword:
-    //{
-    //    //任意のアニメーション再生区間でのみ衝突判定処理をする
-    //    float animationTime = model->GetCurrentAnimationSeconds();
-    //    attackCollisionFlag = (animationTime >= 0.8f && animationTime < 1.0f)
-    //        || (animationTime >= 1.65f && animationTime < 1.85f)
-    //        || (animationTime >= 2.55f && animationTime < 2.8f) ? true : false;
-
-    //    InputMoveSword(elapsedTime);
-
-    //    Mouse& mouse = Input::Instance().GetMouse();
-    //    if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
-    //    {
-    //        if (animationTime <= 1.0f)
-    //        {
-    //            attackStage = 1;
-    //        }
-    //        else if (animationTime <= 1.85)
-    //        {
-    //            attackStage = 2;
-    //        }
-    //        else
-    //        {
-    //            attackStage = 3;
-    //        }
-    //    }
-
-    //    switch (attackStage)
-    //    {
-    //    case 1:
-    //        if (animationTime > 1.25f)
-    //        {
-    //            TransitionIdleState();
-    //        }
-    //        break;
-    //    case 2:
-    //        if (animationTime > 2.15f)
-    //        {
-    //            TransitionIdleState();
-    //        }
-    //        break;
-    //    case 3:
-    //        if (!model->IsPlayAnimation())
-    //        {
-    //            TransitionIdleState();
-    //        }
-    //        break;
-    //    }
-
-    //}
-    //break;
-
-    //case WeaponType::Dagger:
-    //{
-    //    float animationTime = model->GetCurrentAnimationSeconds();
-    //    attackCollisionFlag = (animationTime >= 0.5f && animationTime < 0.8f)
-    //        || (animationTime >= 1.0f && animationTime < 1.6f)
-    //        || (animationTime >= 2.3f && animationTime < 2.8f) ? true : false;
-
-    //    InputMoveSword(elapsedTime);
-
-    //    Mouse& mouse = Input::Instance().GetMouse();
-    //    if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
-    //    {
-    //        if (animationTime <= 0.8f)
-    //        {
-    //            attackStage = 1;
-    //        }
-    //        else
-    //        {
-    //            attackStage = 2;
-    //        }
-    //    }
-
-    //    switch (attackStage)
-    //    {
-    //    case 1:
-    //        if (animationTime > 1.0f)
-    //        {
-    //            attackCollisionFlag = false;
-    //            TransitionIdleState();
-    //        }
-    //        break;
-    //    case 2:
-    //        if (!model->IsPlayAnimation())
-    //        {
-    //            TransitionIdleState();
-    //        }
-    //        break;
-    //    }
-
-    //}
-    //break;
-    //}
-
-    
-    
-
     switch (weapon)
     {
     case WeaponType::GreatSword:
@@ -564,26 +464,7 @@ void Player::UpdateAttackState(float elapsedTime)
                 || (attackStage == 3 && animTime >= 0.15f && animTime < 0.6f);
 
             InputMoveSword(elapsedTime);
-
-        Mouse& mouse = Input::Instance().GetMouse();
-        if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
-        {
-            if (animationTime <= 1.0f)
-            {
-                AttackSE->Play(false);
-                attackStage = 1;
-            }
-            else if (animationTime <= 1.85)
-            {
-                AttackSE->Play(false);
-                attackStage = 2;
-            }
-            else
-            {
-                Finish_AttackSE->Play(false);
-                attackStage = 3;
-            }
-        }
+        
             Mouse& mouse = Input::Instance().GetMouse();
             if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
             {
@@ -601,51 +482,15 @@ void Player::UpdateAttackState(float elapsedTime)
                         attackTimer = 0.0f; // タイマーリセット
                         model->PlayAnimation(GreatSword_Attack, false);
                         model->SetCurrentAnimationSeconds(1.4f); // 2段目の開始位置
+                        AttackSE->Play(false);
                     }
                     else
                     {
                         TransitionIdleState();
+                        AttackSE->Stop();
                     }
                 }
                 break;
-
-        switch (attackStage)
-        {
-        case 1:
-            if (animationTime > 1.0f)
-            {
-                AttackSE->Stop();
-            }
-            if (animationTime > 1.25f)
-            {
-                TransitionIdleState();
-            }
-            break;
-        case 2:
-            if (animationTime > 1.85f)
-            {
-                AttackSE->Stop();
-            }
-            if (animationTime > 2.15f)
-            {
-                TransitionIdleState();
-            }
-            break;
-        case 3:
-            if (animationTime > 2.8f)
-            {
-                Finish_AttackSE->Stop();
-            }
-            if (!model->IsPlayAnimation())
-            {
-                TransitionIdleState();
-            }
-            break;
-        }
-
-    }
-    break;
-
             case 2:
                 if (attackTimer > 0.65f)
                 {
@@ -655,18 +500,22 @@ void Player::UpdateAttackState(float elapsedTime)
                         attackTimer = 0.0f;
                         model->PlayAnimation(GreatSword_Attack, false);
                         model->SetCurrentAnimationSeconds(2.45f); // 3段目の開始位置
+                        AttackSE->Stop();
                     }
                     else
                     {
                         TransitionIdleState();
+                        AttackSE->Stop();
                     }
                 }
                 break;
 
             case 3:
+                Finish_AttackSE->Play(false);
                 if (!model->IsPlayAnimation())
                 {
                     TransitionIdleState();
+                    Finish_AttackSE->Stop();
                 }
                 break;
             }
@@ -684,83 +533,41 @@ void Player::UpdateAttackState(float elapsedTime)
 
             InputMoveSword(elapsedTime);
 
-        Mouse& mouse = Input::Instance().GetMouse();
-        if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
-        {
-            if (animationTime <= 0.8f)
+            if (mouse.GetButtonUp() & Mouse::BTN_LEFT)
             {
-                KnifeSE->Play(false);
-                attackStage = 1;
-            }
-            else
-            mouse = Input::Instance().GetMouse();
-            if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
-            {
-                Knife_FinishSE->Play(false);
-                attackStage = 2;
-            }
-        }
                 requestedAttackStage = (std::max)(requestedAttackStage, attackStage + 1);
             }
 
         switch (attackStage)
         {
         case 1:
-            if (animationTime > 0.8)
+            if (attackTimer > 0.8f)
             {
-                KnifeSE->Stop();
-            }
-          if (animationTime > 1.0f)
-            {
-                attackCollisionFlag = false;
-                TransitionIdleState();
+                if (requestedAttackStage >= 2)
+                {
+                    attackStage = 2;
+                    attackTimer = 0.0f;
+                    model->PlayAnimation(Dagger_Attack, false);
+                    model->SetCurrentAnimationSeconds(1.0f); // 2段目の開始位置
+                    KnifeSE->Play(false);
+                }
+                else
+                {
+                    TransitionIdleState();
+                    KnifeSE->Stop();
+                }
             }
             break;
-            switch (attackStage)
-            {
-            case 1:
-                if (attackTimer > 0.8f)
-                {
-                    if (requestedAttackStage >= 2)
-                    {
-                        attackStage = 2;
-                        attackTimer = 0.0f;
-                        model->PlayAnimation(Dagger_Attack, false);
-                        model->SetCurrentAnimationSeconds(1.0f); // 2段目の開始位置
-                    }
-                    else
-                    {
-                        TransitionIdleState();
-                    }
-                }
-                break;
         case 2:
-            if (animationTime > 1.6f)
-            {
-                Knife_FinishSE->Stop();
-            }
-            if (animationTime > 2.3f)
-            {
-                Knife_Finish2SE->Play(false);
-            }
-            if (animationTime > 2.8f)
-            {
-                Knife_Finish2SE->Stop();
-            }
+            Knife_FinishSE->Play(false);
             if (!model->IsPlayAnimation())
             {
                 TransitionIdleState();
+                Knife_FinishSE->Stop();
             }
             break;
         }
-
-                if (!model->IsPlayAnimation())
-                {
-                    TransitionIdleState();
-                }
-                break;
-            }
-            break;
+        break;
         }
         
     }

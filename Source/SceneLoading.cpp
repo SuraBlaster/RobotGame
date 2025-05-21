@@ -12,7 +12,6 @@ void SceneLoading::Initialize()
     LoadingBGM = audio.LoadAudioSource("Data/Audio/BGM/Loading.wav");
     //BGM‰¹—ÊÝ’è(100ˆÈ‰º)
     LoadingBGM->sourceVoice->SetVolume(50);
-    sprite = new Sprite("Data/Sprite/LoadingIcon.png");
     load = new Sprite("Data/Sprite/Loading.png");
     dot = new Sprite("Data/Sprite/Dot.png");
 
@@ -54,8 +53,6 @@ void SceneLoading::Update(float elapsedTime)
 {
     //BGMÄ¶
     LoadingBGM->Play(true);
-    constexpr float speed = 180;
-    angle += speed * elapsedTime;
     timeAccumulator += elapsedTime;
 
     if (timeAccumulator >= updateInterval) {
