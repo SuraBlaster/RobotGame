@@ -333,6 +333,7 @@ void EnemyBomber::TransitionDeathState()
     model->PlayAnimation(Anim_Attack, false);
 
     AddBomberdeadcount();
+    Destroy();
 }
 
 void EnemyBomber::UpdateDeathState(float elapsedTime)
