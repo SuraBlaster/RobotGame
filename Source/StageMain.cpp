@@ -3,6 +3,8 @@
 #include "Camera.h"
 #include "Input/Mouse.h"
 #include "Input/Input.h"
+#include "Player.h"
+#include "Graphics/Graphics.h"
 
 static StageMain* instance = nullptr;
 
@@ -36,13 +38,15 @@ void StageMain::Update(float elapsedTime)
 {
     transform.updateMatrix();
     //if (selectedDirection != Down)
+
+    if (isRotationAnimation)
+        RotationStage(elapsedTime);
+
     Mouse& mouse = Input::Instance().GetMouse();
     if (mouse.GetWheel() > 0.0f)
     {
         StageMain::Instance().ChangeGravity();
     }
-
-    RotationStage(elapsedTime);
     //const DirectX::XMFLOAT4X4 transformIdentity = { 1,0,0,0 ,0,1,0,0 ,0,0,1,0 ,0,0,0,1 };
     model->UpdateTransform(transform.getMatrix());
 }
@@ -55,8 +59,29 @@ void StageMain::Render(ID3D11DeviceContext* dc, Shader* shader)
 
     //シェーダーにモデルを描画してもらう
     shader->Draw(dc, model);
-}
 
+
+    if (isAnten)
+    {
+        antenTimer++;
+        Graphics& graphics = Graphics::Instance();
+        ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
+        ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
+
+        alpha = antenTimer / 60;
+        if (alpha != 0.0f)
+        { 
+            alpha = 1.0f;
+            if (antenTimer >= 150.0f)
+            {
+                antenTimer = 0.0f;
+                isAnten = false;
+            }
+            
+            isRotationAnimation = true;
+        }
+    }
+}
 bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
     return Collision::IntersectRayVsModel(start, end, model, hit);
@@ -64,120 +89,132 @@ bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3&
 
 void StageMain::RotationStage(float elapsedTime)
 {
-    DirectX::XMVECTOR up, front, right;
-
-    up = DirectX::XMLoadFloat3(&transform.getUp());
-    front = DirectX::XMLoadFloat3(&transform.getFront());
-    right = DirectX::XMLoadFloat3(&transform.getRight());
-    DirectX::XMVECTOR Rotation = DirectX::XMLoadFloat4(&transform.rotation);
-    DirectX::XMFLOAT3 angle = transform.getAngle();
     constexpr float radian90 = DirectX::XMConvertToRadians(90);
-    const float rotationSpeed = 40.0f;
+    DirectX::XMVECTOR q = {};
 
     switch (selectedDirection) {
-    case Down:
+    case YMinus:
     {
-        nowAngle = angle;
-        return;
-    }
-    case West:
-    {
-        float rotationVelocity = rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.z + rotationVelocity >= radian90)
-            rotationVelocity = radian90 - angle.z;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        ;
-        if (std::abs(nowAngle.z - angle.z) >= radian90)
-        {
-            selectedDirection = Down;
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 0);
+        if (Player::Instance().IsGround())
             isRotationAnimation = false;
-        }
+        else
+            isRotationAnimation = true;
+
         break;
     }
-    case East:
+    case YPuls:
     {
-        float rotationVelocity = -rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.z - rotationVelocity <= radian90)
-            rotationVelocity = radian90 + angle.z;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(front, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        if (std::abs(nowAngle.z - angle.z) >= radian90)
-        {
-            selectedDirection = Down;
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, radian90 * 2, 0);
+        if (Player::Instance().IsGround())
             isRotationAnimation = false;
-        }
+        else
+            isRotationAnimation = true;
         break;
     }
-    case North:
+    case XMinus:
     {
-        float rotationVelocity = rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.x + rotationVelocity >= radian90)
-            rotationVelocity = radian90 - angle.x;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        if (std::abs(nowAngle.x - angle.x) >= radian90)
-        {
-            selectedDirection = Down;
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, -radian90);
+        if (Player::Instance().IsGround())
             isRotationAnimation = false;
-        }
+        else
+            isRotationAnimation = true;
         break;
     }
-    case South:
+    case XPuls:
     {
-        float rotationVelocity = -rotationSpeed * PIDIV180 * elapsedTime;
-        if (angle.x - rotationVelocity <= radian90)
-            rotationVelocity = radian90 + angle.x;
-
-        DirectX::XMVECTOR q = DirectX::XMQuaternionRotationAxis(right, rotationVelocity);
-        Rotation = DirectX::XMQuaternionMultiply(Rotation, q);
-        if (std::abs(nowAngle.x - angle.x) >= radian90)
-        {
-            selectedDirection = Down;
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, radian90);
+        if (Player::Instance().IsGround())
             isRotationAnimation = false;
-        }
+        else
+            isRotationAnimation = true;
+        break;
+    }
+    case ZMinus:
+    {
+        q = DirectX::XMQuaternionRotationRollPitchYaw(-radian90, 0, 0);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
+        break;
+    }
+    case ZPuls:
+    {
+        q = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
         break;
     }
     }
 
-    DirectX::XMStoreFloat4(&transform.rotation, Rotation);
+    DirectX::XMStoreFloat4(&transform.rotation, q);
 }
 
 void StageMain::ChangeGravity()
 {
+    using namespace DirectX;
     if (isRotationAnimation) return;
 
     Camera& camera = Camera::Instance();
-    DirectX::XMFLOAT3 front;
-    DirectX::XMStoreFloat3(&front, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&camera.GetFront())));
+    XMFLOAT3 front;
+   XMStoreFloat3(&front, XMVector3Normalize(XMLoadFloat3(&camera.GetFront())));
 
-    if (std::abs(front.x) < std::abs(front.z))
-    {
-        if (front.z > 0.0f)
-        {
-            selectedDirection = North;
-        }
-        else
-        {
-            selectedDirection = South;
-        }
-    }
-    else
-    {
-        if (front.x > 0.0f)
-        {
-            selectedDirection = East;
-        }
-        else
-        {
-            selectedDirection = West;
-        }
-    }
+    XMFLOAT3 start = camera.GetEye();
+    XMFLOAT3 end;
+    DirectX::XMStoreFloat3(&end, DirectX::XMVectorScale(DirectX::XMLoadFloat3(&front), 100.0f));
+    HitResult hit;
 
-    if (selectedDirection != Down)
-        isRotationAnimation = true;
+    if (RayCast(start, end, hit))
+    {
+        int oldSelectDirection = selectedDirection;
+
+        XMFLOAT3 vec;
+        XMStoreFloat3(&vec, XMVectorSubtract(XMLoadFloat3(&hit.position), XMLoadFloat3(&Player::Instance().GetPosition())));
+
+        DirectX::XMFLOAT3 absVec;
+        absVec.x = std::fabs(vec.x);
+        absVec.y = std::fabs(vec.y);
+        absVec.z = std::fabs(vec.z);
+
+        float maxAbs = absVec.x;
+        int maxIndex = 0;
+        float originalValue = vec.x;
+
+        if (absVec.y > maxAbs)
+        {
+            maxAbs = absVec.y;
+            maxIndex = 1;
+            originalValue = vec.y;
+        }
+        if (absVec.z > maxAbs)
+        {
+            maxAbs = absVec.z;
+            maxIndex = 2;
+            originalValue = vec.z;
+        }
+
+        if (maxAbs + originalValue == 0.0f)
+        {
+            maxIndex += 3;
+        }
+
+        switch (maxIndex)
+        {
+        case 0: selectedDirection = XPuls; break;
+        case 1: selectedDirection = YPuls; break;
+        case 2: selectedDirection = ZPuls; break;
+        case 3: selectedDirection = XMinus; break;
+        case 4: selectedDirection = YMinus; break;
+        case 5: selectedDirection = ZMinus; break;
+        }
+
+        if (oldSelectDirection == selectedDirection)
+        {
+            selectedDirection = YPuls;
+        }
+        isAnten = true;
+    }
 }
-

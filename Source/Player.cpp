@@ -10,6 +10,7 @@
 #include <ProjectileHoming.h>
 #include "SceneLoading.h"
 #include "SceneTitle.h"
+#include "StageMain.h"
 
 static Player* instance = nullptr;
 
@@ -120,7 +121,7 @@ void Player::Update(float elapsedTime)
     }
 
     UpdateTransform();
-    
+
     //走力速度更新
     UpdateVelocity(elapsedTime);
 
@@ -134,12 +135,24 @@ void Player::Update(float elapsedTime)
 
     model->UpdateAnimation(elapsedTime);
 
+    if (StageMain::Instance().GetIsRotation())
+    {
+        position.x += StageMain::Instance().transform.position.x;
+        position.y += StageMain::Instance().transform.position.y;
+        position.z += StageMain::Instance().transform.position.z;
+        //position = {};
+    }
+
+    if (velocity.y < -50.0f)
+    {
+        position = {1,1,1};
+    }
+
     model->UpdateTransform(transform);
 
     UpdateBarrier(elapsedTime);
 
     ChangeWeapon();
-    //UpdateBarrier();
 }
 
 

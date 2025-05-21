@@ -202,7 +202,6 @@ void SceneGame::Update(float elapsedTime)
 		isCameraControll = true;
 		isOldCameraControll = true;
 		UI->Update(elapsedTime);
-
 	}
 	else
 	{
@@ -271,7 +270,7 @@ void SceneGame::Render()
 
 		shader->End(dc);
 	}
-
+	
 	//3Dエフェクト描画
 	{
 		EffectManager::Instance().Render(rc.view, rc.projection);
@@ -298,6 +297,13 @@ void SceneGame::Render()
 
 		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
+
+		if (StageMain::Instance().GetIsAnten()&& !isPause)
+		{
+			//画面クリア&レンダーターゲット設定
+			FLOAT color[] = { 0.0f,0.0f,0.0f,StageMain::Instance().GetAlpha()};
+			dc->ClearRenderTargetView(rtv, color);
+		}
 	}
 
 	// 2DデバッグGUI描画

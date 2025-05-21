@@ -25,25 +25,35 @@ public:
     void ChangeGravity();
 
     bool GetIsRotation() { return isRotationAnimation; }
-private:
 
-    enum GravityDirection {
-        Down,
-        West,
-        East,
-        North,
-        South
-    };
+    bool GetIsAnten() { return isAnten; }
 
-    void RotationStage(float elapsedTime);
+    float GetAlpha() { return alpha; }
     Transform transform;
+
+private:
+    enum GravityDirection {
+        YPuls,
+        YMinus,
+        XPuls,
+        XMinus,
+        ZPuls,
+        ZMinus,
+    };
+    
+    void RotationStage(float elapsedTime);
     DirectX::XMFLOAT3 nowAngle = {};
+
+
 private:
     bool isRotationAnimation = false;
+    bool isAnten = false;
+    int antenTimer = 0;
+    float alpha;
+
     Model* model = nullptr;
 
-    float rotateDuration = 3.0f;
 
-    GravityDirection selectedDirection = GravityDirection::Down;
+    GravityDirection selectedDirection = GravityDirection::YMinus;
     const float PIDIV180 = 0.017452f;    // PAI/180
 };

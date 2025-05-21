@@ -1,6 +1,8 @@
 #include "Character.h"
 #include "Mathf.h"
 #include "StageManager.h"
+#include "StageMain.h"
+
 //行列更新処理
 void Character::UpdateTransform()
 {
@@ -131,6 +133,9 @@ void Character::UpdateVelocity(float elapsedTime)
 
     //水平移動更新処理
     UpdateHorizontalMove(elapsedTime);
+
+    if (StageMain::Instance().GetIsRotation())
+        CollisionPlayerVsStage(elapsedTime);
 }
 
 void Character::UpdateInvincibleTimer(float elapsedTime)
@@ -335,4 +340,52 @@ void Character::UpdateHorizontalMove(float elapsedTime)
     }
 
 
+}
+
+void Character::CollisionPlayerVsStage(float elapsedTime)
+{
+    //水平移動値
+    float mx = 3.0f * elapsedTime;
+    float mz = 3.0f * elapsedTime;
+
+    //レイの開始位置と終点位置
+    DirectX::XMFLOAT3 start = {position.x,position.y + stepOffset,position.z};
+    DirectX::XMFLOAT3 end[4];
+
+    end[0] = { position.x + mx,position.y, position.z };
+    end[1] = { position.x - mx,position.y, position.z };
+    end[2] = { position.x, position.y, position.z - mz };
+    end[3] = {position.x, position.y, position.z + mz};
+
+    //レイキャストによる壁判定
+    HitResult hit;
+    for (int index = 0; index < 4; index++)
+    {
+        if (StageManager::Instance().RayCast(start, end[index], hit))
+        {
+            //壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&hit.position);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end[index]);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            //壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            //入射ベクトルを法線に射影
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Vec, DirectX::XMVectorNegate(Normal));
+
+            float a = DirectX::XMVectorGetX(Dot);
+            a *= 1.1;
+
+            DirectX::XMVECTOR R = DirectX::XMVectorAdd(Vec, DirectX::XMVectorScale(Normal, a));
+
+            DirectX::XMVECTOR O = DirectX::XMVectorAdd(End, DirectX::XMVectorScale(Normal, a));
+
+            DirectX::XMFLOAT3 o;
+            DirectX::XMStoreFloat3(&o, O);
+            position.x = o.x;
+            position.z = o.z;
+
+        }
+    }
 }
