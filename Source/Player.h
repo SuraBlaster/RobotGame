@@ -210,8 +210,6 @@ private:
 
     Model* model = nullptr;
 
-    Effect* hitEffect = nullptr;
-
     Effect* barrierFirst = nullptr;
 
     Effect* barrier = nullptr;

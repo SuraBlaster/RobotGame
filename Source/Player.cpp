@@ -57,7 +57,6 @@ Player::Player()
     instance = this;
 
     //エフェクト読み込み
-    hitEffect = new Effect("Data/Effect/thunder.efk");
     barrier = new Effect("Data/Effect/Barrier.efkefc");
 
     //待機ステートへ遷移
@@ -83,7 +82,6 @@ void Player::DrawDebugPrimitive()
 
 Player::~Player()
 {
-    delete hitEffect;
     delete barrier;
 
     if (model != nullptr)
@@ -291,7 +289,6 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
                 {
                     DirectX::XMFLOAT3 e = enemy->GetPosition();
                     e.y += enemy->GetHeight() * 0.5f;
-                    hitEffect->Play(e);
                 }
 
             }
