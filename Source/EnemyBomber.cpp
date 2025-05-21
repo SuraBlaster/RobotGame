@@ -65,6 +65,7 @@ void EnemyBomber::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
+    SetRandomTargetPosition();
     delay -= elapsedTime;
 }
 
@@ -102,6 +103,7 @@ void EnemyBomber::SetRandomTargetPosition()
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
     targetPosition.y = 0;
     targetPosition.z = Mathf::RandomRange(territoryOrigin.z, territoryOrigin.z + territoryRange);
+    
 
 }
 
@@ -249,7 +251,7 @@ void EnemyBomber::UpdateWanderState(float elapsedTime)
     if (distSq < radius * radius)
     {
         //次の目標地点設定
-        //SetRandomTargetPosition();
+        SetRandomTargetPosition();
 
         //待機ステート繊維
         TransitionIdleState();
@@ -317,6 +319,8 @@ void EnemyBomber::UpdatePursuitState(float elapsedTime)
     stateTimer -= elapsedTime;
     if (stateTimer < 0.0f)
     {
+        CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
+        explosionEffect->Play(position, 0.5f);
         TransitionDeathState();
     }
 }
@@ -327,6 +331,7 @@ void EnemyBomber::TransitionDeathState()
 
     //死亡アニメーション再生
     model->PlayAnimation(Anim_Attack, false);
+    Destroy();
 }
 
 void EnemyBomber::UpdateDeathState(float elapsedTime)
@@ -369,9 +374,9 @@ void EnemyBomber::AddBomberdeadcount()
 
 void EnemyBomber::OnDead()
 {
-    /*int d = bomberdeadcount + 1;
+   /* int d = bomberdeadcount + 1;
     EnemyBomber::Instance().SetDeadcount(d);*/
-    AddBomberdeadcount();
+    //AddBomberdeadcount();
     TransitionDeathState();
 }
 

@@ -140,11 +140,11 @@ private:
     State state = State::Wander;
     DirectX::XMFLOAT3 targetPosition = { 0,0,0 };
     DirectX::XMFLOAT3 territoryOrigin = { 0,0,0 };
-    float territoryRange = 10.0f;
+    float territoryRange = 0.0f;
     float moveSpeed = 3.0f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
     float stateTimer = 0.0f;
-    float searchRange = 7.0f;
+    float searchRange = 10.0f;
     float attackRange = 1.0f;
     float syuziRange = 1.5f;
     bool atknow;

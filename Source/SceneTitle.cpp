@@ -8,6 +8,12 @@
 
 void SceneTitle::Initialize()
 {
+    //BGM初期化
+    Audio& audio = audio.Instance();
+    //BGM設定
+    TitleBGM = audio.LoadAudioSource("Data/Audio/BGM/Title.wav");
+    //BGM音量設定
+    TitleBGM->sourceVoice->SetVolume(100);
     //スプライト初期化
     sprite = new Sprite("Data/Sprite/Title.png");
     goodBye = new Sprite("Data/Sprite/GoodBye.png");
@@ -60,12 +66,13 @@ void SceneTitle::Update(float elapsedTime)
     {
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }*/
-
+    TitleBGM->Play(true);
     Mouse& mouse = Input::Instance().GetMouse();
 
     if (mouse.mouseVsRect(startSD.dx, startSD.dy,
         startSD.dw, startSD.dh))
     {
+        //TitleSE->Play(false);
         startSD.r = startSD.g = startSD.b = 0.7f;
         if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
         {
@@ -80,6 +87,7 @@ void SceneTitle::Update(float elapsedTime)
     if (mouse.mouseVsRect(gameCloseSD.dx, gameCloseSD.dy,
         gameCloseSD.dw, gameCloseSD.dh))
     {
+        //TitleSE->Play(false);
         gameCloseSD.r = gameCloseSD.g = gameCloseSD.b = 0.7f;
         if (mouse.GetButtonDown() & Mouse::BTN_LEFT)
         {

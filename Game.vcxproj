@@ -179,6 +179,7 @@
     <ClInclude Include="Source\Stage.h" />
     <ClInclude Include="Source\StageManager.h" />
     <ClInclude Include="Source\StageMoveFloor.h" />
+    <ClInclude Include="Source\Transform.h" />
     <ClInclude Include="Source\Weapon.h" />
     <ClInclude Include="Source\WeaponGreatSword.h" />
     <ClInclude Include="Source\WeaponDagger.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\StageManager.cpp" />
     <ClCompile Include="Source\StageMoveFloor.cpp" />
+    <ClCompile Include="Source\Transform.cpp" />
     <ClCompile Include="Source\Weapon.cpp" />
     <ClCompile Include="Source\WeaponGreatSword.cpp" />
     <ClCompile Include="Source\WeaponDagger.cpp" />

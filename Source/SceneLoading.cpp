@@ -6,8 +6,13 @@
 
 void SceneLoading::Initialize()
 {
-    load = new Sprite("Data/Sprite/Loading.png");
-    dot = new Sprite("Data/Sprite/Dot.png");
+    //BGM‰ŠúÝ’è
+    Audio& audio = audio.Instance();
+    //BGMÝ’è
+    LoadingBGM = audio.LoadAudioSource("Data/Audio/BGM/Loading.wav");
+    //BGM‰¹—ÊÝ’è(100ˆÈ‰º)
+    LoadingBGM->sourceVoice->SetVolume(50);
+    sprite = new Sprite("Data/Sprite/LoadingIcon.png");
 
     thread = new std::thread(LoadingThread, this);
 }
@@ -45,7 +50,10 @@ void SceneLoading::Finalize()
 
 void SceneLoading::Update(float elapsedTime)
 {
-    timeAccumulator += elapsedTime;
+    //BGMÄ¶
+    LoadingBGM->Play(true);
+    constexpr float speed = 180;
+    angle += speed * elapsedTime;
 
     if (timeAccumulator >= updateInterval) {
         timeAccumulator = 0.0f;

@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include <thread>
 
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
 class SceneLoading : public Scene
 {
 public:
@@ -24,8 +26,6 @@ private:
     Sprite* dot = nullptr;
     Scene* nextScene = nullptr;
     std::thread* thread = nullptr;
-
-    int dotCount = 1;
-    float timeAccumulator = 0.0f;
-    const float updateInterval = 0.5f;
+    //BGM
+    std::unique_ptr<AudioSource> LoadingBGM;
 };
