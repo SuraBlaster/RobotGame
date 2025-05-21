@@ -342,6 +342,7 @@ void EnemyBomber::UpdateDeathState(float elapsedTime)
     {
         CollisionNodeVsPlayer("Bomb", ExplosionRadius);
         explosionEffect->Play(position, 0.5f);
+        Destroy();
     }
 
 }
