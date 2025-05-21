@@ -7,7 +7,7 @@
 
 EnemyBomber::EnemyBomber()
 {
-    model = new Model("Data/Model/Slime/Slime.mdl");
+    model = new Model("Data/Model/Bomber/EnemyBomber.mdl");
 
     //スケーリング
     scale.x = scale.y = scale.z = 0.01f;
@@ -237,7 +237,7 @@ void EnemyBomber::TransitionWanderState()
     SetRandomTargetPosition();
 
     //歩きアニメーション再生
-    model->PlayAnimation(Anim_WalkFWD, true);
+    model->PlayAnimation(Anim_Walk, true);
 }
 
 void EnemyBomber::UpdateWanderState(float elapsedTime)
@@ -273,7 +273,7 @@ void EnemyBomber::TransitionIdleState()
     stateTimer = Mathf::RandomRange(3.0f, 5.0f);
 
     //待機アニメーション再生
-    model->PlayAnimation(Anim_IdleNormal, true);
+    model->PlayAnimation(Anim_Idle, true);
 }
 
 void EnemyBomber::UpdateIdleState(float elapsedTime)
@@ -302,7 +302,7 @@ void EnemyBomber::TransitionPursuitState()
     stateTimer = 10.0f;
 
     //歩きアニメーション再生
-    model->PlayAnimation(Anim_RunFWD, true);
+    model->PlayAnimation(Anim_Walk, true);
 }
 
 void EnemyBomber::UpdatePursuitState(float elapsedTime)
@@ -326,14 +326,18 @@ void EnemyBomber::TransitionDeathState()
     state = State::Death;
 
     //死亡アニメーション再生
-    model->PlayAnimation(Anim_Die, false);
+    model->PlayAnimation(Anim_Attack, false);
 }
 
 void EnemyBomber::UpdateDeathState(float elapsedTime)
 {
+    float animationTime = model->GetCurrentAnimationSeconds();
+    if (animationTime > 0.57f)
+    {
+        CollisionNodeVsPlayer("Bomb", ExplosionRadius);
+        explosionEffect->Play(position, 0.5f);
+    }
 
-    //CollisionNodeVsPlayer("EyeBall", ExplosionRadius);
-    //explosionEffect->Play(position, 0.5f);
     //死亡アニメーションが終わったら自分を破棄しつつ爆発攻撃
     if (!model->IsPlayAnimation())
     {
@@ -350,6 +354,8 @@ void EnemyBomber::UpdateVerticalVelocity(float elapsedFrame)
 void EnemyBomber::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     shader->Draw(dc, model);
+
+    DrawDebugPrimitive();
 }
 
 void EnemyBomber::AddBomberdeadcount()

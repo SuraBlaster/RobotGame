@@ -64,7 +64,6 @@
     <ClCompile Include="Source\ShieldGauge.cpp" />
     <ClCompile Include="Source\ShieldIcon.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
-    <ClCompile Include="Source\StageMain.cpp" />
     <ClCompile Include="Source\StageManager.cpp" />
     <ClCompile Include="Source\StageMoveFloor.cpp" />
     <ClCompile Include="Source\Weapon.cpp" />
@@ -81,6 +80,8 @@
     <ClCompile Include="Source\ItemCrystal.cpp" />
     <ClCompile Include="Source\ClearUI.cpp" />
     <ClCompile Include="Source\GameOverUI.cpp" />
+    <ClCompile Include="Source\Map1.cpp" />
+    <ClCompile Include="Source\Map2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\DirectXTex\WICTextureLoader.h" />
@@ -140,7 +141,6 @@
     <ClInclude Include="Source\ShieldGauge.h" />
     <ClInclude Include="Source\ShieldIcon.h" />
     <ClInclude Include="Source\Stage.h" />
-    <ClInclude Include="Source\StageMain.h" />
     <ClInclude Include="Source\StageManager.h" />
     <ClInclude Include="Source\StageMoveFloor.h" />
     <ClInclude Include="Source\Weapon.h" />
@@ -157,6 +157,8 @@
     <ClInclude Include="Source\ItemCrystal.h" />
     <ClInclude Include="Source\ClearUI.h" />
     <ClInclude Include="Source\GameOverUI.h" />
+    <ClInclude Include="Source\Map1.h" />
+    <ClInclude Include="Source\Map2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />

@@ -7,16 +7,12 @@
 #include "EnemyManager.h"
 #include "EnemySlime.h"
 #include "EnemyBomber.h"
-
 #include "EnemyDrone.h"
-
 #include "EnemySpider.h"
 #include "EffectManager.h"
 #include "StageManager.h"
-#include "StageMain.h"
 #include "StageMoveFloor.h"
 #include "SceneManager.h"
-
 #include <Input/Input.h>
 #include <WeaponManager.h>
 #include <WeaponGreatSword.h>
@@ -44,8 +40,6 @@ void SceneGame::Initialize()
 	
 	map2Manager.Register(map2);
 	}
-	
-	
 
 	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
 	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
@@ -67,59 +61,11 @@ void SceneGame::Initialize()
 
 	//エネミー初期化
 
-	/*EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemyDrone* slime = new EnemyDrone;
-
-	/*EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemyBomber* slime = new EnemyBomber;
-
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}*/
-
-
-	//for (int i = 0; i < 1; ++i)
-	//{
-	//	EnemySlime* slime = new EnemySlime;
-	//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-	//	slime->SetTerritory(slime->GetPosition(), 10.0f);
-	//	enemyManager.Register(slime);
-	//}
-	//EnemyManager& enemyspiderManager = EnemyManager::Instance();
-	//for (int i = 0; i < 1; ++i) 
-	//{
-	//	EnemySpider* spider = new EnemySpider;
-	//	spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
-	//	spider->SetTerritory(spider->GetPosition(), 10.0f);
-	//	enemyspiderManager.Register(spider);
-	//}
-
 	ItemManager& itemManager = ItemManager::Instance();
 	ItemCrystal* crystal = new ItemCrystal();
 	crystal->SetPosition(DirectX::XMFLOAT3(0, 1, 5));
 	itemManager.Register(crystal);
-		
 
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemySlime* slime = new EnemySlime;
-		slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
-	EnemyManager& enemyspiderManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i) 
-	{
-		EnemySpider* spider = new EnemySpider;
-		spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
-		spider->SetTerritory(spider->GetPosition(), 10.0f);
-		enemyManager.Register(spider);
-	}*/
 
 	
 	//カメラ初期設定
@@ -236,11 +182,7 @@ void SceneGame::Finalize()
 
 	//ステージ終了処理
 	StageManager::Instance().Clear();
-	//エネミー終了処理
-	/*EnemyBomber::Instance().~EnemyBomber();
-	EnemySpider::Instance().~EnemySpider();
-	EnemySlime::Instance().~EnemySlime();
-	*/
+	
 }
 
 // 更新処理
@@ -314,7 +256,7 @@ void SceneGame::Update(float elapsedTime)
 	killspider = EnemySpider::Instance().GetDeadcount();
 	killbomber = EnemyBomber::Instance().GetDeadcount();
 	killslime  =  EnemySlime::Instance().GetDeadcount();
-	killcount = killbomber + killspider+killslime;
+	killcount = killbomber + killspider + killslime;
 
 }
 
@@ -406,7 +348,6 @@ void SceneGame::Render()
 	// 2DデバッグGUI描画
 	{
 		player->DrawDebugGUI();
-
 
 		EnemyManager::Instance().DrawDebugGUI();
 

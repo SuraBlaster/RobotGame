@@ -237,6 +237,8 @@ private:
 
     float ShieldTimer = 0;
 
+    float attackTimer = 0;
+
     bool hit = false;
 
     bool Hphit = false;
@@ -244,6 +246,8 @@ private:
     bool HiddenFlag = false;
 
     int attackStage = 0;
+
+    int requestedAttackStage = 0;
 
     int ShieldCount = 0;
 
@@ -257,4 +261,6 @@ private:
     DirectX::XMFLOAT3 previousPlayerPos;
 
     CameraEffect_Death cameraEffect_Death;
+
+    
 };

@@ -5,6 +5,8 @@
 
 void UserInterface::Initialize()
 {
+
+
 	healthUIBackSpr = std::make_unique<Sprite>("Data/Sprite/HpEmpty.png");
 	healthUIBackSD = {
 		25, 20, 500, 30,
@@ -25,17 +27,17 @@ void UserInterface::Initialize()
 		1, 1, 1, 1.0f
 	};
 
-
-	//compass = std::make_unique<Compass>();
-	//compass->Initialize();
 }
 
 void UserInterface::Finalize()
 {
+	
 }
 
 void UserInterface::Update(float elapsedTime)
 {
+
+
 	//compass->Update();
 	// 最大HPと現在HP
 	float maxHP = static_cast<float>(Player::Instance().GetMaxHealth());
@@ -106,7 +108,6 @@ void UserInterface::Update(float elapsedTime)
 
 void UserInterface::Render(ID3D11DeviceContext* dc)
 {
-	//shader->Draw(dc, compass.get()->GetModel());
 	float shakeX = 0.0f;
 	float shakeY = 0.0f;
 

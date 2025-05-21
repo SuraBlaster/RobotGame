@@ -32,6 +32,4 @@ private:
 	bool prevHealthHit = false;
 	bool isHealthAnimating = false;
 	int healthUITimer = 0;
-
-	//std::unique_ptr<Compass> compass;
 };

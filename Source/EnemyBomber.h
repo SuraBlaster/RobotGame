@@ -91,21 +91,10 @@ private:
     //アニメーション
     enum Animation
     {
-        Anim_IdleNormal,
-        Anim_IdleBattle,
-        Anim_Attack1,
-        Anim_Attack2,
-        Anim_WalkFWD,
-        Anim_WalkBWD,
-        Anim_WalkLeft,
-        Anim_WalfRight,
-        Anim_RunFWD,
-        Anim_SenseSomtingST,
-        Anim_Taunt,
-        Anim_Victory,
-        Anim_GetHit,
-        Anim_Dizzy,
-        Anim_Die,
+        Anim_Idle,
+        Anim_Walk,
+        Anim_Damage,
+        Anim_Attack,
     };
 protected:
     //死亡したときに呼ばれる
