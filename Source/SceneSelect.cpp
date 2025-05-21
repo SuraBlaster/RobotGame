@@ -12,15 +12,18 @@
 
 void SceneSelect::Initialize()
 {
+<<<<<<< HEAD
+	coreRoom = new Sprite("Data/Sprite/CoreRoom.png");
+	corridor = new Sprite("Data/Sprite/Corridor.png");
+
+=======
 	Audio& audio = audio.Instance();
 	SelectBGM = audio.LoadAudioSource("Data/Audio/BGM/Select.wav");
 	KuruKuruBGM = audio.LoadAudioSource("Data/Audio/BGM/KuruKuru.wav");
 	SelectBGM->sourceVoice->SetVolume(50);
 	KuruKuruBGM->sourceVoice->SetVolume(50);
 	KuruKuru = false;
-	coreRoom = new Sprite("Data/Sprite/CoreRoom.png");
-	corridor = new Sprite("Data/Sprite/Corridor.png");
-
+>>>>>>> ruisan114514
 	StageManager& stageManager = StageManager::Instance();
 	SelectStage1* selectStage1 = new SelectStage1();
 	selectStage1->SetPosition({ -40,10,10 });
@@ -68,12 +71,92 @@ void SceneSelect::Finalize()
 
 void SceneSelect::Update(float elapsedTime)
 {
-	// マウス入力取得
+<<<<<<< HEAD
+	// �}�E�X���͎擾
 	Mouse& mouse = Input::Instance().GetMouse();
 
 	if (timer < 0.0f)
 	{
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+=======
+	if (KuruKuru == false) 
+	{
+		SelectBGM->Play(true);
+	}
+	else if (KuruKuru == true)
+	{
+		SelectBGM->Stop();
+	}
+    GamePad& gamepad = Input::Instance().GetGamePad();
+
+	//何かボタンを押したら�E移
+	const GamePadButton anyButton =
+		GamePad::BTN_A
+		| GamePad::BTN_B
+		| GamePad::BTN_X
+		| GamePad::BTN_Y
+		;
+
+	switch (stage)
+	{
+	case Stage::Stage1:
+		if (gamepad.GetButtonDown() & GamePad::BTN_RIGHT)
+		{
+			StageManager::Instance().SetStage(Stage::Stage2);
+			stage = Stage::Stage2;
+		}
+		if (gamepad.GetButtonDown() & anyButton)
+		{
+
+		
+			KuruKuru = true;
+			KuruKuruBGM->Play(false);
+
+			SceneSelect::Instance().SetMap(1);
+			timer = 2.0f;
+
+			StageManager::Instance().SetButtonFlag(true);
+		}
+		if (timer < 0.0f)
+		{
+			
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+
+		}
+		if (timer > 5.0f)
+		{
+			KuruKuruBGM->Stop();
+		}
+		break;
+	case Stage::Stage2:
+		if (gamepad.GetButtonDown() & GamePad::BTN_LEFT)
+		{
+			StageManager::Instance().SetStage(Stage::Stage1);
+			stage = Stage::Stage1;
+		}
+		if (gamepad.GetButtonDown() & anyButton)
+		{
+
+		
+			KuruKuru = true;
+			KuruKuruBGM->Play(false);
+
+			SceneSelect::Instance().SetMap(2);
+			timer = 2.0f;
+
+			StageManager::Instance().SetButtonFlag(true);
+		}
+		if (timer < 0.0f)
+		{
+			
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+		}
+		if (timer > 5.0f)
+		{
+			KuruKuruBGM->Stop();
+		}
+		break;
+>>>>>>> ruisan114514
 	}
 
 	if (StageManager::Instance().GetCursorFlag1())
@@ -116,38 +199,38 @@ void SceneSelect::Render()
 	ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
-	// 画面クリア＆レンダーターゲット設定
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+	// 画面クリア�E�E��ンダーターゲチE��設宁E
+	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0�E�E.0)
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
 
-	// 描画処理
+	// 描画処琁E
 	RenderContext rc;
-	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ライト方向（下方向）
+	rc.lightDirection = { 0.0f, -1.0f, 0.0f, 0.0f };	// ライト方向（下方向！E
 
-	//カメラ初期設定
+	//カメラ初期設宁E
 	Camera& camera = Camera::Instance();
 	rc.view = camera.GetView();
 	rc.projection = camera.GetProjection();
 
-	// 3Dモデル描画
+	// 3DモチE��描画
 	{
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 
-		//ステージ描画
+		//スチE�Eジ描画
 		StageManager::Instance().Render(dc, shader);
 
 		shader->End(dc);
 	}
 
-	// 3Dデバッグ描画
+	// 3DチE��チE��描画
 	{
-		// ラインレンダラ描画実行
+		// ラインレンダラ描画実衁E
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
 
-		// デバッグレンダラ描画実行
+		// チE��チE��レンダラ描画実衁E
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 
@@ -175,7 +258,11 @@ void SceneSelect::Render()
 
 	}
 
-	// 当たり判定
+<<<<<<< HEAD
+	// �����蔻��
+=======
+	// 2DチE��チE��GUI描画
+>>>>>>> ruisan114514
 	{
 		
 	}
