@@ -43,11 +43,11 @@ void SelectStage2::Update(float elapsedTime)
 
     if (CursorFlag)
     {
-        turnSpeed += DirectX::XMConvertToRadians(3); 
+        turnSpeed = DirectX::XMConvertToRadians(3); 
     }
     else
     {
-        turnSpeed += DirectX::XMConvertToRadians(1);
+        turnSpeed = DirectX::XMConvertToRadians(1);
     }
 
     angle.y += turnSpeed;
@@ -147,7 +147,6 @@ void SelectStage2::GetMouseToStage(ID3D11DeviceContext* dc, const DirectX::XMFLO
     }
     else
     {
-        turnSpeed += DirectX::XMConvertToRadians(1);
         scale.y = scale.z = 0.006f;
         scale.x = 0.0013f;
     }

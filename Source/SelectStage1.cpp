@@ -41,15 +41,15 @@ void SelectStage1::Update(float elapsedTime)
 
     if (CursorFlag)
     {
-        turnSpeed += DirectX::XMConvertToRadians(3);
+        turnSpeed = DirectX::XMConvertToRadians(3);
     }
     else
     {
-        turnSpeed += DirectX::XMConvertToRadians(1);
+        turnSpeed = DirectX::XMConvertToRadians(1);
    
     }
  
-    angle.y = turnSpeed * elapsedTime;
+    angle.y += turnSpeed;
     
     position.y += sinf(angle.y * 0.5f) * 0.025f;
 
