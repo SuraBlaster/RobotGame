@@ -12,6 +12,12 @@ public:
     EnemyDrone();
     ~EnemyDrone() override;
 
+    static EnemyDrone& Instance()
+    {
+        static EnemyDrone instance;
+        return instance;
+    }
+
     //更新処理
     void Update(float elapsedTime)override;
 
@@ -35,6 +41,8 @@ public:
     //GUI
     void DrawDebugGUI()override;
 
+    int GetDeadcount() { return dronedeadcount; }
+    void SetDeadcount(int deadcount) { this->dronedeadcount = deadcount; }
 private:
     //ターゲット位置をランダム設定
     void SetRandomTargetPosition();
@@ -89,6 +97,10 @@ private:
 
     void UpdateVerticalVelocity(float elapsedFrame);
 
+    void Adddeadcount();
+  
+
+
     void UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos);
 
     DirectX::XMFLOAT3 GetPreviousPlayerPos(int offset);
@@ -129,14 +141,18 @@ private:
     bool deadFlag;
 
     ProjectileManager projectileManager;
-    float territoryRange = 10.0f;
+    float territoryRange = 0.0f;
     float moveSpeed = 1.0f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
     float stateTimer = 0.0f;
-    float searchRange = 7.0f;
+    float searchRange = 10.0f;
     float attackRange = 5.0f;
     float syuziRange = 1.5f;
     float delay = 0.0f;
+
+    int dronedeadcount;
+    int ddd;
+
     std::deque<DirectX::XMFLOAT3> positionHistory;
     static constexpr int kHistoryLimit = 10;
     int projectilecount;

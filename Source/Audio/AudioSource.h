@@ -17,7 +17,7 @@ public:
 	// í‚é~
 	void Stop();
 
-private:
 	IXAudio2SourceVoice*			sourceVoice = nullptr;
+private:
 	std::shared_ptr<AudioResource>	resource;
 };

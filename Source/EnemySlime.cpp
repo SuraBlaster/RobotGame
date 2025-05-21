@@ -82,6 +82,7 @@ void EnemySlime::Update(float elapsedTime)
     //モデル行列を更新
     model->UpdateTransform(transform);
 
+    
     delay -= elapsedTime;
 
 
@@ -119,6 +120,7 @@ void EnemySlime::SetRandomTargetPosition()
     targetPosition.x = Mathf::RandomRange(territoryOrigin.x, territoryOrigin.x + territoryRange);
     targetPosition.y = Mathf::RandomRange(territoryOrigin.y, territoryOrigin.y + territoryRange);
     targetPosition.z = Mathf::RandomRange(territoryOrigin.z, territoryOrigin.z + territoryRange);
+   
 
 }
 
@@ -273,7 +275,7 @@ void EnemySlime::UpdateWanderState(float elapsedTime)
     if (distSq < radius * radius)
     {
         //次の目標地点設定
-        //SetRandomTargetPosition();
+        SetRandomTargetPosition();
 
         //待機ステート繊維
         TransitionIdleState();
@@ -452,6 +454,7 @@ void EnemySlime::TransitionDeathState()
    
     //死亡アニメーション再生
     model->PlayAnimation(Anim_Die, false);
+    Destroy();
 }
 
 void EnemySlime::UpdateDeathState(float elapsedTime)

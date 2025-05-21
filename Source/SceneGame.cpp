@@ -23,23 +23,41 @@
 
 void SceneGame::Initialize()
 {
+	//BGM初期化
+	Audio& audio = audio.Instance();
+	//BGM設定
+	MainBGM = audio.LoadAudioSource("Data/Audio/BGM/Main.wav");
+	//BGM音量設定(100以下)
+	MainBGM->sourceVoice->SetVolume(50);
 	//ステージ初期化
 	heremap = SceneSelect::Instance().GetMap();
 	StageManager& stageManager = StageManager::Instance();
 
-	if(heremap==1)
+	if (heremap == 1)
 	{
-	StageManager& map1Manager = StageManager::Instance();
-	
-	map1Manager.Register(map1);
+		StageManager& map1Manager = StageManager::Instance();
+
+		map1Manager.Register(map1);
+
+		CrystalPosition = {-20, -28, 0};
 
 	}
-	if(heremap==2)
+	if (heremap == 2)
 	{
-	StageManager& map2Manager = StageManager::Instance();
-	
-	map2Manager.Register(map2);
+		StageManager& map2Manager = StageManager::Instance();
+
+		map2Manager.Register(map2);
+
+		CrystalPosition = { 95, -10, 0 };
 	}
+	Oncrystal = false;
+	playernowpos = { 0,0,0 };
+
+	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
+	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
+	stageMoveFloor->SetGoalPoint(DirectX::XMFLOAT3(10, 2, 3));
+	stageMoveFloor->SetTorque(DirectX::XMFLOAT3(0, 1.0f, 0));
+	stageManager.Register(stageMoveFloor);
 
 	//プレイヤー初期化
 	player = new Player;
@@ -52,6 +70,81 @@ void SceneGame::Initialize()
 	WeaponDagger* dagger = new WeaponDagger;
 	weaponManager.Register(dagger);
 
+
+	//エネミー初期化
+
+	enemyslimeposi = { 0,0,0 };
+	enemybomberposi = { 0,0,0 };
+	enemyspiderposi = { 0,0,0 };
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < 1; ++i)
+	{
+		EnemyDrone* slime = new EnemyDrone;
+
+		/*EnemyManager& enemyManager = EnemyManager::Instance();
+		for (int i = 0; i < 1; ++i)
+		{
+			EnemyBomber* slime = new EnemyBomber;
+
+			slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+			slime->SetTerritory(slime->GetPosition(), 10.0f);
+			enemyManager.Register(slime);
+		}
+
+
+		//for (int i = 0; i < 1; ++i)
+		//{
+		//	EnemySlime* slime = new EnemySlime;
+		//	slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+		//	slime->SetTerritory(slime->GetPosition(), 10.0f);
+		//	enemyManager.Register(slime);
+		//}
+		//EnemyManager& enemyspiderManager = EnemyManager::Instance();
+		//for (int i = 0; i < 1; ++i)
+		//{
+		//	EnemySpider* spider = new EnemySpider;
+		//	spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+		//	spider->SetTerritory(spider->GetPosition(), 10.0f);
+		//	enemyspiderManager.Register(spider);
+		//}
+
+		ItemManager& itemManager = ItemManager::Instance();
+		ItemCrystal* crystal = new ItemCrystal();
+		crystal->SetPosition(DirectX::XMFLOAT3(0, 1, 5));
+		itemManager.Register(crystal);
+
+
+		for (int i = 0; i < 1; ++i)
+		{
+			EnemySlime* slime = new EnemySlime;
+			slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+			slime->SetTerritory(slime->GetPosition(), 10.0f);
+			enemyManager.Register(slime);
+		}
+		EnemyManager& enemyspiderManager = EnemyManager::Instance();
+		for (int i = 0; i < 1; ++i)
+		{
+			EnemySpider* spider = new EnemySpider;
+			spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10));
+			spider->SetTerritory(spider->GetPosition(), 10.0f);
+			enemyManager.Register(spider);
+		}*/
+
+
+		//カメラ初期設定
+		Graphics& graphics = Graphics::Instance();
+		Camera& camera = Camera::Instance();
+		camera.SetLookAt(
+			DirectX::XMFLOAT3(0, 10, -10),
+			DirectX::XMFLOAT3(0, 0, 0),
+			DirectX::XMFLOAT3(0, 1, 0)
+		);
+		camera.SetParspectiveFov(
+			DirectX::XMConvertToRadians(45),
+			graphics.GetScreenWidth() / graphics.GetScreenHeight(),
+			0.1f,
+			1000.0f
+		);
 	ItemManager& itemManager = ItemManager::Instance();
 	ItemCrystal* crystal = new ItemCrystal();
 	crystal->SetPosition(DirectX::XMFLOAT3(0, 1, 5));
@@ -72,16 +165,16 @@ void SceneGame::Initialize()
 		1000.0f
 	);
 
-	//カメラコントローラー初期化
-	cameraController = new CameraController;
-	SceneGame::Instance().SetCameraController(cameraController);
+		//カメラコントローラー初期化
+		cameraController = new CameraController;
+		SceneGame::Instance().SetCameraController(cameraController);
 
-	Mouse& mouse = Input::Instance().GetMouse();
-	mouse.setCenter();
-	cameraController->ZeroClear();
+		Mouse& mouse = Input::Instance().GetMouse();
+		mouse.setCenter();
+		cameraController->ZeroClear();
 
-	//ゲージスプライト
-	gauge = new Sprite();
+		//ゲージスプライト
+		gauge = new Sprite();
 
 	gameOverUI = std::make_unique<GameOverUI>();
 	gameOverUI->Initialize();
@@ -92,51 +185,52 @@ void SceneGame::Initialize()
 	shieldGauge = std::make_unique<ShieldGauge>();
 	shieldGauge->Initialize();
 
-	shieldIcon = std::make_unique<ShieldIcon>();
-	shieldIcon->Initialize();
+		shieldIcon = std::make_unique<ShieldIcon>();
+		shieldIcon->Initialize();
 
-	UI = std::make_unique<UserInterface>();
-	UI->Initialize();
-	//2Dスプライト
-	{
-		screenWidth = static_cast<float>(graphics.GetScreenWidth());
-		screenHeight = static_cast<float>(graphics.GetScreenHeight());
+		UI = std::make_unique<UserInterface>();
+		UI->Initialize();
+		//2Dスプライト
+		{
+			screenWidth = static_cast<float>(graphics.GetScreenWidth());
+			screenHeight = static_cast<float>(graphics.GetScreenHeight());
 
-		sprite = std::make_unique<Sprite>();
-		spriteSD = {
-				0, 0, screenWidth, screenHeight,
-				0, 0, 1, 1,
+			sprite = std::make_unique<Sprite>();
+			spriteSD = {
+					0, 0, screenWidth, screenHeight,
+					0, 0, 1, 1,
+					0,
+					0, 0, 0, 0.6f
+			};
+
+			toTitleSpr = std::make_unique<Sprite>("Data/Sprite/GoTitle.png");
+			toTitleSD = {
+				800,500, 250, 50,
+				0, 0,
+				static_cast<float>(toTitleSpr->GetTextureWidth()),
+				static_cast<float>(toTitleSpr->GetTextureHeight()),
 				0,
-				0, 0, 0, 0.6f
-		};
+				1, 1, 1, 1.0f
+			};
 
-		toTitleSpr = std::make_unique<Sprite>("Data/Sprite/GoTitle.png");
-		toTitleSD = {
-			800,500, 250, 50,
-			0, 0,
-			static_cast<float>(toTitleSpr->GetTextureWidth()),
-			static_cast<float>(toTitleSpr->GetTextureHeight()),
-			0,
-			1, 1, 1, 1.0f
-		};
+			backSpr = std::make_unique<Sprite>("Data/Sprite/Close.png");
+			backSD = {
+				300, 500, 150, 50,
+				0, 0,
+				static_cast<float>(backSpr->GetTextureWidth()),
+				static_cast<float>(backSpr->GetTextureHeight()),
+				0,
+				1, 1, 1, 1.0f
+			};
+		}
+		raund = 0;
+		raundcase = 0;
+		EnemySpider::Instance().SetDeadcount(0);
+		EnemySlime::Instance().SetDeadcount(0);
+		EnemyBomber::Instance().SetDeadcount(0);
 
-		backSpr = std::make_unique<Sprite>("Data/Sprite/Close.png");
-		backSD = {
-			300, 500, 150, 50,
-			0, 0,
-			static_cast<float>(backSpr->GetTextureWidth()),
-			static_cast<float>(backSpr->GetTextureHeight()),
-			0,
-			1, 1, 1, 1.0f
-		};
+		
 	}
-	raund = 0;
-	raundcase = 0;
-	EnemySpider::Instance().SetDeadcount(0);
-	EnemySlime::Instance().SetDeadcount(0);
-	EnemyBomber::Instance().SetDeadcount(0);
-	
-	Rcase = 0;
 }
 
 // 終了化
@@ -177,6 +271,8 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	//BGM再生
+	MainBGM->Play(true);
 	DirectX::XMFLOAT3 target = player->GetPosition();
 	target.y += 0.5f;
 	if (!isPause)
@@ -237,14 +333,103 @@ void SceneGame::Update(float elapsedTime)
 		cameraController->ZeroClear();
 	pauseUpdate();
 
+	//マップ、ラウンドごとの敵の出現位置設定
+	if(heremap==1)
+	{
+		if(raund==0)
+		{
+			enemyslimeposi = { 2,-8,2 };
+			enemybomberposi = { 4,-8,4 };
+			enemyspiderposi = { 6,-8,6 };
+		}
+		if (raund==1)
+		{
+			enemyslimeposi = { -2,0,-2 };
+			enemybomberposi = { -4,0,-4 };
+			enemyspiderposi = { 6,0,6 };
+		}
+		if (raund==2)
+		{
+			enemyslimeposi = { -18,-28,2 };
+			enemybomberposi = { -18,-28,4 };
+			enemyspiderposi = { -18,-28,6 };
+		}
+		if (raund==3)
+		{
+			enemyslimeposi = { 0,-28,10 };
+			enemybomberposi = { 0,-28,-10 };
+			enemyspiderposi = { 18,-28,0 };
+		}
+		if (raund==4)
+		{
+			enemyslimeposi = { -16,-28,2 };
+			enemybomberposi = { -18,-28,4 };
+			enemyspiderposi = { -14,-28,6 };
+		}
+		
+	}
+	if(heremap==2)
+	{
+		if (raund == 0)
+		{
+			enemyslimeposi = { 0,-9,2 };
+			enemybomberposi = { 0,-9,4 };
+			enemyspiderposi = { 0,-9,6 };
+		}
+		if (raund == 1)
+		{
+			enemyslimeposi = { 15,-9,2 };
+			enemybomberposi = { 15,-9,4 };
+			enemyspiderposi = { 15,-9,6 };
+		}
+		if (raund == 2)
+		{
+			enemyslimeposi = { 30,-9,2 };
+			enemybomberposi = { 30,-9,4 };
+			enemyspiderposi = { 30,-9,6 };
+		}
+		if (raund == 3)
+		{
+			enemyslimeposi = { 48,-9,2 };
+			enemybomberposi = { 48,-9,4 };
+			enemyspiderposi = { 48,-9,6 };
+		}
+		if (raund == 4)
+		{
+			enemyslimeposi = { 65,-9,2 };
+			enemybomberposi = { 65,-9,4 };
+			enemyspiderposi = { 65,-9,6 };
+		}
+		if (raund == 5)
+		{
+			enemyslimeposi = { 80,-9,2 };
+			enemybomberposi = { 80,-9,4 };
+			enemyspiderposi = { 80,-9,6 };
+		}
+		if (raund == 6)
+		{
+			enemyslimeposi = { 90,-9,2 };
+			enemybomberposi = { 90,-9,4 };
+			enemyspiderposi = { 90,-9,6 };
+		}
+
+	}
+
 	//ラウンド管理
 	RaundManage();
 
 	killspider = EnemySpider::Instance().GetDeadcount();
 	killbomber = EnemyBomber::Instance().GetDeadcount();
 	killslime  =  EnemySlime::Instance().GetDeadcount();
-	killcount = killbomber + killspider + killslime;
+	killdrone  =  EnemyDrone::Instance().GetDeadcount();
+	killcount = killbomber + killspider+killslime+killdrone;
+	
+	EnemyBomber::Instance().SetTerritory(enemybomberposi,0);
+	EnemySpider::Instance().SetTerritory(enemyspiderposi,0);
+	EnemySlime::Instance().SetTerritory(enemyslimeposi,0);
+	EnemyDrone::Instance().SetTerritory(enemyspiderposi,0);
 
+	playernowpos = Player::Instance().GetPosition();
 }
 
 // 描画処理
@@ -355,6 +540,12 @@ void SceneGame::DrawDebugGUI()
 			ImGui::InputInt("Bomberkillcount", &killbomber);
 			ImGui::InputInt("Spiderkillcount", &killspider);
 			ImGui::InputInt("Slimekillcount", &killslime);
+			ImGui::InputInt("Dronekillcount", &killdrone);
+		}
+		if (ImGui::CollapsingHeader("RAUND", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::InputInt("raund", &raund);
+			ImGui::Checkbox("crystal",&Oncrystal);
 		}
 	}
 
@@ -412,206 +603,127 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 
 void SceneGame::EnemySet()
 {
-	DirectX::XMFLOAT3 start = { 0,0,0 };
-	DirectX::XMFLOAT3 end = { 0,0,0 };
-	HitResult hit;
-	EnemyManager& enemyManager = EnemyManager::Instance();
+
 	
+		EnemyManager& enemybomberManager = EnemyManager::Instance();
+		EnemyBomber* bomber = new EnemyBomber;
+		bomber->SetPosition(enemybomberposi);
+		bomber->SetTerritory(bomber->GetPosition(), 10.0f);
+		enemybomberManager.Register(bomber);
 	
-	if(heremap==1)
-	{
+
+	
+		EnemyManager& enemydroneManager = EnemyManager::Instance();
+		EnemyDrone* drone = new EnemyDrone;
+		drone->SetPosition(enemyspiderposi);
+		drone->SetTerritory(drone->GetPosition(), 10.0f);
+		enemydroneManager.Register(drone);
+	
+
+	
+		EnemyManager& enemyslimeManager = EnemyManager::Instance();
+		EnemySlime* slime = new EnemySlime;
+		slime->SetPosition(enemyslimeposi);
+		slime->SetTerritory(slime->GetPosition(), 10.0f);
+		enemyslimeManager.Register(slime);
+	
+
+	
+	/*	
+	* EnemyManager& enemyspiderManager = EnemyManager::Instance();
+		EnemySpider* spider = new EnemySpider;
+		spider->SetPosition(enemyspiderposi);
+		spider->SetTerritory(spider->GetPosition(), 10.0f);
+		enemyspiderManager.Register(spider);
+		*/
+	
+}
+void SceneGame::CrystalSet()
+{
+	Oncrystal = true;
+
+	ItemManager &itemmanger = ItemManager::Instance();
+	ItemCrystal* crystal = new ItemCrystal;
+	
+	crystal->SetPosition(CrystalPosition);
+	itemmanger.Register(crystal);
+
+}
+void SceneGame::RaundManage()
+{
+	
 		switch(raund)
 		{
 		case 0:
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemyDrone* drone = new EnemyDrone;
-				drone->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 5));
-				drone->SetTerritory(drone->GetPosition(), 10.0f);
-				enemyManager.Register(drone);
-			}
-			
-
-			/*for (int i = 0; i < 2; ++i)
-			{
-				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-				enemyManager.Register(bomber);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-				spider->SetTerritory(spider->GetPosition(), 10.0f);
-				enemyManager.Register(spider);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-				slime->SetTerritory(slime->GetPosition(), 10.0f);
-				enemyManager.Register(slime);
-			}*/
-			break;
+			EnemySet();
+			raund++;
 		case 1:
-			for (int i = 0; i < 1; ++i)
+			if(killcount>=2)
 			{
-				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * -10.0f, -28, 20));
-				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-				enemyManager.Register(bomber);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySpider* bomber = new EnemySpider;
-				bomber->SetPosition(DirectX::XMFLOAT3(i * 10.0f, -28, -20));
-				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-				enemyManager.Register(bomber);
-			}
-			break;
-		}
-	}
-	else if(heremap==2)
-	{
-		switch (raund)
-		{
-		case 0:
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*2.0f));
-				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-				enemyManager.Register(bomber);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-				spider->SetTerritory(spider->GetPosition(), 10.0f);
-				enemyManager.Register(spider);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
-				slime->SetTerritory(slime->GetPosition(), 10.0f);
-				enemyManager.Register(slime);
-			}
-			break;
-		case 1:
-			for (int i = 0; i < 2; ++i)
-			{
-				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*2.0f));
-				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-				enemyManager.Register(bomber);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*1.0f));
-				spider->SetTerritory(spider->GetPosition(), 10.0f);
-				enemyManager.Register(spider);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*3.0f));
-				slime->SetTerritory(slime->GetPosition(), 10.0f);
-				enemyManager.Register(slime);
+			EnemySet();
+			raund++;
 			}
 			break;
 		case 2:
-			for (int i = 0; i < 3; ++i)
+			if (killcount >= 4)
 			{
-				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(95.0f, 0, i*2.0f));
-				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-				enemyManager.Register(bomber);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(95.0f, 0, i*1.0f));
-				spider->SetTerritory(spider->GetPosition(), 10.0f);
-				enemyManager.Register(spider);
-			}
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(95.0f, 0, i*3.0f));
-				slime->SetTerritory(slime->GetPosition(), 10.0f);
-				enemyManager.Register(slime);
-			}
-			break;
-		}
-	}
-
-}
-
-void SceneGame::RaundManage()
-{
-	switch(raundcase)
-	{
-	case 0:
-		EnemySet();
-		raundcase++;
-	case 1:
-		
-		switch(Rcase)
-		{
-		case 0:
-			if (killcount>=5)
-			{
-				if (heremap == 1)
+				
+				if(heremap==1)
 				{
 					map1->OpenDoor();
-					EnemySet();
-					
 				}
-				if (heremap == 2)
+				if(heremap==2)
 				{
 					map2->OpenDoor1();
-					EnemySet();
-					
 				}
-				raund++;
-				Rcase++;
-			}
-			break;
-		case 1:
-			if(killcount>=10)
-			{
-			if(heremap==1)
-			{
-			//マップ２クリア
-
-			}
-			if(heremap==2)
-			{
-				map2->OpenDoor2();
 				EnemySet();
 				raund++;
 			}
-			Rcase++;
+		case 3:
+			if(killcount>=6)
+			{
+				EnemySet();
+				raund++;
+				
 			}
-			break;
-		case 2:
-			if(killcount==144)
+		case 4:
+			if(killcount>=8)
 			{
-			if (heremap == 2)
+				if (heremap == 1)
+				{
+					EnemySet();
+					//マップ1クリア
+					CrystalSet();
+					raund++;
+				}
+				if (heremap == 2&&playernowpos.x>=canopendoor2)
+				{
+					map2->OpenDoor2();
+					EnemySet();
+					raund++;
+				}
+				
+			}
+		case 5:
+			if(killcount>=10)
 			{
-				//マップ２クリア
+				if (heremap == 2)
+				{
+					EnemySet();
+					raund++;
+				}
 
 			}
+		case 6:
+			if(killcount>=14)
+			{
+				if (heremap == 2)
+				{
+					//マップ2クリア
+					CrystalSet();
+					raund++;
+				}
 			}
-			
-		}
 		
-	}
-
-	
-	
-
+		}
 }

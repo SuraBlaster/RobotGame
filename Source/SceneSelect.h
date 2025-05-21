@@ -6,11 +6,13 @@
 #include "ShieldGauge.h"
 #include "ShieldIcon.h"
 
-// ƒQ[ƒ€ƒV[ƒ“
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
 class SceneSelect : public Scene
 {
 public:
-	//—Bˆê‚ÌƒCƒ“ƒXƒ^ƒ“ƒXæ“¾
+	//å”¯ä¸€ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—
 	static SceneSelect& Instance()
 	{
 		static SceneSelect instance;
@@ -20,16 +22,16 @@ public:
 	SceneSelect() {}
 	~SceneSelect() override {}
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize()override;
 
-	// I—¹‰»
+	// çµ‚äº†åŒ–
 	void Finalize()override;
 
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update(float elapsedTime)override;
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Render()override;
 
 	int GetMap()  { return map; }
@@ -44,8 +46,18 @@ public:
 	Stage stage = Stage::Stage1;
 	
 private:
+	Sprite* sprite = nullptr;
+
+	//BGM
+	std::unique_ptr<AudioSource> SelectBGM;
+	std::unique_ptr<AudioSource> KuruKuruBGM;
 	Sprite* coreRoom = nullptr;
 	Sprite* corridor = nullptr;
 	float timer;
+	//é¸æŠã—ãŸã¨ãã«æ›²ã‚’æ­¢ã‚ã‚‹ç”¨
+	bool KuruKuru = false;
+
+	
+
 	bool hitFlag = true;
 };

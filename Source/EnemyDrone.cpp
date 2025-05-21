@@ -17,6 +17,8 @@ EnemyDrone::EnemyDrone()
 
     height = 1.0f;
 
+    dronedeadcount = 0;
+    ddd = 0;
     //úpújÉXÉeÅ[ÉWÇ÷ëJà⁄
     TransitionIdleState();
 }
@@ -401,7 +403,12 @@ void EnemyDrone::UpdateDeathState(float elapsedTime)
         Destroy();
     }
 }
-
+void EnemyDrone::Adddeadcount()
+{
+    ddd = EnemyDrone::Instance().GetDeadcount();
+    ddd++;
+    EnemyDrone::Instance().SetDeadcount(ddd);
+}
 
 void EnemyDrone::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
@@ -412,6 +419,7 @@ void EnemyDrone::Render(ID3D11DeviceContext* dc, Shader* shader)
 
 void EnemyDrone::OnDead()
 {
+    Adddeadcount();
     TransitionDeathState();
     deadFlag = true;
 }

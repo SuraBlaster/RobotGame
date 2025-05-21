@@ -7,8 +7,8 @@
 class ItemManager
 {
 public:
-    ItemManager() {};
-    ~ItemManager() {};
+    ItemManager() {}
+    ~ItemManager() {}
 
     static ItemManager& Instance()
     {

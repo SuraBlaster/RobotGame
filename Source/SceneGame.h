@@ -10,8 +10,15 @@
 #include "ClearUI.h"
 #include "GameOverUI.h"
 
+
+#include"Audio/Audio.h"
+#include"Audio/AudioSource.h"
+
+#include "FadeOut.h"
+
 #include "Map1.h"
 #include "Map2.h"
+
 
 
 // ゲームシーン
@@ -47,12 +54,21 @@ public:
 
 	//敵配置
 	void EnemySet();
-	
+
+	//敵位置
+	DirectX::XMFLOAT3 enemyslimeposi;
+	DirectX::XMFLOAT3 enemybomberposi;
+	DirectX::XMFLOAT3 enemyspiderposi;
+	//ゴールクリスタル設置
+	void CrystalSet();
+	//クリスタル位置
+	DirectX::XMFLOAT3 CrystalPosition;
 	//IMGUIの表示
 	void DrawDebugGUI();
 	//ラウンド管理（敵を一定数倒したら次のラウンドに移り、扉が開く（マップのアニメーションを再生））
 	void RaundManage();
 
+	bool Oncrystal;
 	int heremap;
 
 	int raund;
@@ -66,8 +82,10 @@ public:
 	int killspider;
 	int killbomber;
 	int killslime;
-	int Rcase;
-
+	int killdrone;
+	
+	DirectX::XMFLOAT3 playernowpos;
+	float canopendoor2 = 40;
 private:
 
 	void pauseUpdate();
@@ -102,6 +120,8 @@ private:
 	SpriteData backSD;
 
 	std::unique_ptr<UserInterface> UI = nullptr;
+	//BGM再生
+	std::unique_ptr<AudioSource> MainBGM;
 	std::unique_ptr<ClearUI>clearUI;
 	std::unique_ptr<GameOverUI>gameOverUI;
 
