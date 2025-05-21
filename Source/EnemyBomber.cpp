@@ -338,10 +338,13 @@ void EnemyBomber::TransitionDeathState()
 void EnemyBomber::UpdateDeathState(float elapsedTime)
 {
     float animationTime = model->GetCurrentAnimationSeconds();
-    if (animationTime > 0.57f)
+    if (animationTime > 0.57f && health > 0)
     {
         CollisionNodeVsPlayer("Bomb", ExplosionRadius);
         explosionEffect->Play(position, 0.5f);
+    }
+    else if (animationTime > 0.57f)
+    {
         Destroy();
     }
 
