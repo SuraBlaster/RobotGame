@@ -123,7 +123,7 @@ void Character::UpdateVelocity(float elapsedTime)
     float elapsedFrame = 60.0f * elapsedTime;
 
     //垂直速力更新処理
-    //UpdateVerticalVelocity(elapsedFrame);
+    UpdateVerticalVelocity(elapsedFrame);
 
     //水平走力更新処理
     UpdateHorizontalVelocity(elapsedFrame);
@@ -134,8 +134,8 @@ void Character::UpdateVelocity(float elapsedTime)
     //水平移動更新処理
     UpdateHorizontalMove(elapsedTime);
 
-    //if (StageMain::Instance().GetIsRotation())
-        //CollisionPlayerVsStage(elapsedTime);
+    if (StageMain::Instance().GetIsRotation())
+        CollisionPlayerVsStage(elapsedTime);
 }
 
 void Character::UpdateInvincibleTimer(float elapsedTime)
@@ -352,10 +352,10 @@ void Character::CollisionPlayerVsStage(float elapsedTime)
     DirectX::XMFLOAT3 start = {position.x,position.y + stepOffset,position.z};
     DirectX::XMFLOAT3 end[4];
 
-    end[0] = { position.x + mx,position.y,position.z };
-    end[1] = { position.x - mx,position.y,position.z };
-    end[2] = { position.x, position.y,position.z - mz };
-    end[3] = {position.x + mx,position.y,position.z + mz};
+    end[0] = { position.x + mx,position.y, position.z };
+    end[1] = { position.x - mx,position.y, position.z };
+    end[2] = { position.x, position.y, position.z - mz };
+    end[3] = {position.x, position.y, position.z + mz};
 
     //レイキャストによる壁判定
     HitResult hit;

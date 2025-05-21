@@ -4,6 +4,7 @@
 #include "Input/Mouse.h"
 #include "Input/Input.h"
 #include "Player.h"
+#include "Graphics/Graphics.h"
 
 static StageMain* instance = nullptr;
 
@@ -37,13 +38,15 @@ void StageMain::Update(float elapsedTime)
 {
     transform.updateMatrix();
     //if (selectedDirection != Down)
+
+    if (isRotationAnimation)
+        RotationStage(elapsedTime);
+
     Mouse& mouse = Input::Instance().GetMouse();
     if (mouse.GetWheel() > 0.0f)
     {
         StageMain::Instance().ChangeGravity();
     }
-
-    RotationStage(elapsedTime);
     //const DirectX::XMFLOAT4X4 transformIdentity = { 1,0,0,0 ,0,1,0,0 ,0,0,1,0 ,0,0,0,1 };
     model->UpdateTransform(transform.getMatrix());
 }
@@ -56,8 +59,29 @@ void StageMain::Render(ID3D11DeviceContext* dc, Shader* shader)
 
     //シェーダーにモデルを描画してもらう
     shader->Draw(dc, model);
-}
 
+
+    if (isAnten)
+    {
+        antenTimer++;
+        Graphics& graphics = Graphics::Instance();
+        ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
+        ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
+
+        alpha = antenTimer / 60;
+        if (alpha != 0.0f)
+        { 
+            alpha = 1.0f;
+            if (antenTimer >= 150.0f)
+            {
+                antenTimer = 0.0f;
+                isAnten = false;
+            }
+            
+            isRotationAnimation = true;
+        }
+    }
+}
 bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
     return Collision::IntersectRayVsModel(start, end, model, hit);
@@ -65,52 +89,64 @@ bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3&
 
 void StageMain::RotationStage(float elapsedTime)
 {
-    DirectX::XMVECTOR front, right;
-
-    front = DirectX::XMLoadFloat3(&transform.getFront());
-    right = DirectX::XMLoadFloat3(&transform.getRight());
-    DirectX::XMVECTOR Rotation = DirectX::XMLoadFloat4(&transform.rotation);
-    DirectX::XMFLOAT3 angle = transform.getAngle();
     constexpr float radian90 = DirectX::XMConvertToRadians(90);
-    constexpr float radian89 = DirectX::XMConvertToRadians(89);
-    const float rotationSpeed = 40.0f;
     DirectX::XMVECTOR q = {};
 
     switch (selectedDirection) {
     case YMinus:
     {
         q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 0);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
+
         break;
     }
     case YPuls:
     {
-        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 180, 0);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, radian90 * 2, 0);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
         break;
-
     }
     case XMinus:
     {
-        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, -90);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, -radian90);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
         break;
-
     }
     case XPuls:
     {
-        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 90);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, radian90);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
         break;
-
     }
     case ZMinus:
     {
-        q = DirectX::XMQuaternionRotationRollPitchYaw(-90, 0, 0);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(-radian90, 0, 0);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
         break;
-
     }
     case ZPuls:
     {
         q = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
+        if (Player::Instance().IsGround())
+            isRotationAnimation = false;
+        else
+            isRotationAnimation = true;
         break;
-
     }
     }
 
@@ -179,5 +215,6 @@ void StageMain::ChangeGravity()
         {
             selectedDirection = YPuls;
         }
+        isAnten = true;
     }
 }

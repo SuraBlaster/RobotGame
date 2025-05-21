@@ -25,8 +25,13 @@ public:
     void ChangeGravity();
 
     bool GetIsRotation() { return isRotationAnimation; }
-private:
 
+    bool GetIsAnten() { return isAnten; }
+
+    float GetAlpha() { return alpha; }
+    Transform transform;
+
+private:
     enum GravityDirection {
         YPuls,
         YMinus,
@@ -35,13 +40,17 @@ private:
         ZPuls,
         ZMinus,
     };
-
+    
     void RotationStage(float elapsedTime);
-    Transform transform;
     DirectX::XMFLOAT3 nowAngle = {};
+
 
 private:
     bool isRotationAnimation = false;
+    bool isAnten = false;
+    int antenTimer = 0;
+    float alpha;
+
     Model* model = nullptr;
 
 
