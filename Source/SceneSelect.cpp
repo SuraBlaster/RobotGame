@@ -73,6 +73,11 @@ void SceneSelect::Update(float elapsedTime)
 	// ƒ}ƒEƒX“ü—ÍŽæ“¾
 	Mouse& mouse = Input::Instance().GetMouse();
 
+	if (timer < 0.0f)
+	{
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+	}
+
 	if (StageManager::Instance().GetCursorFlag1())
 	{
 		if (timer <= 0.0f)
@@ -93,10 +98,7 @@ void SceneSelect::Update(float elapsedTime)
 		}
 	}
 
-	if (timer <= 0.0f)
-	{
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-	}
+	
 
 	if (timer > 0.0f)
 	{
