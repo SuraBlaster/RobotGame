@@ -423,16 +423,7 @@ void SceneGame::EnemySet()
 		switch(raund)
 		{
 		case 0:
-			for (int i = 0; i < 1; ++i)
-			{
-				EnemyDrone* drone = new EnemyDrone;
-				drone->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 5));
-				drone->SetTerritory(drone->GetPosition(), 10.0f);
-				enemyManager.Register(drone);
-			}
-			
-
-			/*for (int i = 0; i < 2; ++i)
+			for (int i = 0; i < 2; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
 				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
@@ -452,7 +443,7 @@ void SceneGame::EnemySet()
 				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
-			}*/
+			}
 			break;
 		case 1:
 			for (int i = 0; i < 1; ++i)
@@ -480,21 +471,21 @@ void SceneGame::EnemySet()
 			for (int i = 0; i < 1; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
-				bomber->SetPosition(DirectX::XMFLOAT3(0.0f, 0, i*2.0f));
+				bomber->SetPosition(DirectX::XMFLOAT3(0.0f, -5, i * 2.0f));
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
 			}
 			for (int i = 0; i < 1; ++i)
 			{
 				EnemySpider* spider = new EnemySpider;
-				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				spider->SetPosition(DirectX::XMFLOAT3(i * 2.0f, -5, 5));
 				spider->SetTerritory(spider->GetPosition(), 10.0f);
 				enemyManager.Register(spider);
 			}
 			for (int i = 0; i < 1; ++i)
 			{
 				EnemySlime* slime = new EnemySlime;
-				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
+				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, -5, 5));
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
 			}
@@ -557,6 +548,7 @@ void SceneGame::RaundManage()
 	case 0:
 		EnemySet();
 		raundcase++;
+		break;
 	case 1:
 		
 		switch(Rcase)
@@ -606,9 +598,10 @@ void SceneGame::RaundManage()
 
 			}
 			}
+			break;
 			
 		}
-		
+		break;
 	}
 
 	
