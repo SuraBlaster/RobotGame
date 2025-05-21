@@ -550,16 +550,6 @@ void SceneGame::EnemySet()
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
 		enemyslimeManager.Register(slime);
 	
-
-	
-	/*	
-	* EnemyManager& enemyspiderManager = EnemyManager::Instance();
-		EnemySpider* spider = new EnemySpider;
-		spider->SetPosition(enemyspiderposi);
-		spider->SetTerritory(spider->GetPosition(), 10.0f);
-		enemyspiderManager.Register(spider);
-		*/
-	
 }
 void SceneGame::CrystalSet()
 {

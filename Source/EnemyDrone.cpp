@@ -488,6 +488,8 @@ void EnemyDrone::CollisionProjectilesVsPlayer()
         ProjectileEnemy* projectile = projectileManager.GetProjectileEnemy(i);
 
         Player& player = Player::Instance();
+
+        int playerTimer = player.GetTimer();
         //Õ“Ëˆ—
         DirectX::XMFLOAT3 outPosition;
         if (Collision::IntersectSphereVsCylinder(
@@ -499,38 +501,54 @@ void EnemyDrone::CollisionProjectilesVsPlayer()
             outPosition
         ))
         {
-            if (player.ApplyDamage(1))
+            if (playerTimer > 0 && delay <= 0.0f)
             {
+                if (delay <= 0)
                 {
-                    DirectX::XMFLOAT3 impulse{};
-
-                    const float power = 10.0f;
-                    const DirectX::XMFLOAT3& e = player.GetPosition();
-                    const DirectX::XMFLOAT3& p = projectile->GetPosition();
-                    float vx = e.x - p.x;
-                    float vz = e.z - p.z;
-                    float lengthXZ = sqrtf(vx * vx + vz * vz);
-                    vx /= lengthXZ;
-                    vz /= lengthXZ;
-
-                    impulse.x = vx * power;
-                    impulse.y = power;
-                    impulse.z = vz * power;
-
-                    //player.AddImpulse(impulse);
+                    player.SetHit(true);
                 }
 
+                delay = 0.1f;
 
-                projectile->Destroy();
+                playerTimer -= 6.0f;
+                player.SetTimer(playerTimer);
+
+
             }
-
+            else if(delay <= 0.0f)
             {
-                DirectX::XMFLOAT3 e = player.GetPosition();
-                e.y += player.GetHeight() * 0.5f;
-            }
-        }
+                if (player.ApplyDamage(1))
+                {
+                    {
+                        DirectX::XMFLOAT3 impulse{};
 
-        //player.SetHit(false);
+                        const float power = 10.0f;
+                        const DirectX::XMFLOAT3& e = player.GetPosition();
+                        const DirectX::XMFLOAT3& p = projectile->GetPosition();
+                        float vx = e.x - p.x;
+                        float vz = e.z - p.z;
+                        float lengthXZ = sqrtf(vx * vx + vz * vz);
+                        vx /= lengthXZ;
+                        vz /= lengthXZ;
+
+                        impulse.x = vx * power;
+                        impulse.y = power;
+                        impulse.z = vz * power;
+
+                        //player.AddImpulse(impulse);
+                    }
+
+
+                    projectile->Destroy();
+                }
+
+                {
+                    DirectX::XMFLOAT3 e = player.GetPosition();
+                    e.y += player.GetHeight() * 0.5f;
+                }
+            }
+            
+        }
     }
 }
 

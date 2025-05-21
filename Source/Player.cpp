@@ -327,7 +327,7 @@ void Player::TransitionIdleState()
 
 void Player::UpdateIdleState(float elapsedTime)
 {
-    GamePad& gamepad = Input::Instance().GetGamePad();
+    Mouse& mouse = Input::Instance().GetMouse();
 
     if (InputMove(elapsedTime))
     {
@@ -351,7 +351,7 @@ void Player::UpdateIdleState(float elapsedTime)
 
     if (ShieldCount > 0 && ShieldTimer <= 0)
     {
-        if (gamepad.GetButtonDown() & GamePad::BTN_1)
+        if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
         {
             ChieldSE->Play(false);
             TransitionBarrierState();
@@ -397,9 +397,6 @@ void Player::UpdateMoveState(float elapsedTime)
         TransitionJumpState();
     }
 
-    //�e�ۓ��͏���
-    //InputProjectile();
-
     //攻撃入力処理
     if (InputAttack())
     {
@@ -425,9 +422,6 @@ void Player::UpdateJumpState(float elapsedTime)
     {
         TransitionIdleState();
     }
-
-    //�e�ۓ��͏���
-    //InputProjectile();
 }
 
 void Player::TransitionAttackState()
@@ -579,7 +573,6 @@ void Player::TransitionDamageState()
 {
     state = State::Damage;
 
-    //�_���[�W�A�j���[�V�����Đ�
     switch (weapon)
     {
     case WeaponType::GreatSword:
@@ -776,13 +769,13 @@ void Player::UpdateBarrier(float elapsedTime)
 void Player::ChangeWeapon()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_2)
+    if (gamePad.GetButtonDown() & GamePad::BTN_Q)
     {
         ChangeSE->Play(false);
         weapon = WeaponType::GreatSword;
         TransitionIdleState();
     }
-    else if (gamePad.GetButtonDown() & GamePad::BTN_3)
+    else if (gamePad.GetButtonDown() & GamePad::BTN_E)
     {
         ChangeSE->Play(false);
         weapon = WeaponType::Dagger;
