@@ -28,6 +28,10 @@ public:
 	static const GamePadButton BTN_2				= (1 << 19);
 	static const GamePadButton BTN_3				= (1 << 20);
 	static const GamePadButton BTN_4				= (1 << 21);
+	static const GamePadButton BTN_Q				= (1 << 22);
+	static const GamePadButton BTN_E				= (1 << 23);
+
+
 
 
 public:
