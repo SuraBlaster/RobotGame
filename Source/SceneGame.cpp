@@ -769,7 +769,7 @@ void SceneGame::EnemySet()
 	}
 	for (int i = 0; i < 1; ++i)
 	{
-		EnemySpider* spider = new EnemySpider;
+		EnemyDrone* spider = new EnemyDrone;
 		spider->SetPosition(enemyspiderposi);
 		spider->SetTerritory(spider->GetPosition(), 10.0f);
 		enemyManager.Register(spider);
