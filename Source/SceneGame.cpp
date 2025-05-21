@@ -700,7 +700,7 @@ void SceneGame::RenderEnemyGauge(
 		DirectX::XMFLOAT3 end = { worldPosition };
 
 		HitResult hit;
-		if (StageManager::Instance().RayCast(start, end, hit))
+		/*if (StageManager::Instance().RayCast(start, end, hit))
 		{
 			EnemySlime* enemy = new EnemySlime;
 			enemy->SetPosition(hit.position);
@@ -711,7 +711,7 @@ void SceneGame::RenderEnemyGauge(
 			EnemySpider* enemyS = new EnemySpider;
 			enemyS->SetPosition(hit.position);
 			EnemyManager::Instance().Register(enemyS);
-		}
+		}*/
 		
 
 
