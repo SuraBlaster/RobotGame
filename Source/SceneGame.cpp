@@ -55,7 +55,7 @@ void SceneGame::Initialize()
 		CrystalPosition = { 95, -10, 0 };
 	}
 	Oncrystal = false;
-
+	playernowpos = { 0,0,0 };
 
 	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
 	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
@@ -323,9 +323,9 @@ void SceneGame::Update(float elapsedTime)
 		}
 		if (raund==1)
 		{
-			enemyslimeposi = { 0,0,0 };
-			enemybomberposi = { 0,0,0 };
-			enemyspiderposi = { 0,0,0 };
+			enemyslimeposi = { -2,0,-2 };
+			enemybomberposi = { -4,0,-4 };
+			enemyspiderposi = { 6,0,6 };
 		}
 		if (raund==2)
 		{
@@ -357,15 +357,15 @@ void SceneGame::Update(float elapsedTime)
 		}
 		if (raund == 1)
 		{
-			enemyslimeposi = { 0,-9,2 };
-			enemybomberposi = { 0,-9,4 };
-			enemyspiderposi = { 0,-9,6 };
+			enemyslimeposi = { 15,-9,2 };
+			enemybomberposi = { 15,-9,4 };
+			enemyspiderposi = { 15,-9,6 };
 		}
 		if (raund == 2)
 		{
-			enemyslimeposi = { 48,-9,2 };
-			enemybomberposi = { 48,-9,4 };
-			enemyspiderposi = { 48,-9,6 };
+			enemyslimeposi = { 30,-9,2 };
+			enemybomberposi = { 30,-9,4 };
+			enemyspiderposi = { 30,-9,6 };
 		}
 		if (raund == 3)
 		{
@@ -375,15 +375,15 @@ void SceneGame::Update(float elapsedTime)
 		}
 		if (raund == 4)
 		{
-			enemyslimeposi = { 48,-9,2 };
-			enemybomberposi = { 48,-9,4 };
-			enemyspiderposi = { 48,-9,6 };
+			enemyslimeposi = { 65,-9,2 };
+			enemybomberposi = { 65,-9,4 };
+			enemyspiderposi = { 65,-9,6 };
 		}
 		if (raund == 5)
 		{
-			enemyslimeposi = { 90,-9,2 };
-			enemybomberposi = { 90,-9,4 };
-			enemyspiderposi = { 90,-9,6 };
+			enemyslimeposi = { 80,-9,2 };
+			enemybomberposi = { 80,-9,4 };
+			enemyspiderposi = { 80,-9,6 };
 		}
 		if (raund == 6)
 		{
@@ -399,9 +399,15 @@ void SceneGame::Update(float elapsedTime)
 	killspider = EnemySpider::Instance().GetDeadcount();
 	killbomber = EnemyBomber::Instance().GetDeadcount();
 	killslime  =  EnemySlime::Instance().GetDeadcount();
-	killcount = killbomber + killspider+killslime;
+	killdrone  =  EnemyDrone::Instance().GetDeadcount();
+	killcount = killbomber + killspider+killslime+killdrone;
 	
+	EnemyBomber::Instance().SetTerritory(enemybomberposi,0);
+	EnemySpider::Instance().SetTerritory(enemyspiderposi,0);
+	EnemySlime::Instance().SetTerritory(enemyslimeposi,0);
+	EnemyDrone::Instance().SetTerritory(enemyspiderposi,0);
 
+	playernowpos = Player::Instance().GetPosition();
 }
 
 // 描画処理
@@ -505,6 +511,7 @@ void SceneGame::DrawDebugGUI()
 			ImGui::InputInt("Bomberkillcount", &killbomber);
 			ImGui::InputInt("Spiderkillcount", &killspider);
 			ImGui::InputInt("Slimekillcount", &killslime);
+			ImGui::InputInt("Dronekillcount", &killdrone);
 		}
 		if (ImGui::CollapsingHeader("RAUND", ImGuiTreeNodeFlags_DefaultOpen))
 		{
@@ -648,7 +655,7 @@ void SceneGame::RenderEnemyGauge(
 	//if(gamePad.GetButtonUp()& GamePad::BTN_B)
 	//ここの敵の増殖
 	//if (enemytimer>=3.99f)
-	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
+	if (gamePad.GetButtonDown() & GamePad::BTN_Y)
 	{
 		DirectX::XMFLOAT3 screenPosition;
 		screenPosition.x = static_cast<float>(mouse.GetPositionX());
@@ -705,6 +712,9 @@ void SceneGame::RenderEnemyGauge(
 			enemyS->SetPosition(hit.position);
 			EnemyManager::Instance().Register(enemyS);
 		}
+		
+
+
 	}
 }
 
@@ -759,29 +769,39 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 void SceneGame::EnemySet()
 {
 
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < 1; ++i)
-	{
+	
+		EnemyManager& enemybomberManager = EnemyManager::Instance();
 		EnemyBomber* bomber = new EnemyBomber;
 		bomber->SetPosition(enemybomberposi);
 		bomber->SetTerritory(bomber->GetPosition(), 10.0f);
-		enemyManager.Register(bomber);
-	}
-	for (int i = 0; i < 1; ++i)
-	{
-		EnemyDrone* spider = new EnemyDrone;
-		spider->SetPosition(enemyspiderposi);
-		spider->SetTerritory(spider->GetPosition(), 10.0f);
-		enemyManager.Register(spider);
-	}
-	for (int i = 0; i < 1; ++i)
-	{
+		enemybomberManager.Register(bomber);
+	
+
+	
+		EnemyManager& enemydroneManager = EnemyManager::Instance();
+		EnemyDrone* drone = new EnemyDrone;
+		drone->SetPosition(enemyspiderposi);
+		drone->SetTerritory(drone->GetPosition(), 10.0f);
+		enemydroneManager.Register(drone);
+	
+
+	
+		EnemyManager& enemyslimeManager = EnemyManager::Instance();
 		EnemySlime* slime = new EnemySlime;
 		slime->SetPosition(enemyslimeposi);
 		slime->SetTerritory(slime->GetPosition(), 10.0f);
-		enemyManager.Register(slime);
-	}
+		enemyslimeManager.Register(slime);
+	
 
+	
+	/*	
+	* EnemyManager& enemyspiderManager = EnemyManager::Instance();
+		EnemySpider* spider = new EnemySpider;
+		spider->SetPosition(enemyspiderposi);
+		spider->SetTerritory(spider->GetPosition(), 10.0f);
+		enemyspiderManager.Register(spider);
+		*/
+	
 }
 void SceneGame::CrystalSet()
 {
@@ -803,13 +823,13 @@ void SceneGame::RaundManage()
 			EnemySet();
 			raund++;
 		case 1:
-			if(killcount==3)
+			if(killcount>=2)
 			{
 			EnemySet();
 			raund++;
 			}
 		case 2:
-			if (killcount == 6)
+			if (killcount >= 4)
 			{
 				
 				if(heremap==1)
@@ -824,14 +844,14 @@ void SceneGame::RaundManage()
 				raund++;
 			}
 		case 3:
-			if(killcount==9)
+			if(killcount>=6)
 			{
 				EnemySet();
 				raund++;
 				
 			}
 		case 4:
-			if(killcount==12)
+			if(killcount>=8)
 			{
 				if (heremap == 1)
 				{
@@ -840,7 +860,7 @@ void SceneGame::RaundManage()
 					CrystalSet();
 					raund++;
 				}
-				if (heremap == 2)
+				if (heremap == 2&&playernowpos.x>=canopendoor2)
 				{
 					map2->OpenDoor2();
 					EnemySet();
@@ -849,7 +869,7 @@ void SceneGame::RaundManage()
 				
 			}
 		case 5:
-			if(killcount==15)
+			if(killcount>=10)
 			{
 				if (heremap == 2)
 				{
@@ -859,7 +879,7 @@ void SceneGame::RaundManage()
 
 			}
 		case 6:
-			if(killcount==18)
+			if(killcount>=14)
 			{
 				if (heremap == 2)
 				{

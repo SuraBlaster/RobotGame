@@ -258,7 +258,7 @@ void EnemySpider::UpdateWanderState(float elapsedTime)
     if (distSq < radius * radius)
     {
         //次の目標地点設定
-        //SetRandomTargetPosition();
+        SetRandomTargetPosition();
 
         //待機ステート繊維
         TransitionIdleState();
@@ -274,7 +274,7 @@ void EnemySpider::UpdateWanderState(float elapsedTime)
     }
 
     //弾丸発射
-    InputProjectile();
+    //InputProjectile();
 }
 
 void EnemySpider::TransitionIdleState()
@@ -288,7 +288,7 @@ void EnemySpider::TransitionIdleState()
     model->PlayAnimation(Anim_IdleNormal, true);
 
     //弾丸発射
-    InputProjectile();
+    //InputProjectile();
 }
 
 void EnemySpider::UpdateIdleState(float elapsedTime)
@@ -321,7 +321,7 @@ void EnemySpider::TransitionPursuitState()
     //歩きアニメーション再生
     model->PlayAnimation(Anim_RunFWD, true);
     //弾丸発射
-    InputProjectile();
+    //InputProjectile();
 }
 
 void EnemySpider::UpdatePursuitState(float elapsedTime)

@@ -80,8 +80,10 @@ public:
 	int killspider;
 	int killbomber;
 	int killslime;
+	int killdrone;
 	
-
+	DirectX::XMFLOAT3 playernowpos;
+	float canopendoor2 = 40;
 private:
 	void RenderEnemyGauge(
 		ID3D11DeviceContext* dc,
