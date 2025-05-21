@@ -28,11 +28,12 @@ public:
 private:
 
     enum GravityDirection {
-        Down,
-        West,
-        East,
-        North,
-        South
+        YPuls,
+        YMinus,
+        XPuls,
+        XMinus,
+        ZPuls,
+        ZMinus,
     };
 
     void RotationStage(float elapsedTime);
@@ -44,8 +45,7 @@ private:
     bool isRotationAnimation = false;
     Model* model = nullptr;
 
-    float rotateDuration = 3.0f;
 
-    GravityDirection selectedDirection = GravityDirection::Down;
+    GravityDirection selectedDirection = GravityDirection::YMinus;
     const float PIDIV180 = 0.017452f;    // PAI/180
 };

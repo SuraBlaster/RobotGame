@@ -86,6 +86,9 @@ private:
 
     //水平移動更新処理
     void UpdateHorizontalMove(float elapsedTime);
+
+    //ステージ回転中のレイキャスト
+    void CollisionPlayerVsStage(float elapsedTime);
 protected:
     DirectX::XMFLOAT3 position = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle    = { 0, 0, 0 };
