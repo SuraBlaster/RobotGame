@@ -128,9 +128,9 @@ void SceneGame::Initialize()
 				0, 0, 0, 0.6f
 		};
 
-		toTitleSpr = std::make_unique<Sprite>("Data/Sprite/GoTitle.png");
+		toTitleSpr = std::make_unique<Sprite>("Data/Sprite/ReturnTitle.png");
 		toTitleSD = {
-			800,500, 250, 50,
+			670,500, 400, 220,
 			0, 0,
 			static_cast<float>(toTitleSpr->GetTextureWidth()),
 			static_cast<float>(toTitleSpr->GetTextureHeight()),
@@ -138,15 +138,77 @@ void SceneGame::Initialize()
 			1, 1, 1, 1.0f
 		};
 
-		backSpr = std::make_unique<Sprite>("Data/Sprite/Close.png");
+		backSpr = std::make_unique<Sprite>("Data/Sprite/Back.png");
 		backSD = {
-			300, 500, 150, 50,
+			170, 500, 400, 220,
 			0, 0,
 			static_cast<float>(backSpr->GetTextureWidth()),
 			static_cast<float>(backSpr->GetTextureHeight()),
 			0,
 			1, 1, 1, 1.0f
 		};
+
+		moveSpr = std::make_unique<Sprite>("Data/Sprite/Move.png");
+		moveSD = {
+			500, 100, 350, 325,
+			0, 0,
+			static_cast<float>(moveSpr->GetTextureWidth()),
+			static_cast<float>(moveSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		changeSpr = std::make_unique<Sprite>("Data/Sprite/Change.png");
+		changeSD = {
+			900, 0, 350, 263,
+			0, 0,
+			static_cast<float>(changeSpr->GetTextureWidth()),
+			static_cast<float>(changeSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		shieldSpr = std::make_unique<Sprite>("Data/Sprite/Chield.png");
+		shieldSD = {
+			150, 100, 400, 180,
+			0, 0,
+			static_cast<float>(shieldSpr->GetTextureWidth()),
+			static_cast<float>(shieldSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		hpSpr = std::make_unique<Sprite>("Data/Sprite/HP.png");
+		hpSD = {
+			550, -30, 350, 175,
+			0, 0,
+			static_cast<float>(hpSpr->GetTextureWidth()),
+			static_cast<float>(hpSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		limitSpr = std::make_unique<Sprite>("Data/Sprite/Limit.png");
+		limitSD = {
+			0, 300, 350, 100,
+			0, 0,
+			static_cast<float>(limitSpr->GetTextureWidth()),
+			static_cast<float>(limitSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+		mouseMoveSpr = std::make_unique<Sprite>("Data/Sprite/MouseMove.png");
+		mouseMoveSD = {
+			900, 250, 350, 260,
+			0, 0,
+			static_cast<float>(mouseMoveSpr->GetTextureWidth()),
+			static_cast<float>(mouseMoveSpr->GetTextureHeight()),
+			0,
+			1, 1, 1, 1.0f
+		};
+
+
 	}
 	raund = 0;
 	raundcase = 0;
@@ -521,6 +583,13 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 
 		toTitleSpr->Render(dc, toTitleSD);
 		backSpr->Render(dc, backSD);
+
+		moveSpr->Render(dc, moveSD);
+		changeSpr->Render(dc, changeSD);
+		shieldSpr->Render(dc, shieldSD);
+		hpSpr->Render(dc, hpSD);
+		limitSpr->Render(dc, limitSD);
+		mouseMoveSpr->Render(dc, mouseMoveSD);
 	}
 }
 
