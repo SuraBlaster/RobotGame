@@ -9,7 +9,7 @@ Map1::Map1()
 
     //model = new Model("Data/Model/ExampleStage/tile2.mdl");
 
-    position = {0,9,0};
+    position = {0,0,0};
     scale.x = scale.y = scale.z = 0.01f;
 }
 
