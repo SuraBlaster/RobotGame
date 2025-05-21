@@ -1,4 +1,5 @@
 #include "Map1.h"
+#include <Input/Input.h>
 
 //コンストラクタ
 Map1::Map1()
@@ -28,8 +29,6 @@ void Map1::Update(float elapsedTime)
     map1->UpdateAnimation(elapsedTime);
 
     map1->UpdateTransform(transform);
-
-    
 }
 
 void Map1::Render(ID3D11DeviceContext* dc, Shader* shader)
@@ -40,11 +39,11 @@ void Map1::Render(ID3D11DeviceContext* dc, Shader* shader)
 
 bool Map1::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-    return Collision::IntersectRayVsModel(start, end, map1, hit);
+	return Collision::IntersectRayVsModel(start, end, map1, hit);
 }
 
 void Map1::OpenDoor()
 {
-    map1->PlayAnimation(OPENDOOR,false);
+	map1->PlayAnimation(OPENDOOR, false);
 
 }

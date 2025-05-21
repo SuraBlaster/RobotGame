@@ -28,6 +28,7 @@ EnemyDrone::~EnemyDrone()
 
 void EnemyDrone::Update(float elapsedTime)
 {
+    Player& player = Player::Instance();
     //ステートごとの更新処理
     switch (state)
     {
@@ -74,6 +75,8 @@ void EnemyDrone::Update(float elapsedTime)
 
     //モデル行列を更新
     model->UpdateTransform(transform);
+
+    UpdatePlayerPosition(player.GetPosition());
 
     delay -= elapsedTime;
 }
@@ -273,6 +276,8 @@ void EnemyDrone::TransitionAttackState()
 
     //攻撃アニメーション再生
     model->PlayAnimation(Anim_Attack, false);
+
+    projectilecount = 0;
 }
 
 void EnemyDrone::UpdateAttackState(float elapsedTime)
@@ -280,7 +285,11 @@ void EnemyDrone::UpdateAttackState(float elapsedTime)
     float animationTime = model->GetCurrentAnimationSeconds();
     if (animationTime >= 0.1f && animationTime < 0.35f)
     {
-        LaunchProjectile();
+        if (projectilecount <= 1)
+        {
+            LaunchProjectile();
+        }
+        
     }
 
     //攻撃アニメーションが終わったら戦闘待機ステートへ遷移
@@ -294,14 +303,27 @@ void EnemyDrone::LaunchProjectile()
 {
     Player& player = Player::Instance();
 
-    DirectX::XMStoreFloat3(&dir,DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&player.GetPreviousPlayerPos()), DirectX::XMLoadFloat3(&position))));
+    // ★ 3フレーム前の位置に向かうようになる
+    DirectX::XMStoreFloat3(&dir,
+        DirectX::XMVector3Normalize(
+            DirectX::XMVectorSubtract(
+                DirectX::XMLoadFloat3(&GetPreviousPlayerPos(3)),
+                DirectX::XMLoadFloat3(&position)
+            )
+        )
+    );
 
     pos.x = position.x;
     pos.y = position.y + Enemy::GetHeight() / 2;
     pos.z = position.z;
 
     ProjectileEnemyToPlayer* projectileEnemyToPlayer = new ProjectileEnemyToPlayer(&projectileManager);
-    projectileEnemyToPlayer->Launch(dir, pos);
+    if (projectilecount <=1)
+    {
+        projectileEnemyToPlayer->Launch(dir, pos);
+        projectilecount++;
+    }
+    
 }
 
 void EnemyDrone::TransitionIdleBattleState()
@@ -309,7 +331,7 @@ void EnemyDrone::TransitionIdleBattleState()
     state = State::IdleBattle;
 
     //数秒間待機するタイマーをランダム設定
-    stateTimer = Mathf::RandomRange(2.0f, 3.0f);
+    stateTimer = Mathf::RandomRange(5.0f, 6.0f);
 
     //戦闘待機アニメーション再生
     model->PlayAnimation(Anim_Attack, true);
@@ -401,6 +423,8 @@ void EnemyDrone::OnDamaged()
 
 void EnemyDrone::UpdateVerticalVelocity(float elapsedFrame)
 {
+    Player& player = Player::Instance();
+    float playery = player.GetPosition().y;
     //重力処理
     if (deadFlag)
     {
@@ -408,16 +432,43 @@ void EnemyDrone::UpdateVerticalVelocity(float elapsedFrame)
     }
     else
     {
-        if (position.y < 3.0f)
+        if (playery + 3.0f > position.y)
         {
             velocity.y -= gravity * (elapsedFrame / 30);
         }
+        else if(player.GetPosition().y - position.y > 2.0f)
+        {
+            //velocity.y += gravity;
+        }
         else
         {
-            velocity.y = 0;
+            velocity.y = 0.0f;
         }
     }
     
+}
+
+void EnemyDrone::UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos)
+{
+    positionHistory.push_back(newPos);
+    if (positionHistory.size() > kHistoryLimit) {
+        positionHistory.pop_front();
+    }
+}
+
+DirectX::XMFLOAT3 EnemyDrone::GetPreviousPlayerPos(int offset)
+{
+    if (positionHistory.size() > offset) {
+        return positionHistory[positionHistory.size() - 1 - offset];
+    }
+    else if (!positionHistory.empty()) {
+        // 履歴が足りない場合は最新位置を返す
+        return positionHistory.back();
+    }
+    else {
+        // 何も記録されていない場合のデフォルト
+        return { 0.0f, 0.0f, 0.0f };
+    }
 }
 
 void EnemyDrone::CollisionProjectilesVsPlayer()

@@ -38,7 +38,9 @@ void SceneSelect::Initialize()
 		1000.0f
 	);
 
-	StageManager::Instance().SetButtonFlag(false);
+	StageManager::Instance().SetCursorFlag1(false);
+	StageManager::Instance().SetCursorFlag2(false);
+
 }
 
 void SceneSelect::Finalize()
@@ -60,55 +62,33 @@ void SceneSelect::Finalize()
 
 void SceneSelect::Update(float elapsedTime)
 {
-    GamePad& gamepad = Input::Instance().GetGamePad();
+	// マウス入力取得
+	Mouse& mouse = Input::Instance().GetMouse();
 
-	//何かボタンを押したら遷移
-	const GamePadButton anyButton =
-		GamePad::BTN_A
-		| GamePad::BTN_B
-		| GamePad::BTN_X
-		| GamePad::BTN_Y
-		;
-
-	switch (stage)
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && StageManager::Instance().GetCursorFlag1())
 	{
-	case Stage::Stage1:
-		if (gamepad.GetButtonDown() & GamePad::BTN_RIGHT)
+		if (timer <= 0.0f)
 		{
-			StageManager::Instance().SetStage(Stage::Stage2);
-			stage = Stage::Stage2;
-		}
-		if (gamepad.GetButtonDown() & anyButton)
-		{
+			timer = 2.0f;
+			StageManager::Instance().SetCursorFlag1(true);
 			SceneSelect::Instance().SetMap(1);
-			timer = 2.0f;
-			StageManager::Instance().SetButtonFlag(true);
 		}
-		if (timer < 0.0f)
-		{
-			
-			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+	}
 
-		}
-		break;
-	case Stage::Stage2:
-		if (gamepad.GetButtonDown() & GamePad::BTN_LEFT)
+	if (mouse.GetButtonDown() & Mouse::BTN_LEFT && StageManager::Instance().GetCursorFlag2())
+	{
+		if (timer <= 0.0f)
 		{
-			StageManager::Instance().SetStage(Stage::Stage1);
-			stage = Stage::Stage1;
-		}
-		if (gamepad.GetButtonDown() & anyButton)
-		{
-			SceneSelect::Instance().SetMap(2);
 			timer = 2.0f;
-			StageManager::Instance().SetButtonFlag(true);
+			StageManager::Instance().SetCursorFlag2(true);
+			SceneSelect::Instance().SetMap(2);
 		}
-		if (timer < 0.0f)
-		{
-			
-			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-		}
-		break;
+	}
+
+	
+	if (timer < 0.0f)
+	{
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
 	}
 	
 	if (timer > 0.0f)
@@ -185,9 +165,10 @@ void SceneSelect::Render()
 
 	}
 
-	// 2DデバッグGUI描画
+	// 当たり判定
 	{
 		
 	}
 
 }
+

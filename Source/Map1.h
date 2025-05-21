@@ -26,6 +26,8 @@ private:
 
     Model* map1 = nullptr;
 
+    bool HitFlag;
+
     enum Animation
     {
         OPENDOOR

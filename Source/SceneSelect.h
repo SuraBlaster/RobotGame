@@ -31,8 +31,7 @@ public:
 
 	// •`‰æˆ—
 	void Render()override;
-	
-	
+
 	int GetMap()  { return map; }
 	void SetMap(int map) { this->map = map; }
 	int map;
@@ -48,5 +47,5 @@ private:
 	Sprite* coreRoom = nullptr;
 	Sprite* corridor = nullptr;
 	float timer;
-	
+	bool hitFlag = true;
 };

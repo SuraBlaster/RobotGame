@@ -69,11 +69,6 @@ public:
 	int Rcase;
 
 private:
-	void RenderEnemyGauge(
-		ID3D11DeviceContext* dc,
-		const DirectX::XMFLOAT4X4& view,
-		const DirectX::XMFLOAT4X4& projection
-	);
 
 	void pauseUpdate();
 	void pauseRender(ID3D11DeviceContext* dc);

@@ -3,6 +3,7 @@
 #include "Graphics/Model.h"
 #include "Enemy.h"
 #include "ProjectileManager.h"
+#include <deque>
 
 //ドローン
 class EnemyDrone : public Enemy
@@ -87,6 +88,10 @@ private:
     void UpdateDeathState(float elapsedTime);
 
     void UpdateVerticalVelocity(float elapsedFrame);
+
+    void UpdatePlayerPosition(const DirectX::XMFLOAT3& newPos);
+
+    DirectX::XMFLOAT3 GetPreviousPlayerPos(int offset);
 private:
     //ステート
     enum class State
@@ -132,5 +137,8 @@ private:
     float attackRange = 5.0f;
     float syuziRange = 1.5f;
     float delay = 0.0f;
+    std::deque<DirectX::XMFLOAT3> positionHistory;
+    static constexpr int kHistoryLimit = 10;
+    int projectilecount;
 };
 

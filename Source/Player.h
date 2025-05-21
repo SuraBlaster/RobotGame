@@ -192,8 +192,6 @@ public:
 
     void SetHiddenFlag(bool hiddenFlag) { this->HiddenFlag = hiddenFlag; }
 
-    DirectX::XMFLOAT3 GetPreviousPlayerPos() const { return previousPlayerPos; }
-
     void SetPreviousPlayerPos(DirectX::XMFLOAT3 PreviousPlayerPos) { previousPlayerPos = PreviousPlayerPos; }
 
     DirectX::XMFLOAT3 GetCurrentPlayerPos() const { return currentPlayerPos; }

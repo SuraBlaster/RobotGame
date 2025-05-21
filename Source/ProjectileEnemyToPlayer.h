@@ -21,7 +21,7 @@ public:
 
 private:
     Model* model = nullptr;
-    float speed = 10.0f;
+    float speed = 5.0f;
 
     float lifeTimer = 10.0f;
     float stopTimer = 1.0f;

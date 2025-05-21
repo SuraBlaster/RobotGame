@@ -42,9 +42,13 @@ public:
 
     void SetStage(SceneSelect::Stage stage) { this->stage = stage; }
 
-    bool GetButtonFlag() { return ButtonFlag; }
+    bool GetCursorFlag1() { return CursorFlag1; }
 
-    void SetButtonFlag(bool buttonFlag) { ButtonFlag = buttonFlag; }
+    void SetCursorFlag1(bool cursorFlag) { CursorFlag1 = cursorFlag; }
+
+    bool GetCursorFlag2() { return CursorFlag2; }
+
+    void SetCursorFlag2(bool cursorFlag) { CursorFlag2 = cursorFlag; }
 
 
 private:
@@ -54,6 +58,8 @@ private:
 
     SceneSelect::Stage stage;
 
-    bool ButtonFlag;
+    bool CursorFlag1;
+
+    bool CursorFlag2;
 
 };

@@ -20,10 +20,13 @@ public:
     //レイキャスト
     bool RayCast(const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end, HitResult& hit)override;
+
+    void GetMouseToStage(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& view,
+        const DirectX::XMFLOAT4X4& projection);
 private:
     Model* model = nullptr;
     float turnSpeed;
-    bool ButtonFlag = false;
+    bool CursorFlag = false;
     
      
 };

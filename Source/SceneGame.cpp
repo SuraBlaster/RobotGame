@@ -41,12 +41,6 @@ void SceneGame::Initialize()
 	map2Manager.Register(map2);
 	}
 
-	StageMoveFloor* stageMoveFloor = new StageMoveFloor();
-	stageMoveFloor->SetStartPoint(DirectX::XMFLOAT3(0, 1, 3));
-	stageMoveFloor->SetGoalPoint(DirectX::XMFLOAT3(10, 2, 3));
-	stageMoveFloor->SetTorque(DirectX::XMFLOAT3(0, 1.0f, 0));
-	stageManager.Register(stageMoveFloor);
-
 	//プレイヤー初期化
 	player = new Player;
 
@@ -58,16 +52,11 @@ void SceneGame::Initialize()
 	WeaponDagger* dagger = new WeaponDagger;
 	weaponManager.Register(dagger);
 
-
-	//エネミー初期化
-
 	ItemManager& itemManager = ItemManager::Instance();
 	ItemCrystal* crystal = new ItemCrystal();
 	crystal->SetPosition(DirectX::XMFLOAT3(0, 1, 5));
 	itemManager.Register(crystal);
 
-
-	
 	//カメラ初期設定
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -248,11 +237,9 @@ void SceneGame::Update(float elapsedTime)
 		cameraController->ZeroClear();
 	pauseUpdate();
 
-
-
-
 	//ラウンド管理
 	RaundManage();
+
 	killspider = EnemySpider::Instance().GetDeadcount();
 	killbomber = EnemyBomber::Instance().GetDeadcount();
 	killslime  =  EnemySlime::Instance().GetDeadcount();
@@ -341,7 +328,6 @@ void SceneGame::Render()
 			shieldIcon->Render();
 		}
 
-		RenderEnemyGauge(dc, rc.view, rc.projection);
 		pauseRender(dc);
 	}
 
@@ -374,197 +360,6 @@ void SceneGame::DrawDebugGUI()
 
 
 	ImGui::End();
-}
-
-
-void SceneGame::RenderEnemyGauge(
-	ID3D11DeviceContext* dc,
-	const DirectX::XMFLOAT4X4& view,
-	const DirectX::XMFLOAT4X4& projection)
-{
-	//ビューポート
-	D3D11_VIEWPORT viewport;
-	UINT numViewports = 1;
-	dc->RSGetViewports(&numViewports, &viewport);
-
-	//変換行列
-	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&view);
-	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&projection);
-	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
-
-	//すべての敵の頭上にHPゲージを表示
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	int enemyCount = enemyManager.GetEnemyCount();
-
-	EnemyManager& enemyspiderManager = EnemyManager::Instance();
-	int enemySCount = enemyspiderManager.GetEnemyCount();
-
-	for (int i = 0; i < enemyCount; ++i)
-	{
-		Enemy* enemy = enemyManager.GetEnemy(i);
-		
-
-		DirectX::XMVECTOR ScreenPosition{};
-
-		DirectX::XMFLOAT3 enemyPosition{};
-		
-
-		enemyPosition = enemy->GetPosition();
-		
-		
-		enemyPosition.y += enemy->GetHeight();
-		
-		
-
-		ScreenPosition = DirectX::XMVector3Project(
-			DirectX::XMLoadFloat3(&enemyPosition),
-			viewport.TopLeftX,
-			viewport.TopLeftY,
-			viewport.Width,
-			viewport.Height,
-			0.0f,
-			1.0f,
-			Projection,
-			View,
-			World
-		);
-
-		DirectX::XMFLOAT3 screenPosition{};
-		DirectX::XMStoreFloat3(&screenPosition, ScreenPosition);
-
-		float gaugeX = 30.0f;
-		float gaugeY = 5.0f;
-
-		float health = enemy->GetHealth() / static_cast<float>(enemy->GetMaxHealth());
-		
-		gauge->Render(dc,
-			screenPosition.x - gaugeX * 0.5f,
-			screenPosition.y - gaugeY,
-			gaugeX * health,
-			gaugeY,
-			screenPosition.x,
-			screenPosition.y,
-			gauge->GetTextureWidth(),
-			gauge->GetTextureHeight(),
-			0,
-			1, 0, 0, 1);
-	}
-	for (int i = 0; i < enemySCount; ++i)
-	{
-		
-		Enemy* enemyS = enemyspiderManager.GetEnemy(i);
-
-		DirectX::XMVECTOR ScreenPosition{};
-
-		DirectX::XMFLOAT3 enemyPosition{};
-		DirectX::XMFLOAT3 enemySPosition{};
-
-		
-		enemySPosition = enemyS->GetPosition();
-
-		
-		
-		enemySPosition.y += enemyS->GetHeight();
-		
-
-		ScreenPosition = DirectX::XMVector3Project(
-			DirectX::XMLoadFloat3(&enemyPosition),
-			viewport.TopLeftX,
-			viewport.TopLeftY,
-			viewport.Width,
-			viewport.Height,
-			0.0f,
-			1.0f,
-			Projection,
-			View,
-			World
-		);
-
-		DirectX::XMFLOAT3 screenPosition{};
-		DirectX::XMStoreFloat3(&screenPosition, ScreenPosition);
-
-		float gaugeX = 30.0f;
-		float gaugeY = 5.0f;
-
-		
-		float healthS = enemyS->GetHealth() / static_cast<float>(enemyS->GetMaxHealth());
-
-		gauge->Render(dc,
-			screenPosition.x - gaugeX * 0.5f,
-			screenPosition.y - gaugeY,
-			gaugeX * healthS,
-			gaugeY,
-			screenPosition.x,
-			screenPosition.y,
-			gauge->GetTextureWidth(),
-			gauge->GetTextureHeight(),
-			0,
-			1, 0, 0, 1);
-	}
-
-	Mouse& mouse = Input::Instance().GetMouse();
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	//if(gamePad.GetButtonUp()& GamePad::BTN_B)
-	//ここの敵の増殖
-	//if (enemytimer>=3.99f)
-	if (mouse.GetButtonDown() & Mouse::BTN_RIGHT)
-	{
-		DirectX::XMFLOAT3 screenPosition;
-		screenPosition.x = static_cast<float>(mouse.GetPositionX());
-		screenPosition.y = static_cast<float>(mouse.GetPositionY());
-		screenPosition.z = 0.0f;
-		DirectX::XMVECTOR WorldPosition{};
-
-
-
-		WorldPosition = DirectX::XMVector3Unproject(
-			DirectX::XMLoadFloat3(&screenPosition),
-			viewport.TopLeftX,
-			viewport.TopLeftY,
-			viewport.Width,
-			viewport.Height,
-			0.0f,
-			1.0f,
-			Projection,
-			View,
-			World
-		);
-		DirectX::XMFLOAT3 worldPosition{};
-		DirectX::XMStoreFloat3(&worldPosition, WorldPosition);
-		DirectX::XMFLOAT3 start = { worldPosition };
-
-		screenPosition.z = 1.0f;
-
-		WorldPosition = DirectX::XMVector3Unproject(
-			DirectX::XMLoadFloat3(&screenPosition),
-			viewport.TopLeftX,
-			viewport.TopLeftY,
-			viewport.Width,
-			viewport.Height,
-			0.0f,
-			1.0f,
-			Projection,
-			View,
-			World
-		);
-
-		DirectX::XMStoreFloat3(&worldPosition, WorldPosition);
-		DirectX::XMFLOAT3 end = { worldPosition };
-
-		HitResult hit;
-		if (StageManager::Instance().RayCast(start, end, hit))
-		{
-			EnemySlime* enemy = new EnemySlime;
-			enemy->SetPosition(hit.position);
-			EnemyManager::Instance().Register(enemy);
-		}
-		if (StageManager::Instance().RayCast(start, end, hit))
-		{
-			/*EnemySpider* enemyS = new EnemySpider;
-			enemyS->SetPosition(hit.position);
-			EnemyManager::Instance().Register(enemyS);*/
-		}
-	}
 }
 
 void SceneGame::pauseUpdate()
@@ -617,8 +412,6 @@ void SceneGame::pauseRender(ID3D11DeviceContext* dc)
 
 void SceneGame::EnemySet()
 {
-	
-	
 	DirectX::XMFLOAT3 start = { 0,0,0 };
 	DirectX::XMFLOAT3 end = { 0,0,0 };
 	HitResult hit;
@@ -630,7 +423,16 @@ void SceneGame::EnemySet()
 		switch(raund)
 		{
 		case 0:
-			for (int i = 0; i < 2; ++i)
+			for (int i = 0; i < 1; ++i)
+			{
+				EnemyDrone* drone = new EnemyDrone;
+				drone->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 5));
+				drone->SetTerritory(drone->GetPosition(), 10.0f);
+				enemyManager.Register(drone);
+			}
+			
+
+			/*for (int i = 0; i < 2; ++i)
 			{
 				EnemyBomber* bomber = new EnemyBomber;
 				bomber->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
@@ -650,8 +452,8 @@ void SceneGame::EnemySet()
 				slime->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 5));
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
-			}
-
+			}*/
+			break;
 		case 1:
 			for (int i = 0; i < 1; ++i)
 			{
@@ -667,7 +469,7 @@ void SceneGame::EnemySet()
 				bomber->SetTerritory(bomber->GetPosition(), 10.0f);
 				enemyManager.Register(bomber);
 			}
-
+			break;
 		}
 	}
 	else if(heremap==2)
@@ -696,6 +498,7 @@ void SceneGame::EnemySet()
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
 			}
+			break;
 		case 1:
 			for (int i = 0; i < 2; ++i)
 			{
@@ -718,6 +521,7 @@ void SceneGame::EnemySet()
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
 			}
+			break;
 		case 2:
 			for (int i = 0; i < 3; ++i)
 			{
@@ -740,6 +544,7 @@ void SceneGame::EnemySet()
 				slime->SetTerritory(slime->GetPosition(), 10.0f);
 				enemyManager.Register(slime);
 			}
+			break;
 		}
 	}
 
@@ -774,6 +579,7 @@ void SceneGame::RaundManage()
 				raund++;
 				Rcase++;
 			}
+			break;
 		case 1:
 			if(killcount>=10)
 			{
@@ -790,6 +596,7 @@ void SceneGame::RaundManage()
 			}
 			Rcase++;
 			}
+			break;
 		case 2:
 			if(killcount==144)
 			{
