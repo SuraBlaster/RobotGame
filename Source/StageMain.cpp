@@ -74,41 +74,47 @@ void StageMain::RotationStage(float elapsedTime)
     constexpr float radian90 = DirectX::XMConvertToRadians(90);
     constexpr float radian89 = DirectX::XMConvertToRadians(89);
     const float rotationSpeed = 40.0f;
-    //DirectX::XMVECTOR q = DirectX::XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
+    DirectX::XMVECTOR q = {};
 
     switch (selectedDirection) {
     case YMinus:
     {
-        Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 0);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 0);
+        break;
     }
     case YPuls:
     {
-        Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, 180, 0);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 180, 0);
+        break;
 
     }
     case XMinus:
     {
-        Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, -90);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, -90);
+        break;
 
     }
     case XPuls:
     {
-        Rotation = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 90);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(0, 0, 90);
+        break;
 
     }
     case ZMinus:
     {
-        Rotation = DirectX::XMQuaternionRotationRollPitchYaw(-90, 0, 0);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(-90, 0, 0);
+        break;
 
     }
     case ZPuls:
     {
-        Rotation = DirectX::XMQuaternionRotationRollPitchYaw(90, 0, 0);
+        q = DirectX::XMQuaternionRotationRollPitchYaw(radian90, 0, 0);
+        break;
 
     }
     }
 
-    DirectX::XMStoreFloat4(&transform.rotation, Rotation);
+    DirectX::XMStoreFloat4(&transform.rotation, q);
 }
 
 void StageMain::ChangeGravity()
@@ -121,14 +127,16 @@ void StageMain::ChangeGravity()
    XMStoreFloat3(&front, XMVector3Normalize(XMLoadFloat3(&camera.GetFront())));
 
     XMFLOAT3 start = camera.GetEye();
-    XMFLOAT3 end = camera.GetEye();
-    end.z = front.z * 100;
+    XMFLOAT3 end;
+    DirectX::XMStoreFloat3(&end, DirectX::XMVectorScale(DirectX::XMLoadFloat3(&front), 100.0f));
     HitResult hit;
 
     if (RayCast(start, end, hit))
     {
+        int oldSelectDirection = selectedDirection;
+
         XMFLOAT3 vec;
-        XMStoreFloat3(&vec, XMVectorSubtract(XMLoadFloat3(&hit.position), XMLoadFloat3(&transform.position)));
+        XMStoreFloat3(&vec, XMVectorSubtract(XMLoadFloat3(&hit.position), XMLoadFloat3(&Player::Instance().GetPosition())));
 
         DirectX::XMFLOAT3 absVec;
         absVec.x = std::fabs(vec.x);
@@ -145,14 +153,14 @@ void StageMain::ChangeGravity()
             maxIndex = 1;
             originalValue = vec.y;
         }
-        else if (absVec.z > maxAbs)
+        if (absVec.z > maxAbs)
         {
             maxAbs = absVec.z;
             maxIndex = 2;
             originalValue = vec.z;
         }
 
-        if (originalValue - maxAbs == 0.0f)
+        if (maxAbs + originalValue == 0.0f)
         {
             maxIndex += 3;
         }
@@ -165,6 +173,11 @@ void StageMain::ChangeGravity()
         case 3: selectedDirection = XMinus; break;
         case 4: selectedDirection = YMinus; break;
         case 5: selectedDirection = ZMinus; break;
+        }
+
+        if (oldSelectDirection == selectedDirection)
+        {
+            selectedDirection = YPuls;
         }
     }
 }

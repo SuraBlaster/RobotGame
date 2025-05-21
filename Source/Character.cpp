@@ -123,7 +123,7 @@ void Character::UpdateVelocity(float elapsedTime)
     float elapsedFrame = 60.0f * elapsedTime;
 
     //垂直速力更新処理
-    UpdateVerticalVelocity(elapsedFrame);
+    //UpdateVerticalVelocity(elapsedFrame);
 
     //水平走力更新処理
     UpdateHorizontalVelocity(elapsedFrame);
