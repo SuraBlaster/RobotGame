@@ -415,10 +415,10 @@ void SceneGame::Render()
 
 		//player->DrawDebugPrimitive();
 		// ラインレンダラ描画実行
-		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
+		//graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
 
 		// デバッグレンダラ描画実行
-		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
+		//graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 	}
 
 	// 2Dスプライト描画
@@ -441,11 +441,11 @@ void SceneGame::Render()
 
 	// 2DデバッグGUI描画
 	{
-		player->DrawDebugGUI();
+		//player->DrawDebugGUI();
 
-		EnemyManager::Instance().DrawDebugGUI();
+		//EnemyManager::Instance().DrawDebugGUI();
 
-		DrawDebugGUI();
+		//DrawDebugGUI();
 
 	}
 }
