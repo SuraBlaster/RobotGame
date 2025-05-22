@@ -103,16 +103,29 @@ private:
 	Sprite* gauge = nullptr;
 
 	std::unique_ptr<ShieldGauge> shieldGauge = nullptr;
-
 	std::unique_ptr<ShieldIcon> shieldIcon = nullptr;
 
 	std::unique_ptr<Sprite> toTitleSpr = nullptr;
 	std::unique_ptr<Sprite> backSpr = nullptr;
+	std::unique_ptr<Sprite> moveSpr = nullptr;
+	std::unique_ptr<Sprite> changeSpr = nullptr;
+	std::unique_ptr<Sprite> shieldSpr = nullptr;
+	std::unique_ptr<Sprite> hpSpr = nullptr;
+	std::unique_ptr<Sprite> limitSpr = nullptr;
+	std::unique_ptr<Sprite> mouseMoveSpr = nullptr;
+	
+	
 	std::unique_ptr<Sprite> sprite = nullptr;
 
 	SpriteData spriteSD;
 	SpriteData toTitleSD;
 	SpriteData backSD;
+	SpriteData moveSD;
+	SpriteData changeSD;
+	SpriteData shieldSD;
+	SpriteData hpSD;
+	SpriteData limitSD;
+	SpriteData mouseMoveSD;
 
 	std::unique_ptr<UserInterface> UI = nullptr;
 	//BGM再生
