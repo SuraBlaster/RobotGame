@@ -31,7 +31,8 @@ private:
     CameraEffect_Clear cameraEffect_Clear;
 
 
-    float range = 12.0f;
+    float range = 7.0f;
+    //float range = 12.0f;
     float beforRange = range;
     float minAngleX = DirectX::XMConvertToRadians(45);
     float maxAngleX = DirectX::XMConvertToRadians(-45);

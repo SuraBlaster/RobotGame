@@ -7,7 +7,7 @@ ProjectileEnemyToPlayer::ProjectileEnemyToPlayer(ProjectileManager* manager)
     model = new Model("Data/Model/Sword/Sword.mdl");
 
     //表示サイズを調整
-    scale.x = scale.y = scale.z = 0.7f;
+    scale.x = scale.y = scale.z = 1.7f;
 
 }
 

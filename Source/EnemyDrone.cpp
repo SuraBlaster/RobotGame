@@ -320,6 +320,7 @@ void EnemyDrone::LaunchProjectile()
     pos.z = position.z;
 
     ProjectileEnemyToPlayer* projectileEnemyToPlayer = new ProjectileEnemyToPlayer(&projectileManager);
+    
     if (projectilecount <=1)
     {
         projectileEnemyToPlayer->Launch(dir, pos);

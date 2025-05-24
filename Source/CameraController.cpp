@@ -124,7 +124,7 @@ void CameraController::Update(float elapsedTime)
     eye.z = target.z + front.z * -range;
 
     //カメラレイキャスト
-   /* if (!Debug::instance().getIsDebugMode())
+    /*if (!Debug::instance().getIsDebugMode())
     {
         DirectX::XMFLOAT3 start = target;
         DirectX::XMFLOAT3 end = { eye.x + front.x,eye.y + front.y,eye.z - front.z };

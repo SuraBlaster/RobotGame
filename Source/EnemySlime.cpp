@@ -394,7 +394,7 @@ void EnemySlime::TransitionIdleBattleState()
     state = State::IdleBattle;
 
     //数秒間待機するタイマーをランダム設定
-    stateTimer = Mathf::RandomRange(2.0f, 3.0f);
+    stateTimer = Mathf::RandomRange(2.5f, 4.0f);
 
     //戦闘待機アニメーション再生
     model->PlayAnimation(Anim_IdleBattle, true);
@@ -422,7 +422,6 @@ void EnemySlime::UpdateIdleBattleState(float elapsedTime)
         }
         else
         {
-            
             //徘徊ステートに遷移
             TransitionIdleState();
         }

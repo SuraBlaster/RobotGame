@@ -4,7 +4,7 @@
 Map2::Map2()
 {
     
-    map2 = new Model("Data/Model/ExampleStage/map(2).mdl");
+    map2 = new Model("Data/Model/ExampleStage/map2.mdl");
 
     //model = new Model("Data/Model/ExampleStage/tile2.mdl");
 
